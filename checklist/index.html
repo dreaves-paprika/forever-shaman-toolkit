@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-page="checklist">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,6 +14,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&amp;family=DM+Mono:wght@400;500&amp;family=Marcellus+SC&amp;display=swap">
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};window.shamanTrack=window.shamanTrack||function(){(window.shamanTrackQ=window.shamanTrackQ||[]).push(arguments)};</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<script defer src="/assets/track.js"></script>
 <style>
 :root{color-scheme:light}html{-webkit-text-size-adjust:100%}[hidden]{display:none!important}
 :root{
@@ -295,6 +298,8 @@ button{font:inherit;color:inherit}
   *,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}
 }
 .companion{margin:0;font-size:14.5px;color:var(--ink-2)}
+.whoami{margin-top:4px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--surface);font-size:15px}
+.whoami:empty{display:none}
 </style>
 </head>
 <body>
@@ -664,7 +669,8 @@ function tocHTML(st) {
 function footerHTML() {
   return '<footer class="foot"><p>Built from WoW Forever beta data and community guides as of late September 2026. Details can change before launch on November 4, and beta characters are wiped when the beta ends.</p>'
     + '<p>Tap any coordinate to copy a TomTom <code>/way</code> command.</p>'
-    + '<p>Your ticks are saved in this browser only. Fan-made and not affiliated with Blizzard Entertainment. <a href="/">Toolkit home</a></p>'
+    + '<p>Your ticks are saved in this browser and don’t sync between devices. Fan-made and not affiliated with Blizzard Entertainment. <a href="/">Toolkit home</a></p>'
+    + '<div class="whoami" data-whoami></div>'
     + '<h3 class="group-title">Sources</h3><ul class="sources">'
     + SOURCES.map((s) => '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + "</a> <span>" + esc(s.site) + "</span></li>").join("")
     + '</ul><div class="reset-row"><button type="button" class="reset" id="reset-btn">Clear all ticks</button></div></footer>';
@@ -711,7 +717,11 @@ function setStatus() {
   el.textContent = text;
   el.setAttribute("data-tone", tone);
 }
-function changed() { save(); }
+function changed() { save(); track("state", progressSummary()); }
+
+/* ---------- visit stats (see /assets/track.js) ---------- */
+function track(kind, data) { try { if (window.shamanTrack) window.shamanTrack(kind, data); } catch (e) { /* stats are optional */ } }
+function progressSummary() { return { spec: state.spec, done: countAll(state), total: TOTAL }; }
 
 /* ---------- live updates ---------- */
 function refresh() {
@@ -812,6 +822,7 @@ try { localStorage.setItem(STORE_KEY + ":test", "1"); localStorage.removeItem(ST
 app.innerHTML = appHTML(state);
 applyHide(readHide());
 setStatus();
+track("view", state.savedAt ? progressSummary() : null);
 
 app.addEventListener("change", (e) => {
   const t = e.target;

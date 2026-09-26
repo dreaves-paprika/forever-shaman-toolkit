@@ -1,0 +1,1006 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Toolkit Stats</title>
+<meta name="description" content="Private visit stats for the Forever Shaman Toolkit.">
+<meta name="theme-color" content="#EDF0F3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F141A" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&amp;family=DM+Mono:wght@400;500&amp;family=Marcellus+SC&amp;display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#EDF0F3;
+  --surface:#FBFCFD;
+  --surface-2:#E4E9EE;
+  --ink:#15202B;
+  --ink-2:#465465;
+  --ink-3:#5E6C7B;
+  --line:#D2D9E1;
+  --line-strong:#A9B5C2;
+  --grid:#E3E8ED;
+  --accent:#0A62C9;
+  --focus:#0A62C9;
+  --mark:#935B0E;
+  --mark-soft:#F0E3CF;
+  --mark-muted:#B9C3CD;
+  --danger:#B42318;
+  --shadow:0 1px 2px rgba(21,32,43,.06),0 10px 28px rgba(21,32,43,.10);
+  --font-display:"Marcellus SC","Marcellus",Georgia,"Times New Roman",serif;
+  --font-body:"Alegreya Sans","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+  --font-mono:"DM Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    color-scheme:dark;
+    --bg:#0F141A;
+    --surface:#161D25;
+    --surface-2:#1E2731;
+    --ink:#E6EBF0;
+    --ink-2:#A5B1BE;
+    --ink-3:#8793A0;
+    --line:#28323D;
+    --line-strong:#3A4755;
+    --grid:#222B35;
+    --accent:#5AA9FF;
+    --focus:#5AA9FF;
+    --mark:#BF8533;
+    --mark-soft:#33281A;
+    --mark-muted:#4A5866;
+    --danger:#FF8A7A;
+    --shadow:0 1px 2px rgba(0,0,0,.35),0 10px 28px rgba(0,0,0,.45);
+  }
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-underline-offset:2px}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.eyebrow{margin:0;font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:38px;padding:0 14px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--ink);font-size:15px;font-weight:500;text-decoration:none;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--accent)}
+.btn:disabled{opacity:.6;cursor:default}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.btn-small{height:32px;padding:0 12px;font-size:14px}
+.btn-danger{color:var(--danger)}
+.btn-danger:hover{border-color:var(--danger)}
+.btn-danger.armed{background:var(--danger);border-color:var(--danger);color:var(--surface)}
+.btn svg{width:16px;height:16px}
+.field{height:40px;padding:0 12px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);font-size:16px;min-width:0}
+.field::placeholder{color:var(--ink-3)}
+
+/* ---------- sign in ---------- */
+.login{min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:24px 16px}
+.login-card{width:min(420px,100%);display:grid;gap:14px;padding:28px 26px;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.login-card h1{margin:0;font-family:var(--font-display);font-weight:400;font-size:34px;line-height:1.05}
+.login-card p{margin:0;color:var(--ink-2)}
+.login-card label{font-weight:500}
+.login-card .field{width:100%}
+.check{display:flex;align-items:center;gap:10px;font-weight:400!important;color:var(--ink-2)}
+.check input{width:18px;height:18px;margin:0;accent-color:var(--accent)}
+.msg{min-height:1.4em;color:var(--danger)!important;font-size:15px}
+
+/* ---------- dashboard ---------- */
+.wrap{max-width:1160px;margin-inline:auto;padding:clamp(20px,4vw,40px) clamp(16px,3.5vw,36px) 56px;display:grid;gap:18px;transition:opacity .2s}
+.wrap.is-loading .data{opacity:.55}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px 20px;padding-bottom:4px}
+.top h1{margin:4px 0 0;font-family:var(--font-display);font-weight:400;font-size:clamp(32px,4.6vw,44px);line-height:1.02}
+.updated{margin:6px 0 0;font-size:14.5px;color:var(--ink-3)}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+
+.card{min-width:0;padding:18px 20px 20px;background:var(--surface);border:1px solid var(--line);border-radius:16px}
+.card-head{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:10px 16px;margin-bottom:14px}
+.card h2{margin:0;font-size:18px;font-weight:700;line-height:1.25}
+.card .sub{margin:2px 0 0;font-size:14.5px;color:var(--ink-3)}
+
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (min-width:780px){.tiles{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.tile{display:grid;gap:2px;align-content:start;padding:16px 18px 18px}
+.tile-label{font-size:15px;color:var(--ink-2)}
+.tile-value{font-size:clamp(32px,4vw,40px);font-weight:700;line-height:1.1;letter-spacing:-.01em;color:var(--ink)}
+.tile-note{font-size:14px;color:var(--ink-3)}
+
+.duo{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:980px){.duo{grid-template-columns:minmax(0,1.85fr) minmax(0,1fr)}}
+.trio{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:700px){.trio{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1020px){.trio{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* column chart */
+.chart-card{display:flex;flex-direction:column}
+.chart{position:relative;flex:1 1 auto;min-height:236px;border-radius:10px}
+.chart svg{position:absolute;left:0;top:0;display:block;overflow:visible}
+.chart .grid{stroke:var(--grid);stroke-width:1}
+.chart .base{stroke:var(--line-strong);stroke-width:1}
+.chart .tick{fill:var(--ink-3);font-family:var(--font-body);font-size:12.5px;font-variant-numeric:tabular-nums}
+.chart .bar{fill:var(--mark);transition:filter .12s}
+.chart .bar.is-active{filter:brightness(1.18)}
+.chart .hit{fill:transparent;cursor:default}
+.chart .empty{fill:var(--ink-3);font-family:var(--font-body);font-size:15px}
+.tip{position:absolute;z-index:2;min-width:132px;padding:8px 12px 9px;background:var(--surface);border:1px solid var(--line-strong);border-radius:10px;box-shadow:var(--shadow);pointer-events:none;white-space:nowrap}
+.tip p{margin:0}
+.tip-val{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--ink-2)}
+.tip-val strong{font-size:18px;color:var(--ink)}
+.tip-key{display:inline-block;width:12px;height:3px;border-radius:2px;background:var(--mark)}
+.tip-sub{font-size:13.5px;color:var(--ink-3)}
+
+table{border-collapse:collapse;width:100%}
+.plain th,.plain td{padding:7px 10px;border-top:1px solid var(--line);text-align:left;font-size:15px}
+.plain thead th{border-top:0;font-size:13.5px;font-weight:500;color:var(--ink-3)}
+.num{text-align:right!important;font-variant-numeric:tabular-nums}
+.table-scroll{max-height:320px;overflow:auto}
+
+/* bar lists */
+.hbars{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.hbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;align-items:baseline}
+.hbar-label{font-size:15.5px;overflow-wrap:anywhere}
+.hbar-val{font-size:15.5px;font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+.hbar-val small{font-weight:400;font-size:13.5px;color:var(--ink-3)}
+.hbar-bar{grid-column:1/-1;display:block;height:10px}
+.hbar-bar i{display:block;height:100%;min-width:3px;border-radius:0 4px 4px 0;background:var(--mark)}
+.hbar.is-muted .hbar-bar i{background:var(--mark-muted)}
+.hbar.is-muted .hbar-label{color:var(--ink-2)}
+.none{margin:0;color:var(--ink-3);font-size:15px}
+
+/* activity */
+.feed{list-style:none;margin:0;padding:0;display:grid;align-content:start}
+.feed.is-all{max-height:360px;overflow:auto;padding-right:6px}
+.feed li{display:grid;gap:1px;padding:8px 0;border-top:1px solid var(--line)}
+.feed li:first-child{border-top:0;padding-top:0}
+.feed p{margin:0;font-size:15.5px;line-height:1.35;color:var(--ink-2)}
+.feed strong{color:var(--ink);font-weight:700}
+.feed time{font-size:13.5px;color:var(--ink-3)}
+.feed-more{margin-top:12px}
+
+/* visitors table */
+.vtools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.vtools .field{width:min(260px,100%)}
+.vtable{font-size:15px}
+.vtable th{padding:0 10px 8px;text-align:left;vertical-align:bottom;font-size:13.5px;font-weight:500;color:var(--ink-3);white-space:nowrap}
+.vtable th button{padding:2px 0;border:0;background:none;color:inherit;font:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.vtable th button:hover{color:var(--ink)}
+.vtable th[aria-sort] button{color:var(--ink);font-weight:700}
+.vtable th .arrow{font-size:11px}
+.vtable td{padding:10px;border-top:1px solid var(--line);vertical-align:top}
+.vtable tr.vrow:hover td{background:color-mix(in srgb,var(--surface-2) 45%,transparent)}
+.who{display:grid;gap:1px;padding:0;border:0;background:none;text-align:left;cursor:pointer;color:var(--ink)}
+.who-name{display:flex;align-items:baseline;gap:6px;font-weight:700;font-size:15.5px}
+.who-text{min-width:0;overflow-wrap:anywhere}
+.who-name .chev{flex:none;display:inline-block;color:var(--ink-3);font-weight:400;transition:transform .15s}
+.who-sub{padding-left:14px;white-space:nowrap}
+.vtable td.c-who{min-width:150px}
+.who[aria-expanded="true"] .chev{transform:rotate(90deg)}
+.who-sub{font-size:13.5px;color:var(--ink-3)}
+.badge{display:inline-block;padding:1px 7px;border-radius:999px;background:var(--surface-2);color:var(--ink-2);font-size:12px;font-weight:500}
+.muted{color:var(--ink-3)}
+.prog{display:grid;gap:4px;min-width:96px}
+.prog-top{display:flex;align-items:baseline;gap:6px;font-variant-numeric:tabular-nums}
+.meter{display:block;height:6px;border-radius:4px;background:var(--mark-soft);overflow:hidden}
+.meter i{display:block;height:100%;border-radius:0 4px 4px 0;background:var(--mark)}
+.prog small{font-size:13px;color:var(--ink-3)}
+.vdetail td{padding:4px 10px 18px;border-top:0;background:color-mix(in srgb,var(--surface-2) 30%,transparent)}
+.detail{display:grid;gap:16px;padding-top:8px}
+.facts{display:grid;gap:10px 24px;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));margin:0}
+.facts div{min-width:0}
+.facts dt{font-size:13px;color:var(--ink-3)}
+.facts dd{margin:0;font-size:15px;overflow-wrap:anywhere}
+.detail-actions{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 20px}
+.label-form{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.label-form label{flex:1 1 100%;font-size:13.5px;color:var(--ink-3)}
+.label-form .field{width:220px;height:36px;font-size:15px}
+.hint{font-size:13.5px;color:var(--ink-3)}
+.saved-note{font-size:13.5px;color:var(--ink-2)}
+
+@media (max-width:1000px) and (min-width:701px){
+  .vtable .c-device{display:none}
+}
+@media (max-width:700px){
+  .vtable thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .vtable,.vtable tbody{display:block}
+  .vtable tr.vrow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 18px;padding:12px 0;border-top:1px solid var(--line)}
+  .vtable tr.vrow td{display:block;padding:0;border:0}
+  .vtable tr.vrow:hover td{background:none}
+  .vtable .c-who{grid-column:1}
+  .vtable .c-last{grid-column:2;grid-row:1;text-align:right;font-size:14px;color:var(--ink-3)}
+  .vtable .c-where,.vtable .c-device{grid-column:1/-1;font-size:14px;color:var(--ink-2)}
+  .vtable .c-views{display:none!important}
+  .vtable .c-ck{grid-column:1}
+  .vtable .c-gear{grid-column:2}
+  .vtable .c-ck::before,.vtable .c-gear::before{content:attr(data-label);display:block;font-size:12.5px;color:var(--ink-3)}
+  .vtable tr.vdetail{display:block}
+  .vtable tr.vdetail td{display:block;padding:4px 0 16px}
+}
+
+.fine{display:grid;gap:10px;font-size:15px;color:var(--ink-2)}
+.fine p{margin:0;max-width:78ch}
+.error-card{border-color:var(--danger)}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(() => {
+"use strict";
+
+const KEY_STORE = "forever-shaman20:admin-key";
+const VID_KEY = "forever-shaman20:vid";
+const OFF_KEY = "forever-shaman20:notrack";
+const ANALYTICS_URL = "https://vercel.com/dreavespaprika-7476s-projects/forever-shaman-toolkit/analytics";
+const PAGE_LABEL = { checklist: "Checklist", gear: "Gear guide", home: "Home page" };
+const PAGE_THE = { checklist: "the checklist", gear: "the gear guide", home: "the home page" };
+const SPEC_LABEL = { enh: "Enhancement", ele: "Elemental", resto: "Restoration" };
+const PROF_LABEL = { lw: "Leatherworking", tail: "Tailoring", eng: "Engineering", ench: "Enchanting" };
+const PROF_SHORT = { lw: "LW", tail: "Tailor", eng: "Eng", ench: "Ench" };
+
+const app = document.getElementById("app");
+const S = {
+  key: null, data: null, loadedAt: 0, loading: false,
+  sort: "last", dir: -1, q: "", open: new Set(),
+  chartTable: false, feedAll: false, active: -1, armed: null, armTimer: 0, notes: {}
+};
+
+/* ---------- small helpers ---------- */
+function esc(v) {
+  return String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function store(kind) { try { return window[kind]; } catch (e) { return null; } }
+function sget(kind, k) { try { const s = store(kind); return s ? s.getItem(k) : null; } catch (e) { return null; } }
+function sset(kind, k, v) {
+  try { const s = store(kind); if (!s) return; if (v == null) s.removeItem(k); else s.setItem(k, v); } catch (e) { /* ignore */ }
+}
+function b64(str) {
+  const bytes = new TextEncoder().encode(str);
+  let bin = "";
+  bytes.forEach((b) => { bin += String.fromCharCode(b); });
+  return btoa(bin);
+}
+const nf = new Intl.NumberFormat("en-US");
+const nfc = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 });
+function n(v) { v = Number(v) || 0; return v >= 10000 ? nfc.format(v) : nf.format(v); }
+function plural(v, one, many) { return n(v) + " " + (Number(v) === 1 ? one : (many || one + "s")); }
+const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+const shortDate = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" });
+const fullTime = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
+const clock = new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" });
+const dayShort = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+const dayLong = new Intl.DateTimeFormat("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" });
+function ago(ms) {
+  ms = Number(ms) || 0;
+  if (!ms) return "never";
+  const s = Math.round((ms - Date.now()) / 1000);
+  const a = Math.abs(s);
+  if (a < 45) return "just now";
+  if (a < 3600) return rtf.format(Math.round(s / 60), "minute");
+  if (a < 86400) return rtf.format(Math.round(s / 3600), "hour");
+  if (a < 6 * 86400) return rtf.format(Math.round(s / 86400), "day");
+  return shortDate.format(ms);
+}
+function when(ms) { return ms ? fullTime.format(Number(ms)) : "Unknown"; }
+function dayDate(key) { const p = key.split("-").map(Number); return new Date(Date.UTC(p[0], p[1] - 1, p[2])); }
+let regionNames = null;
+try { regionNames = new Intl.DisplayNames(["en"], { type: "region" }); } catch (e) { regionNames = null; }
+function country(code) {
+  if (!code) return "";
+  try { return (regionNames && regionNames.of(code)) || code; } catch (e) { return code; }
+}
+
+/* ---------- data shaping ---------- */
+function myVid() { return sget("localStorage", VID_KEY) || ""; }
+function counted() { return sget("localStorage", OFF_KEY) !== "1"; }
+
+function rows() {
+  const me = myVid();
+  return (S.data ? S.data.visitors : []).map((v) => {
+    const r = {
+      id: v.id,
+      name: v.name || "",
+      label: v.label || "",
+      first: Number(v.first) || 0,
+      last: Number(v.last) || 0,
+      views: Number(v.views) || 0,
+      pages: { home: Number(v.views_home) || 0, checklist: Number(v.views_checklist) || 0, gear: Number(v.views_gear) || 0 },
+      device: v.device || "",
+      os: v.os || "",
+      browser: v.browser || "",
+      country: v.country || "",
+      region: v.region || "",
+      city: v.city || "",
+      ref: v.ref || "",
+      me: !!me && v.id === me,
+      ck: Number(v.ck_total) > 0 ? { done: Number(v.ck_done) || 0, total: Number(v.ck_total), spec: v.ck_spec || "", at: Number(v.ck_at) || 0 } : null,
+      gear: Number(v.gear_total) > 0 ? { have: Number(v.gear_have) || 0, total: Number(v.gear_total), spec: v.gear_spec || "", profs: String(v.gear_profs || "").split(",").filter((p) => PROF_LABEL[p]), at: Number(v.gear_at) || 0 } : null
+    };
+    r.short = "Visitor " + r.id.slice(0, 4);
+    r.display = r.name || r.label || r.short;
+    r.place = placeShort(r);
+    r.spec = latestSpec(r);
+    return r;
+  });
+}
+function placeShort(r) {
+  const parts = [];
+  if (r.city) parts.push(r.city);
+  if (r.region && (r.country === "US" || r.country === "CA" || !r.city)) parts.push(r.region);
+  if (r.country && r.country !== "US") parts.push(country(r.country));
+  return parts.join(", ");
+}
+function placeLong(r) {
+  return [r.city, r.region, country(r.country)].filter(Boolean).join(", ") || "Unknown";
+}
+function latestSpec(r) {
+  const c = r.ck && r.ck.spec ? r.ck : null;
+  const g = r.gear && r.gear.spec ? r.gear : null;
+  if (c && g) return (g.at >= c.at ? g : c).spec;
+  return (g || c || {}).spec || "";
+}
+
+/* ---------- API ---------- */
+async function call(method, body) {
+  const headers = { "x-admin-key-b64": b64(S.key || "") };
+  if (body) headers["Content-Type"] = "application/json";
+  let res;
+  try {
+    res = await fetch("/api/stats", { method: method, headers: headers, body: body ? JSON.stringify(body) : undefined, cache: "no-store" });
+  } catch (e) { return { status: 0, json: null }; }
+  let json = null;
+  try { json = await res.json(); } catch (e) { json = null; }
+  return { status: res.status, json: json };
+}
+function problem(r) {
+  if (r.status === 401) return "That passphrase didn’t match. Check it against ADMIN_KEY in Vercel.";
+  if (r.status === 503 && r.json && r.json.error === "no_admin_key") return "This deployment doesn’t have an ADMIN_KEY yet. Add it in Vercel under Settings, Environment Variables, then redeploy.";
+  if (r.status === 503) return "The stats database isn’t connected to this project.";
+  if (r.status === 0) return "Couldn’t reach the site. Check your connection and try again.";
+  return "Something went wrong loading the stats (error " + r.status + "). Try again in a minute.";
+}
+
+async function load(quiet) {
+  if (S.loading) return;
+  S.loading = true;
+  const wrap = document.querySelector(".wrap");
+  if (wrap) { wrap.classList.add("is-loading"); wrap.setAttribute("aria-busy", "true"); }
+  const r = await call("GET");
+  S.loading = false;
+  if (r.status === 200 && r.json && r.json.ok) {
+    S.data = r.json;
+    S.loadedAt = Date.now();
+    renderDashboard();
+    return;
+  }
+  if (r.status === 401) { signOut("Your saved passphrase no longer works. Sign in again."); return; }
+  if (wrap) { wrap.classList.remove("is-loading"); wrap.removeAttribute("aria-busy"); }
+  if (!S.data) { renderDashboardError(problem(r)); return; }
+  if (!quiet) flashUpdated(problem(r));
+}
+
+function signOut(msg) {
+  S.key = null;
+  S.data = null;
+  sset("sessionStorage", KEY_STORE, null);
+  sset("localStorage", KEY_STORE, null);
+  renderLogin(msg || "");
+}
+
+/* ---------- sign in ---------- */
+function renderLogin(msg) {
+  document.title = "Toolkit Stats";
+  app.innerHTML = '<main class="login"><form class="login-card" id="login-form" novalidate>'
+    + '<p class="eyebrow">Forever Shaman Toolkit</p>'
+    + "<h1>Toolkit stats</h1>"
+    + "<p>Enter the admin passphrase you saved in Vercel as <code>ADMIN_KEY</code>.</p>"
+    + '<input type="text" name="username" value="admin" autocomplete="username" hidden>'
+    + '<label for="key">Passphrase</label>'
+    + '<input class="field" id="key" name="password" type="password" autocomplete="current-password" required>'
+    + '<label class="check" for="remember"><input type="checkbox" id="remember"> Keep me signed in on this device</label>'
+    + '<button class="btn btn-primary" type="submit" id="login-btn">Open stats</button>'
+    + '<p class="msg" id="login-msg" role="alert">' + esc(msg) + "</p>"
+    + "</form></main>";
+  const input = document.getElementById("key");
+  if (input) input.focus();
+}
+
+async function signIn(form) {
+  const input = form.querySelector("#key");
+  const btn = form.querySelector("#login-btn");
+  const msg = form.querySelector("#login-msg");
+  const key = input.value.trim();
+  if (!key) { msg.textContent = "Enter your passphrase."; input.focus(); return; }
+  btn.disabled = true;
+  btn.textContent = "Checking…";
+  msg.textContent = "";
+  S.key = key;
+  const r = await call("GET");
+  if (r.status === 200 && r.json && r.json.ok) {
+    const remember = form.querySelector("#remember").checked;
+    sset(remember ? "localStorage" : "sessionStorage", KEY_STORE, key);
+    S.data = r.json;
+    S.loadedAt = Date.now();
+    renderDashboard();
+    return;
+  }
+  S.key = null;
+  btn.disabled = false;
+  btn.textContent = "Open stats";
+  msg.textContent = problem(r);
+  input.select();
+}
+
+/* ---------- dashboard ---------- */
+const ICON_REFRESH = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.2 6.2A5.4 5.4 0 1 0 13.4 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M13.6 2.6v3.8H9.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+function topHTML() {
+  return '<header class="top"><div><p class="eyebrow">Forever Shaman Toolkit</p><h1>Toolkit stats</h1>'
+    + '<p class="updated" id="updated" role="status" aria-live="polite">Updated ' + esc(clock.format(S.loadedAt)) + "</p></div>"
+    + '<div class="actions"><button class="btn" type="button" id="refresh">' + ICON_REFRESH + "Refresh</button>"
+    + '<a class="btn" href="/" target="_blank" rel="noopener">View site</a>'
+    + '<button class="btn" type="button" id="signout">Sign out</button></div></header>';
+}
+
+function flashUpdated(text) {
+  const el = document.getElementById("updated");
+  if (el) el.textContent = text;
+}
+
+function tilesHTML(list) {
+  const t = S.data.totals;
+  const views = t.views || {};
+  const totalViews = (Number(views.home) || 0) + (Number(views.checklist) || 0) + (Number(views.gear) || 0);
+  const named = list.filter((r) => r.name).length;
+  const tile = (label, value, note) => '<div class="card tile"><span class="tile-label">' + esc(label) + '</span><span class="tile-value">' + esc(value) + '</span><span class="tile-note">' + esc(note) + "</span></div>";
+  return '<section class="tiles data" aria-label="Totals">'
+    + tile("People", n(list.length), named ? n(named) + " added a name" : "since tracking began")
+    + tile("Active today", n(t.today), "since midnight")
+    + tile("Last 7 days", n(t.last7), n(t.last30) + " in the last 30 days")
+    + tile("Page views", n(totalViews), "since tracking began")
+    + "</section>";
+}
+
+function chartCardHTML() {
+  const s = S.data.series;
+  const rowsHTML = s.slice().reverse().map((d) => "<tr><td>" + esc(dayLong.format(dayDate(d.day))) + '</td><td class="num">' + n(d.visitors) + '</td><td class="num">' + n(d.views) + "</td></tr>").join("");
+  return '<section class="card chart-card data" aria-labelledby="chart-title"><div class="card-head"><div><h2 id="chart-title">Visitors per day</h2><p class="sub">Last 30 days · people who opened any page</p></div>'
+    + '<button class="btn btn-small" type="button" id="chart-toggle" aria-pressed="' + (S.chartTable ? "true" : "false") + '">' + (S.chartTable ? "Show chart" : "Show table") + "</button></div>"
+    + '<div class="chart" id="chart" tabindex="0" role="group" aria-label="Visitors per day, last 30 days. Use the left and right arrow keys to read each day, or switch to the table."' + (S.chartTable ? " hidden" : "") + "></div>"
+    + '<p class="sr-only" id="chart-live" aria-live="polite"></p>'
+    + '<div class="table-scroll" id="chart-table"' + (S.chartTable ? "" : " hidden") + '><table class="plain"><thead><tr><th scope="col">Day</th><th scope="col" class="num">Visitors</th><th scope="col" class="num">Page views</th></tr></thead><tbody>' + rowsHTML + "</tbody></table></div>"
+    + "</section>";
+}
+
+/* activity feed */
+function feedItems(list) {
+  const byId = {};
+  list.forEach((r) => { byId[r.id] = r; });
+  const out = [];
+  const lastKept = {};
+  (S.data.events || []).forEach((e) => {
+    if (!e || !e.v || !PAGE_LABEL[e.p]) return;
+    const prev = lastKept[e.v];
+    if (prev && prev.e === e.e && prev.p === e.p) {
+      if (e.e === "state") return;
+      if (e.e === "view" && Math.abs(prev.t - e.t) < 10 * 60000) return;
+    }
+    lastKept[e.v] = e;
+    const r = byId[e.v];
+    out.push({ e: e, who: r ? r.display : "Visitor " + e.v.slice(0, 4) });
+  });
+  return out;
+}
+function eventText(e) {
+  const x = e.x || {};
+  if (e.e === "view") return "opened " + PAGE_THE[e.p];
+  if (e.e === "name") return x.set ? "added their name" : "removed their name";
+  if (e.e === "state" && e.p === "checklist") return "is at " + n(x.done) + " of " + n(x.total) + " on the checklist" + (SPEC_LABEL[x.spec] ? " (" + SPEC_LABEL[x.spec] + ")" : "");
+  if (e.e === "state" && e.p === "gear") return "has " + n(x.have) + " of " + n(x.total) + " best-in-slot pieces" + (SPEC_LABEL[x.spec] ? " for " + SPEC_LABEL[x.spec] : "");
+  return "was active";
+}
+function feedCardHTML(list) {
+  const items = feedItems(list);
+  const FEW = 5;
+  const shown = S.feedAll ? items.slice(0, 150) : items.slice(0, FEW);
+  const body = items.length
+    ? '<ol class="feed' + (S.feedAll ? ' is-all" tabindex="0" aria-label="All recent activity' : "") + '">'
+      + shown.map((it) => '<li><p><strong>' + esc(it.who) + "</strong> " + esc(eventText(it.e)) + '</p><time datetime="' + new Date(it.e.t).toISOString() + '" title="' + esc(when(it.e.t)) + '">' + esc(ago(it.e.t)) + "</time></li>").join("") + "</ol>"
+      + (items.length > FEW ? '<button class="btn btn-small feed-more" type="button" id="feed-more" aria-expanded="' + (S.feedAll ? "true" : "false") + '">' + (S.feedAll ? "Show less" : "Show all " + n(Math.min(items.length, 150))) + "</button>" : "")
+    : '<p class="none">Nothing yet. Activity shows up here a few seconds after someone opens the site.</p>';
+  return '<section class="card data" aria-labelledby="feed-title"><div class="card-head"><div><h2 id="feed-title">Recent activity</h2><p class="sub">Newest first</p></div></div>' + body + "</section>";
+}
+
+/* bar lists */
+function hbarsHTML(items, unit) {
+  const real = items.filter((i) => i.value > 0);
+  if (!real.length) return '<p class="none">Nothing yet.</p>';
+  const max = Math.max.apply(null, real.map((i) => i.value));
+  return '<ul class="hbars">' + real.map((i) => {
+    const w = Math.max(1.5, (i.value / max) * 100);
+    return '<li class="hbar' + (i.muted ? " is-muted" : "") + '"><span class="hbar-label">' + esc(i.label) + "</span>"
+      + '<span class="hbar-val">' + n(i.value) + (i.note ? " <small>" + esc(i.note) + "</small>" : "") + '<span class="sr-only"> ' + esc(unit) + "</span></span>"
+      + '<span class="hbar-bar" aria-hidden="true"><i style="width:' + w.toFixed(1) + '%"></i></span></li>';
+  }).join("") + "</ul>";
+}
+function tally(list, keyFn) {
+  const m = new Map();
+  list.forEach((r) => { const k = keyFn(r); if (k == null) return; [].concat(k).forEach((kk) => m.set(kk, (m.get(kk) || 0) + 1)); });
+  return m;
+}
+function topItems(map, limit, mutedKeys, labelFn, otherLabel) {
+  const entries = Array.from(map.entries()).map(([k, v]) => ({ key: k, label: labelFn ? labelFn(k) : k, value: v, muted: mutedKeys.indexOf(k) >= 0 }));
+  const main = entries.filter((e) => !e.muted).sort((a, b) => b.value - a.value || String(a.label).localeCompare(String(b.label)));
+  const muted = entries.filter((e) => e.muted);
+  let out = main;
+  if (main.length > limit) {
+    const rest = main.slice(limit - 1).reduce((s, e) => s + e.value, 0);
+    out = main.slice(0, limit - 1).concat([{ key: "__other", label: otherLabel || "Other", value: rest, muted: true }]);
+  }
+  return out.concat(muted);
+}
+function breakdownCard(title, sub, inner) {
+  return '<section class="card data"><div class="card-head"><div><h2>' + esc(title) + '</h2><p class="sub">' + esc(sub) + "</p></div></div>" + inner + "</section>";
+}
+function breakdownsHTML(list) {
+  const views = S.data.totals.views || {};
+  const tools = ["checklist", "gear", "home"].map((p) => ({ label: PAGE_LABEL[p], value: list.filter((r) => r.pages[p] > 0).length, note: plural(views[p] || 0, "view") }));
+
+  const specs = tally(list, (r) => r.spec || (r.ck || r.gear ? "none" : null));
+  const specItems = topItems(specs, 4, ["none"], (k) => (k === "none" ? "No build picked" : SPEC_LABEL[k]));
+
+  const gearUsers = list.filter((r) => r.gear);
+  const profs = tally(gearUsers, (r) => (r.gear.profs.length ? r.gear.profs : "none"));
+  const profItems = topItems(profs, 5, ["none"], (k) => (k === "none" ? "No professions ticked" : PROF_LABEL[k]));
+
+  const devices = tally(list, (r) => r.device || "Unknown");
+  const deviceItems = topItems(devices, 4, ["Unknown"], null);
+
+  const places = tally(list, (r) => r.place || "Unknown");
+  const placeItems = topItems(places, 6, ["Unknown"], null, "Everywhere else");
+
+  const refs = tally(list, (r) => r.ref || "direct");
+  const refItems = topItems(refs, 5, ["direct"], (k) => (k === "direct" ? "Direct, or a link in an app" : k), "Other sites");
+
+  return '<div class="trio">'
+    + breakdownCard("Tools used", "People who opened each page", hbarsHTML(tools, "people"))
+    + breakdownCard("Builds", "The talent build each person picked last", hbarsHTML(specItems, "people"))
+    + breakdownCard("Professions", "Ticked on the gear guide", hbarsHTML(profItems, "people"))
+    + breakdownCard("Where they are", "Rough location from the connection", hbarsHTML(placeItems, "people"))
+    + breakdownCard("Devices", "What they opened the site on", hbarsHTML(deviceItems, "people"))
+    + breakdownCard("How they found it", "The site that linked them, on their first visit", hbarsHTML(refItems, "people"))
+    + "</div>";
+}
+
+/* visitors table */
+const SORTS = {
+  who: (r) => r.display.toLowerCase(),
+  where: (r) => (r.place || "~").toLowerCase(),
+  device: (r) => (r.device + " " + r.os).toLowerCase(),
+  last: (r) => r.last,
+  views: (r) => r.views,
+  ck: (r) => (r.ck ? r.ck.done / r.ck.total : -1),
+  gear: (r) => (r.gear ? r.gear.have / r.gear.total : -1)
+};
+const COLS = [
+  { key: "who", label: "Visitor", cls: "c-who" },
+  { key: "where", label: "Where", cls: "c-where" },
+  { key: "device", label: "Device", cls: "c-device" },
+  { key: "last", label: "Last seen", cls: "c-last" },
+  { key: "views", label: "Views", cls: "c-views num" },
+  { key: "ck", label: "Checklist", cls: "c-ck" },
+  { key: "gear", label: "Gear", cls: "c-gear" }
+];
+function filtered(list) {
+  const q = S.q.trim().toLowerCase();
+  let out = list;
+  if (q) out = list.filter((r) => [r.display, r.name, r.label, r.short, r.place, r.region, country(r.country), r.device, r.os, r.browser].join(" ").toLowerCase().indexOf(q) >= 0);
+  const f = SORTS[S.sort] || SORTS.last;
+  return out.slice().sort((a, b) => {
+    const x = f(a), y = f(b);
+    if (x < y) return -S.dir;
+    if (x > y) return S.dir;
+    return b.last - a.last;
+  });
+}
+function progHTML(done, total, sub) {
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  return '<div class="prog"><span class="prog-top"><strong>' + n(done) + "</strong><span class=\"muted\">of " + n(total) + "</span></span>"
+    + '<span class="meter" aria-hidden="true"><i style="width:' + pct + '%"></i></span>'
+    + (sub ? "<small>" + esc(sub) + "</small>" : "") + "</div>";
+}
+function detailHTML(r) {
+  const pages = ["checklist", "gear", "home"].filter((p) => r.pages[p]).map((p) => PAGE_LABEL[p] + " " + n(r.pages[p])).join(" · ") || "None yet";
+  const ck = r.ck ? n(r.ck.done) + " of " + n(r.ck.total) + (SPEC_LABEL[r.ck.spec] ? " · " + SPEC_LABEL[r.ck.spec] : "") + " · updated " + ago(r.ck.at) : "Hasn’t ticked anything";
+  const gear = r.gear ? n(r.gear.have) + " of " + n(r.gear.total) + " pieces" + (SPEC_LABEL[r.gear.spec] ? " · " + SPEC_LABEL[r.gear.spec] : "") + " · updated " + ago(r.gear.at) : "Hasn’t ticked anything";
+  const profs = r.gear ? (r.gear.profs.map((p) => PROF_LABEL[p]).join(", ") || "None ticked") : "Not set";
+  const fact = (dt, dd) => "<div><dt>" + esc(dt) + "</dt><dd>" + esc(dd) + "</dd></div>";
+  const armed = S.armed === r.id;
+  const note = S.notes[r.id] || "";
+  return '<div class="detail"><dl class="facts">'
+    + fact("Their name", r.name || "Not added")
+    + fact("First seen", when(r.first))
+    + fact("Last seen", when(r.last))
+    + fact("Pages opened", pages)
+    + fact("Where", placeLong(r))
+    + fact("Device", [r.device, r.os, r.browser].filter(Boolean).join(" · ") || "Unknown")
+    + fact("Came from", r.ref || "Direct, or a link in an app")
+    + fact("Checklist", ck)
+    + fact("Gear guide", gear)
+    + fact("Professions", profs)
+    + fact("Visitor ID", r.id)
+    + "</dl>"
+    + '<div class="detail-actions">'
+    + '<form class="label-form" data-label-form="' + esc(r.id) + '"><label for="lbl-' + esc(r.id) + '">Your label for them (only you see it)</label>'
+    + '<input class="field" id="lbl-' + esc(r.id) + '" maxlength="40" placeholder="e.g. Sam from the guild" value="' + esc(r.label) + '">'
+    + '<button class="btn btn-small" type="submit">Save label</button>'
+    + '<span class="saved-note" role="status" aria-live="polite">' + esc(note) + "</span></form>"
+    + '<div><button class="btn btn-small btn-danger' + (armed ? " armed" : "") + '" type="button" data-forget="' + esc(r.id) + '">' + (armed ? "Tap again to remove" : "Remove from stats") + "</button></div>"
+    + "</div></div>";
+}
+function rowsHTML(list) {
+  const shown = filtered(list);
+  if (!shown.length) return '<tr><td colspan="7" class="muted">' + (list.length ? "No one matches that search." : "No visitors yet. Share the site link and people show up here a few seconds after they open it.") + "</td></tr>";
+  return shown.map((r) => {
+    const open = S.open.has(r.id);
+    const sub = r.name && r.label ? r.label : (r.name || r.label ? r.short : "No name added");
+    const ckSub = r.ck && SPEC_LABEL[r.ck.spec] ? SPEC_LABEL[r.ck.spec] : "";
+    const gearSub = r.gear ? [SPEC_LABEL[r.gear.spec] || "", r.gear.profs.map((p) => PROF_SHORT[p]).join(", ")].filter(Boolean).join(" · ") : "";
+    return '<tr class="vrow" data-id="' + esc(r.id) + '">'
+      + '<td class="c-who"><button class="who" type="button" id="who-' + esc(r.id) + '" aria-expanded="' + (open ? "true" : "false") + '" aria-controls="d-' + esc(r.id) + '">'
+      + '<span class="who-name"><span class="chev" aria-hidden="true">›</span><span class="who-text">' + esc(r.display) + (r.me ? ' <span class="badge">This browser</span>' : "") + "</span></span>"
+      + '<span class="who-sub">' + esc(sub) + "</span></button></td>"
+      + '<td class="c-where">' + (r.place ? esc(r.place) : '<span class="muted">Unknown</span>') + "</td>"
+      + '<td class="c-device">' + esc([r.device, r.os].filter(Boolean).join(" · ") || "Unknown") + "</td>"
+      + '<td class="c-last"><time datetime="' + (r.last ? new Date(r.last).toISOString() : "") + '" title="' + esc(when(r.last)) + '">' + esc(ago(r.last)) + "</time></td>"
+      + '<td class="c-views num">' + n(r.views) + "</td>"
+      + '<td class="c-ck" data-label="Checklist">' + (r.ck ? progHTML(r.ck.done, r.ck.total, ckSub) : '<span class="muted">Not started</span>') + "</td>"
+      + '<td class="c-gear" data-label="Gear">' + (r.gear ? progHTML(r.gear.have, r.gear.total, gearSub) : '<span class="muted">Not started</span>') + "</td>"
+      + "</tr>"
+      + '<tr class="vdetail" id="d-' + esc(r.id) + '"' + (open ? "" : " hidden") + '><td colspan="7">' + (open ? detailHTML(r) : "") + "</td></tr>";
+  }).join("");
+}
+function visitorsSub(list) {
+  const named = list.filter((r) => r.name).length;
+  return plural(list.length, "person", "people") + " · " + n(named) + " added a name · select a name for details";
+}
+function visitorsCardHTML(list) {
+  const head = COLS.map((c) => {
+    const active = S.sort === c.key;
+    const aria = active ? ' aria-sort="' + (S.dir < 0 ? "descending" : "ascending") + '"' : "";
+    return '<th scope="col" class="' + c.cls + '"' + aria + '><button type="button" data-sort="' + c.key + '">' + esc(c.label) + (active ? '<span class="arrow" aria-hidden="true">' + (S.dir < 0 ? "▼" : "▲") + "</span>" : "") + "</button></th>";
+  }).join("");
+  return '<section class="card data" aria-labelledby="who-title"><div class="card-head"><div><h2 id="who-title">Who’s using it</h2><p class="sub" id="who-sub">' + esc(visitorsSub(list)) + "</p></div>"
+    + '<div class="vtools"><label class="sr-only" for="vsearch">Find a visitor</label><input class="field" type="search" id="vsearch" placeholder="Find a name or place" value="' + esc(S.q) + '"></div></div>'
+    + '<table class="vtable"><thead><tr>' + head + '</tr></thead><tbody id="vbody">' + rowsHTML(list) + "</tbody></table></section>";
+}
+
+function browserCardHTML(list) {
+  const me = myVid();
+  const mine = list.find((r) => r.id === me);
+  const status = !counted()
+    ? "Visits from this browser aren’t counted."
+    : mine ? "This browser is counted and shows up in the table as " + mine.display + "." : "This browser hasn’t visited the site yet, or its visits were removed.";
+  return '<section class="card fine" aria-labelledby="browser-title"><h2 id="browser-title">Your own visits</h2>'
+    + '<label class="check" for="notrack"><input type="checkbox" id="notrack"' + (counted() ? "" : " checked") + "> Don’t count visits from this browser</label>"
+    + '<p id="browser-status">' + esc(status) + " Turning this on also removes this browser’s past visits. Do it once in each browser you use.</p>"
+    + '<p>Page views by country, referrers and more are also in <a href="' + ANALYTICS_URL + '" target="_blank" rel="noopener">Vercel Analytics</a>. Visitors can add a name or opt out at the bottom of each page.</p>'
+    + "</section>";
+}
+
+function renderDashboard() {
+  const focusId = document.activeElement && document.activeElement.id;
+  const list = rows();
+  document.title = "Toolkit Stats";
+  app.innerHTML = '<main class="wrap">' + topHTML() + tilesHTML(list)
+    + '<div class="duo">' + chartCardHTML() + feedCardHTML(list) + "</div>"
+    + visitorsCardHTML(list)
+    + breakdownsHTML(list)
+    + browserCardHTML(list)
+    + "</main>";
+  drawChart();
+  if (focusId) {
+    const el = document.getElementById(focusId);
+    if (el) el.focus({ preventScroll: true });
+  }
+}
+
+function renderDashboardError(text) {
+  app.innerHTML = '<main class="wrap">' + '<header class="top"><div><p class="eyebrow">Forever Shaman Toolkit</p><h1>Toolkit stats</h1></div>'
+    + '<div class="actions"><button class="btn" type="button" id="refresh">' + ICON_REFRESH + 'Try again</button><button class="btn" type="button" id="signout">Sign out</button></div></header>'
+    + '<section class="card error-card"><h2>Couldn’t load the stats</h2><p class="sub">' + esc(text) + "</p></section></main>";
+}
+
+function refreshRows() {
+  const list = rows();
+  const body = document.getElementById("vbody");
+  if (body) body.innerHTML = rowsHTML(list);
+}
+
+/* ---------- column chart ---------- */
+const CH = { top: 12, minH: 236, axis: 28, left: 34, right: 6 };
+let lastSize = "";
+function niceTicks(max) {
+  if (max <= 0) return [0, 1];
+  const steps = [1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 5000, 10000];
+  let step = steps[steps.length - 1];
+  for (let i = 0; i < steps.length; i++) { if (Math.ceil(max / steps[i]) <= 4) { step = steps[i]; break; } }
+  const top = Math.ceil(max / step) * step;
+  const out = [];
+  for (let v = 0; v <= top; v += step) out.push(v);
+  return out;
+}
+function colPath(x, base, w, h, r) {
+  r = Math.min(r, h, w / 2);
+  const t = base - h;
+  return "M" + x + "," + base + "V" + (t + r) + "A" + r + "," + r + " 0 0 1 " + (x + r) + "," + t
+    + "H" + (x + w - r) + "A" + r + "," + r + " 0 0 1 " + (x + w) + "," + (t + r) + "V" + base + "Z";
+}
+function geom() {
+  const box = document.getElementById("chart");
+  const s = S.data.series;
+  const W = Math.max(260, box.clientWidth);
+  const plotW = W - CH.left - CH.right;
+  const slot = plotW / s.length;
+  const bw = Math.max(2, Math.min(24, slot * 0.6));
+  const max = Math.max.apply(null, s.map((d) => d.visitors).concat([0]));
+  const ticks = niceTicks(max);
+  const H = Math.max(CH.minH, Math.floor(box.clientHeight));
+  const plot = H - CH.top - CH.axis;
+  return { box, s, W, H, plot, slot, bw, ticks, yMax: ticks[ticks.length - 1], base: CH.top + plot };
+}
+function drawChart() {
+  const box = document.getElementById("chart");
+  if (!box || !S.data || box.hidden) return;
+  lastSize = box.clientWidth + "x" + box.clientHeight;
+  const g = geom();
+  const f = (v) => Math.round(v * 10) / 10;
+  let svg = '<svg width="' + g.W + '" height="' + g.H + '" viewBox="0 0 ' + g.W + " " + g.H + '" aria-hidden="true" focusable="false">';
+  g.ticks.forEach((t) => {
+    const y = f(g.base - (t / g.yMax) * g.plot) + 0.5;
+    svg += '<line class="' + (t === 0 ? "base" : "grid") + '" x1="' + CH.left + '" x2="' + (g.W - CH.right) + '" y1="' + y + '" y2="' + y + '"/>';
+    svg += '<text class="tick" x="' + (CH.left - 10) + '" y="' + y + '" dy="0.32em" text-anchor="end">' + n(t) + "</text>";
+  });
+  g.s.forEach((d, i) => {
+    if (!d.visitors) return;
+    const x = f(CH.left + i * g.slot + (g.slot - g.bw) / 2);
+    const h = Math.max(2, (d.visitors / g.yMax) * g.plot);
+    svg += '<path class="bar' + (i === S.active ? " is-active" : "") + '" data-i="' + i + '" d="' + colPath(x, g.base, f(g.bw), f(h), 4) + '"/>';
+  });
+  const last = g.s.length - 1;
+  const every = g.slot * 7 >= 70 ? 7 : 14;
+  g.s.forEach((d, i) => {
+    if ((last - i) % every !== 0) return;
+    const cx = CH.left + i * g.slot + g.slot / 2;
+    const anchor = i === last ? "end" : "middle";
+    const x = i === last ? g.W - CH.right : cx;
+    svg += '<text class="tick" x="' + f(x) + '" y="' + (g.base + 20) + '" text-anchor="' + anchor + '">' + esc(dayShort.format(dayDate(d.day))) + "</text>";
+  });
+  if (!g.s.some((d) => d.visitors)) {
+    svg += '<text class="empty" x="' + f(CH.left + (g.W - CH.left - CH.right) / 2) + '" y="' + f(CH.top + g.plot / 2) + '" text-anchor="middle">No visits in the last 30 days yet</text>';
+  }
+  g.s.forEach((d, i) => {
+    svg += '<rect class="hit" data-i="' + i + '" x="' + f(CH.left + i * g.slot) + '" y="0" width="' + f(g.slot) + '" height="' + (g.base + 4) + '"/>';
+  });
+  svg += "</svg>";
+  box.innerHTML = svg + '<div class="tip" id="chart-tip" hidden></div>';
+  if (S.active >= 0) showTip(S.active, false);
+}
+function showTip(i, announce) {
+  const box = document.getElementById("chart");
+  const tip = document.getElementById("chart-tip");
+  if (!box || !tip || !S.data) return;
+  const g = geom();
+  const d = g.s[i];
+  if (!d) return;
+  S.active = i;
+  box.querySelectorAll(".bar").forEach((b) => b.classList.toggle("is-active", Number(b.getAttribute("data-i")) === i));
+  tip.textContent = "";
+  const val = document.createElement("p");
+  val.className = "tip-val";
+  const key = document.createElement("span");
+  key.className = "tip-key";
+  const strong = document.createElement("strong");
+  strong.textContent = n(d.visitors);
+  val.appendChild(key);
+  val.appendChild(strong);
+  val.appendChild(document.createTextNode(d.visitors === 1 ? " visitor" : " visitors"));
+  const sub = document.createElement("p");
+  sub.className = "tip-sub";
+  sub.textContent = dayLong.format(dayDate(d.day)) + " · " + plural(d.views, "page view");
+  tip.appendChild(val);
+  tip.appendChild(sub);
+  tip.hidden = false;
+  const cx = CH.left + i * g.slot + g.slot / 2;
+  const topY = g.base - (d.visitors / g.yMax) * g.plot;
+  const tw = tip.offsetWidth;
+  const th = tip.offsetHeight;
+  const left = Math.min(Math.max(0, cx - tw / 2), g.W - tw);
+  const top = Math.max(-8, topY - th - 10);
+  tip.style.left = left + "px";
+  tip.style.top = top + "px";
+  if (announce) {
+    const live = document.getElementById("chart-live");
+    if (live) live.textContent = dayLong.format(dayDate(d.day)) + ": " + plural(d.visitors, "visitor") + ", " + plural(d.views, "page view") + ".";
+  }
+}
+function hideTip() {
+  S.active = -1;
+  const tip = document.getElementById("chart-tip");
+  if (tip) tip.hidden = true;
+  const box = document.getElementById("chart");
+  if (box) box.querySelectorAll(".bar.is-active").forEach((b) => b.classList.remove("is-active"));
+}
+
+/* ---------- actions ---------- */
+async function saveLabel(form) {
+  const id = form.getAttribute("data-label-form");
+  const input = form.querySelector("input");
+  const btn = form.querySelector("button");
+  btn.disabled = true;
+  const r = await call("POST", { action: "label", vid: id, label: input.value });
+  btn.disabled = false;
+  if (r.status === 200 && r.json && r.json.ok) {
+    const v = S.data.visitors.find((x) => x.id === id);
+    if (v) { if (r.json.label) v.label = r.json.label; else delete v.label; }
+    S.notes[id] = r.json.label ? "Saved." : "Label removed.";
+    renderDashboard();
+    const who = document.getElementById("lbl-" + id);
+    if (who) who.focus({ preventScroll: true });
+    setTimeout(() => { delete S.notes[id]; }, 100);
+  } else if (r.status === 401) signOut("Sign in again to make changes.");
+  else { const note = form.querySelector(".saved-note"); if (note) note.textContent = problem(r); }
+}
+
+async function forget(btn) {
+  const id = btn.getAttribute("data-forget");
+  if (S.armed !== id) {
+    S.armed = id;
+    btn.classList.add("armed");
+    btn.textContent = "Tap again to remove";
+    clearTimeout(S.armTimer);
+    S.armTimer = setTimeout(() => {
+      S.armed = null;
+      const b = document.querySelector('[data-forget="' + id + '"]');
+      if (b) { b.classList.remove("armed"); b.textContent = "Remove from stats"; }
+    }, 4000);
+    return;
+  }
+  clearTimeout(S.armTimer);
+  S.armed = null;
+  btn.disabled = true;
+  btn.textContent = "Removing…";
+  const r = await call("POST", { action: "forget", vid: id });
+  if (r.status === 200) { S.open.delete(id); await load(); }
+  else if (r.status === 401) signOut("Sign in again to make changes.");
+  else { btn.disabled = false; btn.textContent = "Remove from stats"; flashUpdated(problem(r)); }
+}
+
+async function setNotrack(on) {
+  if (on) {
+    sset("localStorage", OFF_KEY, "1");
+    const me = myVid();
+    if (me && S.data && S.data.visitors.some((v) => v.id === me)) {
+      await call("POST", { action: "forget", vid: me });
+    }
+  } else {
+    sset("localStorage", OFF_KEY, null);
+  }
+  await load();
+}
+
+/* ---------- events ---------- */
+app.addEventListener("submit", (e) => {
+  const form = e.target;
+  if (form.id === "login-form") { e.preventDefault(); signIn(form); return; }
+  if (form.hasAttribute("data-label-form")) { e.preventDefault(); saveLabel(form); }
+});
+
+app.addEventListener("click", (e) => {
+  const t = e.target.closest("button");
+  if (!t) return;
+  if (t.id === "refresh") { load(); return; }
+  if (t.id === "signout") { signOut("You’re signed out."); return; }
+  if (t.id === "feed-more") { S.feedAll = !S.feedAll; renderDashboard(); return; }
+  if (t.id === "chart-toggle") {
+    S.chartTable = !S.chartTable;
+    S.active = -1;
+    renderDashboard();
+    return;
+  }
+  if (t.hasAttribute("data-sort")) {
+    const k = t.getAttribute("data-sort");
+    if (S.sort === k) S.dir = -S.dir;
+    else { S.sort = k; S.dir = k === "who" || k === "where" || k === "device" ? 1 : -1; }
+    renderDashboard();
+    return;
+  }
+  if (t.classList.contains("who")) {
+    const id = t.closest("tr").getAttribute("data-id");
+    if (S.open.has(id)) S.open.delete(id); else S.open.add(id);
+    const detail = document.getElementById("d-" + id);
+    const r = rows().find((x) => x.id === id);
+    if (detail && r) {
+      const open = S.open.has(id);
+      detail.hidden = !open;
+      detail.firstElementChild.innerHTML = open ? detailHTML(r) : "";
+      t.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+    return;
+  }
+  if (t.hasAttribute("data-forget")) forget(t);
+});
+
+app.addEventListener("input", (e) => {
+  if (e.target.id === "vsearch") { S.q = e.target.value; refreshRows(); }
+});
+
+app.addEventListener("change", (e) => {
+  if (e.target.id === "notrack") setNotrack(e.target.checked);
+});
+
+app.addEventListener("pointermove", (e) => {
+  const hit = e.target.closest && e.target.closest("#chart .hit");
+  if (hit) { const i = Number(hit.getAttribute("data-i")); if (i !== S.active) showTip(i, false); }
+});
+app.addEventListener("pointerdown", (e) => {
+  const hit = e.target.closest && e.target.closest("#chart .hit");
+  if (hit) showTip(Number(hit.getAttribute("data-i")), false);
+});
+app.addEventListener("pointerleave", (e) => {
+  if (e.target && e.target.id === "chart" && document.activeElement !== e.target) hideTip();
+}, true);
+app.addEventListener("focusin", (e) => {
+  if (e.target.id === "chart" && S.data) showTip(S.active >= 0 ? S.active : S.data.series.length - 1, true);
+});
+app.addEventListener("focusout", (e) => {
+  if (e.target.id === "chart") hideTip();
+});
+app.addEventListener("keydown", (e) => {
+  if (e.target.id !== "chart" || !S.data) return;
+  const last = S.data.series.length - 1;
+  let i = S.active >= 0 ? S.active : last;
+  if (e.key === "ArrowLeft") i = Math.max(0, i - 1);
+  else if (e.key === "ArrowRight") i = Math.min(last, i + 1);
+  else if (e.key === "Home") i = 0;
+  else if (e.key === "End") i = last;
+  else return;
+  e.preventDefault();
+  showTip(i, true);
+});
+
+// Redraw the chart when its box changes size (window resize, or the activity list growing).
+function sizeChanged() {
+  const box = document.getElementById("chart");
+  if (!box || box.hidden) return;
+  const size = box.clientWidth + "x" + box.clientHeight;
+  if (size !== lastSize) { lastSize = size; drawChart(); }
+}
+if (window.ResizeObserver) new ResizeObserver(sizeChanged).observe(app);
+window.addEventListener("resize", sizeChanged);
+
+// Pull fresh numbers when you come back to the tab after a while.
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" && S.key && S.data && Date.now() - S.loadedAt > 5 * 60000) load(true);
+});
+setInterval(() => {
+  const el = document.getElementById("updated");
+  if (el && S.loadedAt && el.textContent.indexOf("Updated") === 0) el.textContent = "Updated " + clock.format(S.loadedAt) + " (" + ago(S.loadedAt) + ")";
+}, 60000);
+
+/* ---------- boot ---------- */
+S.key = sget("sessionStorage", KEY_STORE) || sget("localStorage", KEY_STORE);
+if (S.key) {
+  app.innerHTML = '<main class="wrap is-loading" aria-busy="true"><header class="top"><div><p class="eyebrow">Forever Shaman Toolkit</p><h1>Toolkit stats</h1><p class="updated">Loading…</p></div></header></main>';
+  load();
+} else {
+  renderLogin("");
+}
+})();
+</script>
+</body>
+</html>
