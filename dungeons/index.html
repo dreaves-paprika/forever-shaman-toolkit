@@ -408,7 +408,7 @@ function render() {
     + (P.skip && P.skip.length ? '<section class="skip" aria-labelledby="skip-title"><h2 id="skip-title">Skip these</h2><ul>' + P.skip.map((s) => "<li><b>" + esc(D.DUNGEONS[s.key].name) + "</b>: " + esc(s.why) + "</li>").join("") + "</ul></section>" : "")
     + '<footer class="foot"><p>Run order and notes are this page’s own picks, based on where your best-in-slot gear drops. Level ranges come from Forever’s game data on Wowhead, except Razorfen Kraul: Wowhead lists 32–42 there, which no other source agrees with, so it shows the usual 29–38. Quests and bosses come from Wowhead’s Forever guides and community loot tables, checked in late September 2026. Tap a location to copy a TomTom <code>/way</code> command.</p>'
     + "<p>Your picks save in this browser. Fan-made and not affiliated with Blizzard Entertainment.</p>"
-    + (window.shamanNoteButton ? "<p>Spotted a mistake, or know a better route? " + window.shamanNoteButton({ link: true, text: "Send a note to the admin" }) + "</p>" : "")
+    + (window.shamanNoteFooter ? window.shamanNoteFooter("Spotted a mistake, or know a better route?") : "")
     + '<div class="whoami" data-whoami></div>'
     + "<ul>" + D.SOURCES.map((s) => '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + "</a> <span>" + esc(s.site) + "</span></li>").join("") + "</ul></footer>"
     + '<div class="toast" id="toast" role="status" aria-live="polite" hidden></div></main>';

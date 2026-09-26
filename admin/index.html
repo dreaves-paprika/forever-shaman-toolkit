@@ -265,6 +265,15 @@ table{border-collapse:collapse;width:100%}
 .nmeta strong{color:var(--ink);font-weight:700}
 .nactions{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .linkish{padding:0;border:0;background:none;color:var(--accent);font:inherit;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.nreply{padding:9px 12px;border-left:3px solid var(--mark);border-radius:0 10px 10px 0;background:var(--mark-soft)}
+.nreply-head{margin:0 0 2px;font-size:13px;font-weight:700;color:var(--ink-2)}
+.nreply-text{margin:0;font-size:15px;color:var(--ink);white-space:pre-wrap;overflow-wrap:anywhere}
+.nreply-form{display:grid;gap:8px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.nreply-form label{font-size:14.5px;font-weight:500}
+.nreply-form label small{font-weight:400;color:var(--ink-3)}
+.nreply-form textarea{width:100%;min-height:84px;padding:8px 10px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit;font-size:15px;line-height:1.45;resize:vertical}
+.nseen.is-not{font-style:italic}
+.nhint{margin:0;font-size:13.5px;color:var(--ink-3)}
 .notes-msg{margin:10px 0 0;font-size:14.5px;color:var(--ink-2)}
 .notes-msg:empty{display:none}
 .copy-box{width:100%;min-height:140px;margin-top:10px;padding:10px 12px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--ink);font-family:var(--font-mono);font-size:13px}
@@ -300,7 +309,8 @@ const S = {
   sort: "last", dir: -1, q: "", open: new Set(),
   chartTable: false, feedAll: false, active: -1, armed: null, armTimer: 0, notes: {},
   capArmed: false, capTimer: 0, capBusy: false, capNote: "",
-  notesView: "open", notesAll: false, noteArmed: null, noteTimer: 0, noteBusy: new Set(), notesMsg: "", copyText: ""
+  notesView: "open", notesAll: false, noteArmed: null, noteTimer: 0, noteBusy: new Set(), notesMsg: "", copyText: "",
+  replyOpen: null, replyDrafts: {}
 };
 
 /* ---------- small helpers ---------- */
@@ -574,15 +584,35 @@ function noteHTML(nt, byId) {
   if (status === "new") actions += act("Looking into it", "looking") + act("Mark done", "done");
   else if (status === "looking") actions += act("Mark done", "done") + act("Back to new", "new");
   else actions += act("Reopen", "new");
+  const replying = S.replyOpen === id;
+  if (nt.canReply && !replying) actions += '<button class="btn btn-small" type="button" data-nreply="' + id + '"' + (busy ? " disabled" : "") + ">" + (nt.reply ? "Edit reply" : "Reply") + "</button>";
   actions += '<button class="btn btn-small" type="button" data-ncopy="' + id + '">Copy</button>'
     + '<button class="btn btn-small btn-danger' + (armed ? " armed" : "") + '" type="button" data-ndelete="' + id + '"' + (busy ? " disabled" : "") + ">" + (armed ? "Tap again to delete" : "Delete") + "</button>";
+  // Whether the sender's browser has picked up your latest reply or status change.
+  const changed = Math.max(nt.status_at || 0, nt.reply_at || 0);
+  const seen = nt.canReply && changed ? (nt.seen_at && nt.seen_at >= changed ? '<span class="nseen">They’ve seen your update</span>' : '<span class="nseen is-not">They haven’t seen your update yet</span>') : "";
+  const who = noteWho(nt, byId);
+  const draft = S.replyDrafts[id] != null ? S.replyDrafts[id] : (nt.reply || "");
+  const form = replying
+    ? '<form class="nreply-form" data-nreply-form="' + id + '"><label for="reply-' + id + '">Reply to ' + esc(nt.name || "them") + ' <small>(they’ll see it under “Your notes” on the site)</small></label>'
+      + '<textarea id="reply-' + id + '" data-reply-for="' + id + '" maxlength="500" rows="3" placeholder="For example: Good catch, it’s fixed now.">' + esc(draft) + "</textarea>"
+      + '<div class="nactions"><button class="btn btn-small btn-primary" type="submit"' + (busy ? " disabled" : "") + ">" + (busy ? "Sending…" : "Send reply") + "</button>"
+      + (status !== "done" ? '<button class="btn btn-small" type="button" data-nreply-done="' + id + '"' + (busy ? " disabled" : "") + ">Send and mark done</button>" : "")
+      + '<button class="btn btn-small" type="button" data-nreply-cancel="' + id + '">Cancel</button>'
+      + (nt.reply ? '<button class="btn btn-small btn-danger" type="button" data-nreply-remove="' + id + '"' + (busy ? " disabled" : "") + ">Remove reply</button>" : "")
+      + "</div></form>"
+    : "";
   return '<li class="nitem is-' + status + '" id="note-' + id + '">'
     + '<div class="nhead"><span class="kchip">' + esc(KIND_LABEL[nt.kind] || "Note") + '</span><span class="nctx">' + esc(noteAbout(nt)) + "</span>"
     + '<span class="nstatus s-' + status + '">' + esc(STATUS_LABEL[status]) + "</span></div>"
     + (nt.item ? '<p class="npick">Their current pick there: ' + esc(nt.item) + "</p>" : "")
     + '<p class="ntext">' + esc(nt.text) + "</p>"
-    + '<p class="nmeta"><strong>' + esc(noteWho(nt, byId)) + '</strong> · <time datetime="' + new Date(nt.t).toISOString() + '" title="' + esc(when(nt.t)) + '">' + esc(ago(nt.t)) + "</time> · #" + id
-    + (r ? ' · <button class="linkish" type="button" data-goto-visitor="' + esc(r.id) + '">See their visits</button>' : "") + "</p>"
+    + '<p class="nmeta"><strong>' + esc(who) + '</strong> · <time datetime="' + new Date(nt.t).toISOString() + '" title="' + esc(when(nt.t)) + '">' + esc(ago(nt.t)) + "</time> · #" + id
+    + (r ? ' · <button class="linkish" type="button" data-goto-visitor="' + esc(r.id) + '">See their visits</button>' : "")
+    + (seen ? " · " + seen : "") + "</p>"
+    + (nt.reply ? '<div class="nreply"><p class="nreply-head">Your reply · <time datetime="' + new Date(nt.reply_at || nt.t).toISOString() + '" title="' + esc(when(nt.reply_at)) + '">' + esc(ago(nt.reply_at)) + '</time></p><p class="nreply-text">' + esc(nt.reply) + "</p></div>" : "")
+    + (!nt.canReply ? '<p class="nhint">This note came in before replies were added, so a reply can’t reach them.</p>' : "")
+    + form
     + '<div class="nactions">' + actions + "</div></li>";
 }
 function notesCardHTML(list) {
@@ -1127,6 +1157,50 @@ async function setNoteStatus(btn) {
     redrawNotes();
   }
 }
+function openReply(id) {
+  S.replyOpen = id;
+  S.notesMsg = "";
+  redrawNotes("#reply-" + id);
+  const box = document.getElementById("reply-" + id);
+  if (box) box.setSelectionRange(box.value.length, box.value.length);
+}
+function closeReply(id) {
+  S.replyOpen = null;
+  delete S.replyDrafts[id];
+  redrawNotes('[data-nreply="' + id + '"]');
+}
+async function sendReply(id, opts) {
+  const box = document.getElementById("reply-" + id);
+  const text = opts.remove ? "" : (box ? box.value : S.replyDrafts[id] || "").trim();
+  if (!opts.remove && !text) {
+    S.notesMsg = "Write a reply first.";
+    redrawNotes("#reply-" + id);
+    return;
+  }
+  S.noteBusy.add(id);
+  if (box) S.replyDrafts[id] = box.value;
+  redrawNotes();
+  const body = { action: "note_reply", id: id, reply: text };
+  if (opts.done) body.status = "done";
+  const r = await call("POST", body);
+  S.noteBusy.delete(id);
+  if (r.status === 200 && r.json && r.json.ok) {
+    const i = S.data.notes.findIndex((nt) => nt.id === id);
+    if (i >= 0) S.data.notes[i] = r.json.note;
+    S.replyOpen = null;
+    delete S.replyDrafts[id];
+    S.notesMsg = opts.remove ? "Reply removed from note #" + id + "." : "Reply sent on note #" + id + (opts.done ? " and marked done." : ".") + " They’ll see it next time they open the site.";
+    redrawNotes();
+    const f = document.querySelector(noteFocusAfter(id));
+    if (f) f.focus({ preventScroll: true });
+  } else if (r.status === 401) {
+    signOut("Sign in again to make changes.");
+  } else {
+    S.notesMsg = problem(r);
+    redrawNotes("#reply-" + id);
+  }
+}
+
 async function deleteNote(btn) {
   const id = Number(btn.getAttribute("data-ndelete"));
   if (S.noteArmed !== id) {
@@ -1162,7 +1236,8 @@ function noteAsText(nt, byId) {
   return "#" + nt.id + " · " + (KIND_LABEL[nt.kind] || "Note") + " · " + (STATUS_LABEL[nt.status] || "New") + "\n"
     + "About: " + noteAbout(nt) + (nt.item ? " · their current pick: " + nt.item : "") + "\n"
     + "From: " + noteWho(nt, byId) + " · " + when(nt.t) + "\n"
-    + "Note: " + nt.text.replace(/\n/g, "\n  ");
+    + "Note: " + nt.text.replace(/\n/g, "\n  ")
+    + (nt.reply ? "\nYour reply: " + nt.reply.replace(/\n/g, "\n  ") : "");
 }
 async function copyNotes(ids) {
   const byId = {};
@@ -1216,6 +1291,7 @@ app.addEventListener("submit", (e) => {
   const form = e.target;
   if (form.id === "login-form") { e.preventDefault(); signIn(form); return; }
   if (form.hasAttribute("data-label-form")) { e.preventDefault(); saveLabel(form); }
+  if (form.hasAttribute("data-nreply-form")) { e.preventDefault(); sendReply(Number(form.getAttribute("data-nreply-form")), {}); }
 });
 
 app.addEventListener("click", (e) => {
@@ -1230,6 +1306,10 @@ app.addEventListener("click", (e) => {
   if (t.hasAttribute("data-nstatus")) { setNoteStatus(t); return; }
   if (t.hasAttribute("data-ndelete")) { deleteNote(t); return; }
   if (t.hasAttribute("data-ncopy")) { copyNotes([Number(t.getAttribute("data-ncopy"))]); return; }
+  if (t.hasAttribute("data-nreply")) { openReply(Number(t.getAttribute("data-nreply"))); return; }
+  if (t.hasAttribute("data-nreply-cancel")) { closeReply(Number(t.getAttribute("data-nreply-cancel"))); return; }
+  if (t.hasAttribute("data-nreply-done")) { sendReply(Number(t.getAttribute("data-nreply-done")), { done: true }); return; }
+  if (t.hasAttribute("data-nreply-remove")) { sendReply(Number(t.getAttribute("data-nreply-remove")), { remove: true }); return; }
   if (t.id === "copy-open") { copyNotes(notesFor("open").map((nt) => nt.id)); return; }
   if (t.hasAttribute("data-goto-visitor")) { gotoVisitor(t.getAttribute("data-goto-visitor")); return; }
   if (t.hasAttribute("data-unparty")) { unparty(t); return; }
@@ -1264,6 +1344,7 @@ app.addEventListener("click", (e) => {
 
 app.addEventListener("input", (e) => {
   if (e.target.id === "vsearch") { S.q = e.target.value; refreshRows(); }
+  if (e.target.hasAttribute && e.target.hasAttribute("data-reply-for")) S.replyDrafts[Number(e.target.getAttribute("data-reply-for"))] = e.target.value;
 });
 
 app.addEventListener("change", (e) => {

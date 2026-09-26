@@ -30,6 +30,8 @@ Every gear slot and dungeon card has a **Note to admin** button, and every page 
 
 Notes show up in the **Notes from visitors** card on `/admin`. Mark each one "Looking into it" or "Done", reopen it, delete it, or copy the open ones as plain text to work through somewhere else.
 
+**Replies.** Each note has a **Reply** button on `/admin` ("Send reply", or "Send and mark done"). The browser that sent a note keeps a receipt for it: the note's number and a private token that only that browser and the server know. Pages use the receipt to check for news, at most every two minutes and only when the browser has sent a note. When a note gets a reply, a status change or is deleted, the sender sees a one-time notice and an update badge on **Your notes** at the bottom of each page, which lists their notes with status and replies. The inbox shows whether they've seen your latest update.
+
 Limits: 8 notes an hour from one browser, 60 an hour across the site, 1,000 kept in all, and a hidden field that catches simple bots. Browsers that chose "Don't count me" can still send notes; theirs aren't linked to a visitor.
 
 ## Structure

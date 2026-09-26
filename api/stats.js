@@ -4,6 +4,24 @@ const { TZ, VID_RE, pipeline, lastDays, pairs, safeEqual, readBody, cleanName, f
 
 const MAX_VISITORS = 2000;
 
+// What the admin page gets for a note. The private token stays on the server.
+function forAdmin(note, id) {
+  const out = Object.assign({}, note, { id: Number(id), canReply: !!note.tk });
+  delete out.tk;
+  return out;
+}
+
+// Replies keep their line breaks, like notes.
+function replyText(v) {
+  return String(v == null ? "" : v)
+    .replace(/\r\n?/g, "\n")
+    .replace(/[\u0000-\u0009\u000b-\u001f\u007f]/g, "")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim()
+    .slice(0, 500);
+}
+
 // The admin page sends the passphrase base64-encoded so any characters work in a header.
 function givenKey(req) {
   let b = req.headers["x-admin-key-b64"];
@@ -50,7 +68,7 @@ async function read(res) {
 
   const rawNotes = pairs(out[5]);
   const notes = Object.keys(rawNotes)
-    .map((id) => { try { return Object.assign(JSON.parse(rawNotes[id]), { id: Number(id) }); } catch (e) { return null; } })
+    .map((id) => { try { return forAdmin(JSON.parse(rawNotes[id]), id); } catch (e) { return null; } })
     .filter(Boolean)
     .sort((a, b) => b.t - a.t);
 
@@ -91,23 +109,34 @@ module.exports = async function handler(req, res) {
       await pipeline([["HSET", "config", "cap", cap, "cap_at", at]]);
       return res.status(200).json({ ok: true, config: { cap: cap, at: at } });
     }
-    if (body.action === "note_status" || body.action === "note_delete") {
+    if (body.action === "note_status" || body.action === "note_delete" || body.action === "note_reply") {
       const id = String(Math.floor(Number(body.id)) || "");
       if (!/^[1-9][0-9]{0,8}$/.test(id)) return res.status(400).json({ ok: false, error: "bad_request" });
       if (body.action === "note_delete") {
         await pipeline([["HDEL", "notes", id]]);
         return res.status(200).json({ ok: true });
       }
-      const status = { new: 1, looking: 1, done: 1 }[body.status] ? body.status : null;
-      if (!status) return res.status(400).json({ ok: false, error: "bad_request" });
+      const STATUSES = { new: 1, looking: 1, done: 1 };
+      const status = STATUSES[body.status] ? body.status : null;
+      if (body.action === "note_status" && !status) return res.status(400).json({ ok: false, error: "bad_request" });
       const [raw] = await pipeline([["HGET", "notes", id]]);
       if (!raw) return res.status(404).json({ ok: false, error: "not_found" });
       let note;
       try { note = JSON.parse(raw); } catch (e) { return res.status(500).json({ ok: false, error: "server" }); }
-      note.status = status;
-      note.status_at = Date.now();
+      const now = Date.now();
+      if (body.action === "note_reply") {
+        // An empty reply takes the reply away. The sender sees the change next time they check.
+        const reply = replyText(body.reply);
+        if (reply) note.reply = reply;
+        else delete note.reply;
+        note.reply_at = now;
+      }
+      if (status) {
+        note.status = status;
+        note.status_at = now;
+      }
       await pipeline([["HSET", "notes", id, JSON.stringify(note)]]);
-      return res.status(200).json({ ok: true, note: Object.assign(note, { id: Number(id) }) });
+      return res.status(200).json({ ok: true, note: forAdmin(note, id) });
     }
     const vid = String(body.vid || "");
     if (!VID_RE.test(vid)) return res.status(400).json({ ok: false, error: "bad_request" });
