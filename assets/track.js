@@ -6,6 +6,7 @@
   var VID_KEY = "forever-shaman20:vid";
   var OFF_KEY = "forever-shaman20:notrack";
   var NAME_KEY = "forever-shaman20:name";
+  var PARTY_KEY = "forever-shaman20:party";
   var ENDPOINT = "/api/track";
   var PAGE = document.documentElement.getAttribute("data-page") || "home";
 
@@ -43,8 +44,13 @@
   }
   function counting() { return get(OFF_KEY) !== "1"; }
   function myName() { return (get(NAME_KEY) || "").slice(0, 40); }
+  function onParty() { return get(PARTY_KEY) === "1"; }
+  function cleanName(v) { return String(v || "").replace(/[\u0000-\u001f\u007f<>]/g, "").replace(/\s+/g, " ").trim().slice(0, 40); }
+  function announce() {
+    try { window.dispatchEvent(new CustomEvent("shaman:party")); } catch (e) { /* old browser */ }
+  }
 
-  function send(payload, force) {
+  function send(payload, force, onReply) {
     if (!force && !counting()) return;
     payload.vid = vid();
     payload.page = PAGE;
@@ -56,6 +62,8 @@
         body: body,
         keepalive: true,
         credentials: "same-origin"
+      }).then(function (r) {
+        if (onReply && r.status === 200) return r.json().then(onReply);
       }).catch(function () { /* stats are best-effort */ });
     } catch (e) {
       try { navigator.sendBeacon(ENDPOINT, new Blob([body], { type: "application/json" })); } catch (e2) { /* ignore */ }
@@ -82,11 +90,18 @@
   }
 
   var viewed = false;
+  var partySeq = 0;
   var commands = {
     view: function (data) {
       if (viewed) return;
       viewed = true;
-      send({ type: "view", ref: referrer(), name: myName() || undefined, data: data || undefined });
+      var seq = partySeq;
+      send({ type: "view", ref: referrer(), name: myName() || undefined, data: data || undefined }, false, function (j) {
+        // Keep this browser's party flag in step with the server (the owner can take people off the board).
+        if (!j || typeof j.party !== "boolean" || seq !== partySeq || j.party === onParty()) return;
+        put(PARTY_KEY, j.party ? "1" : null);
+        announce();
+      });
     },
     state: function (data) {
       if (!data) return;
@@ -94,6 +109,39 @@
       clearTimeout(timer);
       timer = setTimeout(flush, 4000);
     }
+  };
+
+  // Joining or leaving the party board waits for the server, so pages can show the result.
+  function partyRequest(on, name) {
+    if (!counting()) return Promise.resolve({ ok: false, error: "not_counting" });
+    partySeq++;
+    var body = { type: "party", on: !!on, vid: vid(), page: PAGE };
+    if (name) body.name = name;
+    return window.fetch(ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      credentials: "same-origin"
+    }).then(function (r) {
+      if (r.ok) {
+        put(PARTY_KEY, on ? "1" : null);
+        if (on && name) put(NAME_KEY, name);
+        announce();
+        return { ok: true };
+      }
+      return { ok: false, error: r.status === 409 ? "need_name" : r.status === 429 ? "busy" : "failed" };
+    }).catch(function () { return { ok: false, error: "offline" }; });
+  }
+  window.shamanParty = {
+    isOn: onParty,
+    name: myName,
+    counting: counting,
+    join: function (name) {
+      var n = cleanName(name || myName());
+      if (!n) return Promise.resolve({ ok: false, error: "need_name" });
+      return partyRequest(true, n);
+    },
+    leave: function () { return partyRequest(false); }
   };
 
   function run(args) {
@@ -112,8 +160,8 @@
     + ".st-who-title{font-weight:700;color:var(--ink)}"
     + ".st-who-form{display:flex;flex-wrap:wrap;gap:8px;align-items:center}"
     + ".st-who-form label{flex:1 1 100%;color:var(--ink)}"
-    + ".st-who input{flex:1 1 180px;max-width:300px;min-width:0;height:40px;padding:0 12px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit;font-size:16px}"
-    + ".st-who input::placeholder{color:var(--ink-3)}"
+    + ".st-who-form input{flex:1 1 180px;max-width:300px;min-width:0;height:40px;padding:0 12px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit;font-size:16px}"
+    + ".st-who-form input::placeholder{color:var(--ink-3)}"
     + ".st-btn{height:40px;padding:0 16px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit;font-size:15px;font-weight:500;cursor:pointer}"
     + ".st-btn:hover{border-color:var(--accent)}"
     + ".st-btn-primary{background:var(--accent);border-color:var(--accent);color:var(--surface)}"
@@ -121,7 +169,10 @@
     + ".st-who :focus-visible{outline:2px solid var(--focus,var(--accent));outline-offset:2px}"
     + ".st-who-fine{font-size:.92em;color:var(--ink-3)}"
     + ".st-who-note{font-size:.92em;color:var(--ink-2)}"
-    + ".st-who-note:empty{margin-top:-10px}";
+    + ".st-who-note:empty{margin-top:-10px}"
+    + ".st-party{display:flex;align-items:flex-start;gap:9px;margin:0}"
+    + ".st-party input{flex:none;width:18px;height:18px;margin:3px 0 0;accent-color:var(--accent)}"
+    + ".st-party label{color:var(--ink)}";
 
   function injectCSS() {
     if (document.getElementById("st-who-css")) return;
@@ -140,6 +191,7 @@
 
   var uid = 0;
   function render(box, note) {
+    box.setAttribute("data-st-mounted", "1");
     box.textContent = "";
     box.className = (box.className.replace(/\bst-who\b/g, "") + " st-who").trim();
     var name = myName();
@@ -166,18 +218,42 @@
       var remove = el("button", { type: "button", "class": "st-link" }, "Remove my name");
       remove.addEventListener("click", function () {
         put(NAME_KEY, null);
+        put(PARTY_KEY, null);
         send({ type: "name", name: "" });
-        renderAll("Your name is removed.");
+        announce();
+        renderAll("Your name is removed, and you’re off the party board.");
       });
       named.appendChild(change);
       named.appendChild(document.createTextNode(" · "));
       named.appendChild(remove);
       box.appendChild(named);
+      box.appendChild(partyToggle());
     } else {
       renderForm(box, "");
       return;
     }
     finish(box, note);
+  }
+
+  function partyToggle() {
+    var id = "st-party-" + (++uid);
+    var row = el("p", { "class": "st-party" });
+    var cb = el("input", { type: "checkbox", id: id });
+    cb.checked = onParty();
+    var label = el("label", { "for": id });
+    label.appendChild(document.createTextNode("Show my name, build and progress on the "));
+    var link = el("a", { href: "/party" }, "party board");
+    label.appendChild(link);
+    row.appendChild(cb);
+    row.appendChild(label);
+    cb.addEventListener("change", function () {
+      cb.disabled = true;
+      var p = cb.checked ? window.shamanParty.join() : window.shamanParty.leave();
+      p.then(function (res) {
+        renderAll(res.ok ? (cb.checked ? "You’re on the party board." : "You’ve left the party board.") : "That didn’t work. Try again in a moment.");
+      });
+    });
+    return row;
   }
 
   function renderForm(box, current) {
@@ -219,6 +295,8 @@
         flush();
         send({ type: "forget" }, true);
         put(OFF_KEY, "1");
+        put(PARTY_KEY, null);
+        announce();
         renderAll("Done. This browser isn’t counted, and its past visits are removed.");
       });
       fine.appendChild(stop);
@@ -255,8 +333,9 @@
       }).observe(document.body, { childList: true, subtree: true });
     }
     window.addEventListener("storage", function (e) {
-      if (e.key === NAME_KEY || e.key === OFF_KEY) renderAll();
+      if (e.key === NAME_KEY || e.key === OFF_KEY || e.key === PARTY_KEY) renderAll();
     });
+    window.addEventListener("shaman:party", function () { renderAll(); });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
   else start();

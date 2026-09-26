@@ -1,29 +1,35 @@
-// Records a page view, a progress summary, or a visitor's chosen name.
+// Records a page view, a progress summary, a visitor's chosen name, or joining the party board.
 // Stores no IP addresses: only a random ID the browser made, plus what's listed below.
 const {
   PAGES, SPECS, PROFS, VID_RE, KEEP_DAYS,
-  pipeline, dayKey, header, parseUA, cleanName, clampInt, readBody, sameOrigin, forgetVisitor
+  pipeline, dayKey, header, parseUA, cleanName, clampInt, readBody, sameOrigin, forgetVisitor, pairs
 } = require("./_lib");
 
-const TYPES = new Set(["view", "state", "name", "forget"]);
+const TYPES = new Set(["view", "state", "name", "forget", "party"]);
 const PER_MINUTE = 40;
+const ITEM_RE = /^[a-z0-9]{2,24}$/;
+
+function level(v) { return Number(v) === 30 ? 30 : 20; }
 
 // Adds the progress fields for a tool page. Returns a small summary for the activity feed, or null.
 function progress(page, d, vkey, now, cmds) {
   if (!d || typeof d !== "object") return null;
   const spec = SPECS[d.spec] ? d.spec : "";
+  const lvl = level(d.lvl);
   if (page === "checklist") {
     const total = clampInt(d.total, 0, 500);
     const done = Math.min(clampInt(d.done, 0, 500), total);
-    cmds.push(["HSET", vkey, "ck_done", done, "ck_total", total, "ck_spec", spec, "ck_at", now]);
-    return { spec, done, total };
+    const totems = Array.from(new Set(String(d.totems || "").split("").filter((c) => "efwa".indexOf(c) >= 0))).join("");
+    cmds.push(["HSET", vkey, "ck_done", done, "ck_total", total, "ck_spec", spec, "ck_lvl", lvl, "ck_totems", totems, "ck_at", now]);
+    return { spec, done, total, lvl };
   }
   if (page === "gear") {
     const total = clampInt(d.total, 0, 100);
     const have = Math.min(clampInt(d.have, 0, 100), total);
     const profs = Array.from(new Set((Array.isArray(d.profs) ? d.profs : []).filter((p) => PROFS[p]))).slice(0, 4);
-    cmds.push(["HSET", vkey, "gear_have", have, "gear_total", total, "gear_spec", spec, "gear_profs", profs.join(","), "gear_at", now]);
-    return { spec, have, total, profs };
+    const own = Array.from(new Set((Array.isArray(d.own) ? d.own : []).map(String).filter((k) => ITEM_RE.test(k)))).slice(0, 60);
+    cmds.push(["HSET", vkey, "gear_have", have, "gear_total", total, "gear_spec", spec, "gear_lvl", lvl, "gear_profs", profs.join(","), "gear_own", own.join(","), "gear_at", now]);
+    return { spec, have, total, lvl, profs };
   }
   return null;
 }
@@ -90,11 +96,35 @@ module.exports = async function handler(req, res) {
       event.x = x;
     } else if (type === "name") {
       const name = cleanName(body.name);
-      cmds.push(name ? ["HSET", vkey, "name", name] : ["HDEL", vkey, "name"]);
+      if (name) cmds.push(["HSET", vkey, "name", name]);
+      else cmds.push(["HDEL", vkey, "name", "party"], ["SREM", "party", vid]);
       event.x = { set: !!name };
+    } else if (type === "party") {
+      const on = body.on === true;
+      if (on) {
+        // Joining needs a name, so the board never shows an anonymous row.
+        let name = cleanName(body.name);
+        if (!name) {
+          const [known] = await pipeline([["HGET", vkey, "name"]]);
+          name = cleanName(known);
+        }
+        if (!name) return res.status(409).json({ ok: false, error: "need_name" });
+        cmds.push(["HSET", vkey, "name", name, "party", 1], ["SADD", "party", vid]);
+      } else {
+        cmds.push(["HDEL", vkey, "party"], ["SREM", "party", vid]);
+      }
+      event.x = { on: on };
     }
 
     cmds.push(["LPUSH", "events", JSON.stringify(event)], ["LTRIM", "events", 0, 299]);
+    if (type === "view") {
+      // Tell the page whether this browser is on the party board, so it stays in step if the
+      // owner took them off it or their stats were removed.
+      const at = cmds.length;
+      cmds.push(["HGET", vkey, "party"]);
+      const out = await pipeline(cmds);
+      return res.status(200).json({ ok: true, party: out[at] === "1" || out[at] === 1 });
+    }
     await pipeline(cmds);
     return res.status(204).end();
   } catch (err) {

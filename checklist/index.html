@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Level 20 Dwarf Shaman</title>
-<meta name="description" content="Everything a level 20 Dwarf Shaman can train, unlock and quest for in the WoW Forever beta, as a checklist that saves in your browser.">
-<meta property="og:title" content="Level 20 Dwarf Shaman">
-<meta property="og:description" content="Everything a level 20 Dwarf Shaman can train, unlock and quest for in the WoW Forever beta, as a checklist that saves in your browser.">
+<title>Dwarf Shaman Checklist</title>
+<meta name="description" content="Everything a Dwarf Shaman can train, unlock and quest for at the WoW Forever beta’s level cap, as a checklist that saves in your browser.">
+<meta property="og:title" content="Dwarf Shaman Checklist · Forever Shaman Toolkit">
+<meta property="og:description" content="Everything a Dwarf Shaman can train, unlock and quest for at the WoW Forever beta’s level cap, as a checklist that saves in your browser.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#EDF0F3" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0F141A" media="(prefers-color-scheme: dark)">
@@ -17,6 +17,7 @@
 <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};window.shamanTrack=window.shamanTrack||function(){(window.shamanTrackQ=window.shamanTrackQ||[]).push(arguments)};</script>
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="/assets/track.js"></script>
+<script src="/assets/site.js"></script>
 <style>
 :root{color-scheme:light}html{-webkit-text-size-adjust:100%}[hidden]{display:none!important}
 :root{
@@ -297,6 +298,13 @@ button{font:inherit;color:inherit}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}
 }
+.lvlbar{display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;width:max-content;padding:3px;border:1px solid var(--line-strong);border-radius:99px;background:var(--surface)}
+.lvlopt{position:relative;cursor:pointer}
+.lvlopt input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.lvlopt span{display:block;padding:5px 14px;border-radius:99px;font-family:var(--font-mono);font-size:12.5px;letter-spacing:.04em;color:var(--ink-2);white-space:nowrap;transition:background .12s,color .12s}
+.lvlopt input:checked + span{background:var(--accent);color:var(--on-color,#fff)}
+.lvlopt input:focus-visible + span{outline:2px solid var(--focus);outline-offset:2px}
+.preview-note{margin:0;font-size:13.5px;color:var(--warn,#9A5B00)}
 .companion{margin:0;font-size:14.5px;color:var(--ink-2)}
 .whoami{margin-top:4px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--surface);font-size:15px}
 .whoami:empty{display:none}
@@ -308,7 +316,8 @@ button{font:inherit;color:inherit}
 (() => {
 "use strict";
 
-const TITLE = "Level 20 Dwarf Shaman";
+const SITE = window.SITE || { level: () => 20, levels: () => [20], setLevel: () => {}, onChange: () => {}, preview: false };
+
 const HIDE_KEY = "forever-shaman20:hide-done";
 
 const EL_NAME = { earth: "Earth", fire: "Fire", water: "Water", air: "Air" };
@@ -327,7 +336,7 @@ const GLYPH = {
 const TRAINER = { zone: "Ironforge", x: "46.2", y: "13.0" };
 const NORRIC = { zone: "Loch Modan", x: "41.9", y: "19.0" };
 
-const BUILDS = {
+const BUILDS20 = {
   enh: { label: "Enhancement", use: "Solo questing", src: "Icy Veins", blurb: "The easiest way to quest alone: hit things, shock them, heal between pulls.", rows: [
     { n: "Thundering Strikes", row: 1, pts: "5/5", fx: "+5% crit chance on spells and attacks" },
     { n: "Mental Dexterity", row: 2, pts: "3/3", fx: "Your Intellect also adds Attack Power" },
@@ -348,7 +357,7 @@ const BUILDS = {
   ] }
 };
 
-const SECTIONS = [
+const SECTIONS20 = [
   {
     id: "spells", short: "Spells", title: "Train your spells", glyph: "bolt",
     intro: "Level 20 is a big training stop. Visit Eldrun Stormbreaker, the Shaman trainer in Ironforge’s Mystic Ward, and buy everything on this list.",
@@ -424,12 +433,12 @@ const SECTIONS = [
         { t: "Bring the Torch of Eternal Flame back to Bruegs Kindleborn." }
       ] }
     ],
-    air: "Air Totem: Call of Air opens at level 30, once the beta cap rises. Step-by-step guides for it aren’t out yet."
+    air: "Air Totem: its quest opens at level 30, once the beta cap rises. Other shamans know it as Call of Air; step-by-step guides for the Dwarf version aren’t out yet."
   },
   {
     id: "talents", short: "Talents", title: "Spend your talent points", glyph: "rune",
     intro: "You have 11 points at level 20, one per level from 10. Each row of a tree needs 5 more points spent in that tree, so 11 points reach row 3. Pick the build that fits how you play.",
-    builds: BUILDS,
+    builds: BUILDS20,
     check: { id: "t-spent", name: "All 11 talent points spent", note: "Open the talent window (N) and check that no points are left unspent." }
   },
   {
@@ -464,13 +473,13 @@ const SECTIONS = [
     intro: "Blizzard plans to raise the beta cap to 30 a couple of weeks into testing. This is what opens up then; nothing here can be done yet." }
 ];
 
-const NEXT = [
+const NEXT20 = [
   { lvl: "22", items: ["Totemic Projection (new: moves your active totems)", "Poison Cleansing Totem", "Cure Disease", "Water Breathing", "Fire Nova rank 2"] },
   { lvl: "24", items: ["Frost Resistance Totem", "Strength of Earth rank 2", "Stoneskin rank 3", "Healing Wave rank 5", "Earth Shock rank 4", "Lightning Shield rank 3", "Rockbiter rank 4", "Ancestral Spirit rank 2"] },
   { lvl: "25", items: ["Your 16th talent point opens row 4: Stormstrike for Enhancement, Mana Tide Totem for Restoration"] },
   { lvl: "26", items: ["Magma Totem", "Mana Spring Totem", "Far Sight", "Lightning Bolt rank 5", "Flametongue Weapon rank 3"] },
   { lvl: "28", items: ["Flametongue Totem", "Fire Resistance Totem", "Water Walking", "Flame Shock rank 3", "Frostbrand rank 2", "Lesser Healing Wave rank 2", "Stoneclaw rank 3"] },
-  { lvl: "30", items: ["Call of Air quest for the Air Totem", "Call of the Ancestors (new: a second totem-bar set)", "Windfury Weapon", "Reincarnation (needs an Ankh unless you take the Reagent Economy Legacy perk)", "Grounding Totem", "Nature Resistance Totem", "Astral Recall", "Healing Stream rank 2", "Searing Totem rank 3"] }
+  { lvl: "30", items: ["The Air Totem quest (likely Call of Air)", "Call of the Ancestors (new: a second totem-bar set)", "Windfury Weapon", "Reincarnation (needs an Ankh unless you take the Reagent Economy Legacy perk)", "Grounding Totem", "Nature Resistance Totem", "Astral Recall", "Healing Stream rank 2", "Searing Totem rank 3"] }
 ];
 
 const SOURCES = [
@@ -485,12 +494,178 @@ const SOURCES = [
   { name: "Legacy System guide", site: "Warcraft Tavern", url: "https://www.warcrafttavern.com/forever/guides/legacy/" }
 ];
 
-const SOCKETS = [
+const SOCKETS20 = [
   { el: "earth", from: "q-earth" },
   { el: "fire", from: "q-fire" },
   { el: "water", from: "w10" },
   { el: "air", from: null }
 ];
+
+/* ---------- level 30 ---------- */
+const SPELLS30 = [
+  { id: "s30-totemic-projection", name: "Totemic Projection", lvl: 22, tag: "new", note: "Moves all your active totems to a spot up to 30 yards away. 1 minute cooldown." },
+  { id: "s30-poison-cleansing-totem", name: "Poison Cleansing Totem", lvl: 22, el: "water", note: "Removes a poison from nearby party members every 5 seconds." },
+  { id: "s30-cure-disease", name: "Cure Disease", lvl: 22, note: "Removes a disease from a friendly target." },
+  { id: "s30-water-breathing", name: "Water Breathing", lvl: 22, note: "Breathe underwater for 10 minutes. Uses 1 Shiny Fish Scales." },
+  { id: "s30-fire-nova-2", name: "Fire Nova", rank: 2, lvl: 22, tag: "new", note: "Forever’s Fire Nova is a spell that bursts around your active Fire totem, so drop one first. 10 second cooldown." },
+  { id: "s30-frost-resistance-totem-1", name: "Frost Resistance Totem", rank: 1, lvl: 24, el: "fire", note: "+30 Frost resistance for the group. It uses your Fire Totem, not the Water one." },
+  { id: "s30-strength-of-earth-totem-2", name: "Strength of Earth Totem", rank: 2, lvl: 24, el: "earth", note: "More Strength for your party." },
+  { id: "s30-stoneskin-totem-3", name: "Stoneskin Totem", rank: 3, lvl: 24, el: "earth", note: "Your party takes less physical damage per hit." },
+  { id: "s30-healing-wave-5", name: "Healing Wave", rank: 5, lvl: 24, note: "Your big, slow heal." },
+  { id: "s30-earth-shock-4", name: "Earth Shock", rank: 4, lvl: 24, note: "Instant damage that also interrupts a spellcast." },
+  { id: "s30-lightning-shield-3", name: "Lightning Shield", rank: 3, lvl: 24, note: "Orbs that zap whatever hits you." },
+  { id: "s30-rockbiter-weapon-4", name: "Rockbiter Weapon", rank: 4, lvl: 24, note: "Imbue that adds attack power and extra threat. Lasts 60 minutes." },
+  { id: "s30-ancestral-spirit-2", name: "Ancestral Spirit", rank: 2, lvl: 24, note: "Brings a dead party member back to life." },
+  { id: "s30-magma-totem-1", name: "Magma Totem", rank: 1, lvl: 26, el: "fire", note: "Burns every enemy within 8 yards for 20 seconds. Use it on groups of enemies." },
+  { id: "s30-mana-spring-totem-1", name: "Mana Spring Totem", rank: 1, lvl: 26, el: "water", note: "Restores mana to your party every 2 seconds." },
+  { id: "s30-far-sight", name: "Far Sight", lvl: 26, note: "Look at a distant spot for a minute. Outdoors only." },
+  { id: "s30-lightning-bolt-5", name: "Lightning Bolt", rank: 5, lvl: 26, note: "Your main damage spell. Casts in 2.5 seconds in Forever." },
+  { id: "s30-flametongue-weapon-3", name: "Flametongue Weapon", rank: 3, lvl: 26, note: "Imbue that adds Fire damage to every hit." },
+  { id: "s30-flametongue-totem-1", name: "Flametongue Totem", rank: 1, lvl: 28, el: "fire", note: "Your party’s main-hand weapons deal extra Fire damage. It doesn’t stack with Flametongue Weapon or Windfury Totem." },
+  { id: "s30-fire-resistance-totem-1", name: "Fire Resistance Totem", rank: 1, lvl: 28, el: "water", note: "+30 Fire resistance for the group. It uses your Water Totem, not the Fire one." },
+  { id: "s30-water-walking", name: "Water Walking", lvl: 28, note: "Walk on water for 10 minutes; taking damage cancels it. Uses 1 Fish Oil." },
+  { id: "s30-flame-shock-3", name: "Flame Shock", rank: 3, lvl: 28, note: "Instant Fire damage plus a burn." },
+  { id: "s30-frostbrand-weapon-2", name: "Frostbrand Weapon", rank: 2, lvl: 28, note: "Imbue with a chance to deal Frost damage and slow the target." },
+  { id: "s30-lesser-healing-wave-2", name: "Lesser Healing Wave", rank: 2, lvl: 28, note: "Your quick, smaller heal." },
+  { id: "s30-stoneclaw-totem-3", name: "Stoneclaw Totem", rank: 3, lvl: 28, el: "earth", note: "Nearby enemies attack the totem for a few seconds, buying you an escape." },
+  { id: "s30-call-of-the-ancestors", name: "Call of the Ancestors", lvl: 30, tag: "new", note: "Drops a second, separate set of up to four totems from your totem bar in one cast." },
+  { id: "s30-windfury-weapon-1", name: "Windfury Weapon", rank: 1, lvl: 30, note: "Imbue that gives each hit a 20% chance of two extra attacks. Great on a slow two-hander." },
+  { id: "s30-reincarnation", name: "Reincarnation", lvl: 30, note: "Come back to life after dying, once an hour. Each use costs an Ankh unless you take the Reagent Economy Legacy perk." },
+  { id: "s30-grounding-totem", name: "Grounding Totem", lvl: 30, el: "air", note: "Pulls one enemy spell aimed at your party onto itself every 10 seconds. Needs the Air Totem from the level 30 totem quest." },
+  { id: "s30-nature-resistance-totem-1", name: "Nature Resistance Totem", rank: 1, lvl: 30, el: "air", note: "+30 Nature resistance for the group. Needs the Air Totem from the level 30 totem quest." },
+  { id: "s30-astral-recall", name: "Astral Recall", lvl: 30, note: "Teleports you to your hearthstone spot. A second hearth with a 15 minute cooldown." },
+  { id: "s30-healing-stream-totem-2", name: "Healing Stream Totem", rank: 2, lvl: 30, el: "water", note: "Heals your party a little every 2 seconds. Rank 1 came from Call of Water." },
+  { id: "s30-searing-totem-3", name: "Searing Totem", rank: 3, lvl: 30, el: "fire", note: "A totem that shoots Fire at one enemy near it." }
+];
+const SEC20 = {};
+SECTIONS20.forEach((s) => { SEC20[s.id] = s; });
+const ITEM20 = {};
+SEC20.spells.groups.forEach((g) => g.items.forEach((it) => { ITEM20[it.id] = it; }));
+const BAR20 = {};
+SEC20.bar.items.forEach((it) => { BAR20[it.id] = it; });
+const GEAR20 = {};
+SEC20.gear.items.forEach((it) => { GEAR20[it.id] = it; });
+const Q20 = {};
+SEC20.totems.quests.forEach((q) => { Q20[q.id] = q; });
+
+const BUILDS30 = {
+  enh: { label: "Enhancement", use: "Solo questing", src: "expcarry’s level 30 table, which matches the talents Warcraft Tavern names", blurb: "Melee swings plus cheap shocks. Flurry and Elemental Weapons make every swing count, and Stormstrike sets up a bigger Earth Shock.", rows: [
+    { n: "Thundering Strikes", row: 1, pts: "5/5", fx: "+5% crit chance on attacks and spells" },
+    { n: "Mental Dexterity", row: 2, pts: "3/3", fx: "Your Intellect also adds attack power" },
+    { n: "Improved Ghost Wolf", row: 2, pts: "2/2", fx: "Instant Ghost Wolf that also works indoors" },
+    { n: "Shamanistic Focus", row: 3, pts: "1/1", fx: "Shocks and Lightning Shield cost 45% less mana" },
+    { n: "Elemental Weapons", row: 3, pts: "3/3", fx: "Stronger Rockbiter, Windfury, Flametongue and Frostbrand" },
+    { n: "Anticipation", row: 3, pts: "1/3", fx: "+2% dodge; the point that opens row 4" },
+    { n: "Stormstrike", row: 4, pts: "1/1", fx: "Instant strike that makes your next Lightning Bolt or Earth Shock on the target hit harder" },
+    { n: "Flurry", row: 4, pts: "5/5", fx: "After a melee crit, your next three swings are faster" }
+  ] },
+  resto: { label: "Restoration", use: "Dungeon healing", src: "Warcraft Tavern’s level 30 build. The guide names the key talents; the third Tidal Focus point and Tidal Mastery are our picks", blurb: "Built for healing groups: faster heals, mana back from Mindfulness, Water Shield and Mana Tide, and an instant emergency heal.", rows: [
+    { n: "Improved Healing Wave", row: 1, pts: "5/5", fx: "Healing Wave casts 0.5 seconds faster" },
+    { n: "Mindfulness", row: 2, pts: "3/3", fx: "Half your mana regeneration keeps going while you cast" },
+    { n: "Tidal Focus", row: 2, pts: "3/5", fx: "Heals cost 3% less mana; +3% hit" },
+    { n: "Water Shield", row: 3, pts: "1/1", fx: "Mana back when you’re hit or land a critical heal" },
+    { n: "Ancestral Healing", row: 3, pts: "3/3", fx: "Critical heals give the target 25% more armor for 15 seconds" },
+    { n: "Mana Tide Totem", row: 4, pts: "1/1", fx: "A totem that restores mana to your whole group" },
+    { n: "Tidal Mastery", row: 4, pts: "4/5", fx: "+4% crit chance on heals" },
+    { n: "Nature’s Swiftness", row: 5, pts: "1/1", fx: "Your next Nature spell is instant, for emergency heals" }
+  ] },
+  ele: { label: "Elemental", use: "Caster damage", src: "Warcraft Tavern’s level 30 build. The guide names the key talents; Call of Flame, Call of Thunder and Earthbound are our picks", blurb: "Stand back and throw lightning: cheaper spells first, then a 2-second Lightning Bolt and less pushback when you’re hit.", rows: [
+    { n: "Convection", row: 1, pts: "5/5", fx: "Shocks and Lightning Bolt cost 10% less mana" },
+    { n: "Concussion", row: 1, pts: "5/5", fx: "+5% damage for Lightning Bolt and Earth Shock" },
+    { n: "Elemental Focus", row: 3, pts: "1/1", fx: "Sometimes makes your next damage spell free" },
+    { n: "Elemental Alacrity", row: 3, pts: "3/3", fx: "Lightning Bolt casts 0.5 seconds faster" },
+    { n: "Call of Flame", row: 2, pts: "2/3", fx: "+10% damage for Fire totems, Flame Shock and Fire Nova" },
+    { n: "Call of Thunder", row: 4, pts: "1/1", fx: "+3% crit chance on Lightning Bolt" },
+    { n: "Eye of the Storm", row: 4, pts: "3/3", fx: "Getting hit barely delays your Lightning Bolt" },
+    { n: "Earthbound", row: 5, pts: "1/1", fx: "Earthbind Totem roots nearby enemies for 5 seconds when you drop it" }
+  ] }
+};
+
+const SECTIONS30 = [
+  {
+    id: "spells", short: "Spells", title: "Train your spells", glyph: "bolt",
+    intro: "Visit Eldrun Stormbreaker in Ironforge’s Mystic Ward at every even level from 22 to 30. Totemic Projection and Call of the Ancestors are the only new spells; the rest are Classic spells and stronger ranks.",
+    where: [Object.assign({ label: "Eldrun Stormbreaker" }, TRAINER)],
+    groups: [
+      { title: "New from level 22 to 30", items: SPELLS30 },
+      { title: "Still needed from level 20", hint: "These have no higher rank before 30. Tick them if you already know them.", items: ["s-ghostwolf", "s-cote", "s-recall", "s-frostshock", "s-tremor", "s-curepoison", "s-purge", "s-earthbind"].map((id) => ITEM20[id]) }
+    ]
+  },
+  SEC20.water,
+  {
+    id: "totems", short: "Totems", title: "Earth, Fire and Air totems", el: "air", glyph: "air",
+    intro: "You can’t cast a totem unless that element’s Totem item is in your bags. Tick each one you already carry. Your two new Air totems need the Air Totem from the level 30 totem quest.",
+    quests: [
+      Q20["q-earth"],
+      Q20["q-fire"],
+      { id: "q-air", el: "air", name: "Air Totem in your bags", sub: "Air totem quest · level 30", reward: "the Air Totem, which Grounding and Nature Resistance Totem need", steps: [
+        { t: "The Dwarf version of this quest hasn’t been published yet; other shamans know it as Call of Air. Ask Eldrun Stormbreaker first, since Call of Water started with him.", where: [TRAINER] },
+        { t: "If he has nothing, try Norric Lochthane in Loch Modan. He ended Call of Water with “Yer next trial won’t come soon.”", where: [NORRIC] },
+        { t: "This checklist gets the full steps once someone maps the quest." }
+      ] }
+    ]
+  },
+  {
+    id: "talents", short: "Talents", title: "Spend your talent points", glyph: "rune",
+    intro: "You have 21 points at level 30. Row 4 opens at 25 and row 5 at 30. Wowhead still lists Stormstrike and Mana Tide Totem as level 40, which looks like leftover Classic data; every guide takes them at 25.",
+    builds: BUILDS30,
+    check: { id: "t30-spent", name: "All 21 talent points spent", note: "Open the talent window (N) and check that no points are left. Respecs cost 1 silver in the beta, so trying a build is cheap." }
+  },
+  {
+    id: "bar", short: "Totem bar", title: "Set up your totem bar", glyph: "totem",
+    intro: "At 30 you get a second totem set. Call of the Elements drops set one, and Call of the Ancestors drops set two.",
+    items: [
+      BAR20.b1,
+      { id: "b30-air", name: "Fill all four slots, Air included", note: "Put Grounding Totem in the Air slot once you have the Air Totem. Until then the slot stays empty." },
+      { id: "b30-anc", name: "Set up a second set for Call of the Ancestors", note: "Keep your solo set on Call of the Elements and a group or big-pull set on Call of the Ancestors." },
+      { id: "b30-proj", name: "Put Totemic Projection on a key", note: "It moves all your totems up to 30 yards, handy when a fight drifts away from them. 1 minute cooldown." },
+      BAR20.b3
+    ],
+    sets: [
+      { name: "Solo, melee", earth: "Strength of Earth", fire: "Searing Totem", water: "Healing Stream", air: "Grounding, against casters", note: "Swap in Magma Totem and Fire Nova when you pull a group." },
+      { name: "Solo, caster", earth: "Stoneskin", fire: "Searing Totem", water: "Mana Spring", air: "Grounding" },
+      { name: "Dungeon group", earth: "Strength of Earth", fire: "Flametongue Totem", water: "Mana Spring", air: "Grounding", note: "Use Stoneskin when the tank is taking a beating, and Poison Cleansing against poison." }
+    ],
+    after: [
+      "Frost Resistance Totem uses your Fire Totem, and Fire Resistance Totem uses your Water Totem.",
+      "Flametongue Totem doesn’t stack with Flametongue Weapon or Windfury Totem, and imbuing your own weapon with either cancels the totem’s bonus for you.",
+      "Windfury Totem arrives at 32, just past the beta’s cap."
+    ]
+  },
+  {
+    id: "gear", short: "Gear & extras", title: "Weapons, gear and extras", glyph: "mace",
+    items: [
+      GEAR20.g1,
+      { id: "g30-axes", name: "Learn Two-Handed Axes too", whereText: "Buliwyf Stonehand, Hall of Arms, Ironforge", note: "Corpsemaker, the best Enhancement weapon at 30, is an axe." },
+      GEAR20.g2,
+      GEAR20.g3,
+      { id: "g30-ankh", name: "Carry Ankhs for Reincarnation", note: "Reincarnation brings you back after you die, once an hour, and each use costs an Ankh. Reagent vendors in Ironforge, Dun Morogh, Loch Modan and the Wetlands sell them for 20 silver. Two or three cover a play session." },
+      { id: "g30-legacy", name: "Pick Legacy perks that fit in 16 points", opt: true, note: "Talented (up to five extra talent points) costs 10 with its prerequisite. Reagent Economy (no Ankhs) costs 11. Together they’re over the 16-point limit, so choose one." },
+      { id: "g30-prof", name: "Push a crafting profession toward 225", opt: true, note: "Expert (up to 225) opened at 20; Artisan needs level 35. The level 30 leatherworking belts need skill 150." },
+      { id: "g30-exsite", name: "Try the new Excavation Site dungeon", opt: true, note: "Forever’s new level 24–29 dungeon, on the hill above Whelgar’s Excavation Site in the Wetlands. Nobody has published its loot yet." },
+      { id: "g30-fish", name: "Keep Fish Oil and Shiny Fish Scales", opt: true, note: "Water Walking and Water Breathing each use one. They come from fishing, drops and the Auction House, not vendors." }
+    ]
+  },
+  { id: "next", short: "After 30", title: "After the beta", glyph: "next",
+    intro: "The beta stays at 30 until it ends on October 21. This is what comes next at launch." }
+];
+
+const NEXT30 = [
+  { lvl: "32", items: ["Chain Lightning", "Windfury Totem", "Fire Nova rank 3"] },
+  { lvl: "40", items: ["Mail armor", "Call of the Spirits (a third totem set)"] }
+];
+
+const SOCKETS30 = [
+  { el: "earth", from: "q-earth" },
+  { el: "fire", from: "q-fire" },
+  { el: "water", from: "w10" },
+  { el: "air", from: "q-air" }
+];
+
+const LEVELS = {
+  20: { title: "Level 20 Dwarf Shaman", lede: "Everything you can train, unlock and quest for at the beta’s level 20 cap. Tick things off as you play.", sections: SECTIONS20, builds: BUILDS20, next: NEXT20, sockets: SOCKETS20 },
+  30: { title: "Level 30 Dwarf Shaman", lede: "Everything you can train, unlock and quest for at the beta’s level 30 cap. Tick things off as you play.", sections: SECTIONS30, builds: BUILDS30, next: NEXT30, sockets: SOCKETS30 }
+};
 
 /* ---------- derived ---------- */
 function sectionItems(sec) {
@@ -499,14 +674,22 @@ function sectionItems(sec) {
   if (sec.check) return [sec.check];
   return sec.items || [];
 }
-const CHECKABLE = {};
-const VALID = new Set();
-SECTIONS.forEach((sec) => {
-  const ids = sectionItems(sec).filter((it) => !it.info).map((it) => it.id);
-  ids.forEach((id) => VALID.add(id));
-  CHECKABLE[sec.id] = ids;
-});
-const TOTAL = VALID.size;
+const VALID_ALL = new Set();
+let TITLE = "", LEDE = "", SECTIONS = [], BUILDS = {}, NEXT = [], SOCKETS = [], CHECKABLE = {}, VALID = new Set(), TOTAL = 0, LEVEL = 20;
+function useLevel(lvl) {
+  const L = LEVELS[lvl] || LEVELS[20];
+  LEVEL = LEVELS[lvl] ? lvl : 20;
+  TITLE = L.title; LEDE = L.lede; SECTIONS = L.sections; BUILDS = L.builds; NEXT = L.next; SOCKETS = L.sockets;
+  CHECKABLE = {};
+  VALID = new Set();
+  SECTIONS.forEach((sec) => {
+    const ids = sectionItems(sec).filter((it) => !it.info).map((it) => it.id);
+    ids.forEach((id) => VALID.add(id));
+    CHECKABLE[sec.id] = ids;
+  });
+  TOTAL = VALID.size;
+}
+[20, 30].forEach((l) => { useLevel(l); VALID.forEach((id) => VALID_ALL.add(id)); });
 
 /* ---------- helpers ---------- */
 function esc(s) {
@@ -578,6 +761,7 @@ function buildHTML(b) {
 }
 
 function talentsHTML(sec, st) {
+  const BUILDS = sec.builds;
   const spec = BUILDS[st.spec] ? st.spec : "enh";
   return '<fieldset class="spec"><legend class="sr-only">Choose a build</legend>'
     + Object.keys(BUILDS).map((k) => '<label class="seg"><input type="radio" name="spec" id="spec-' + k + '" value="' + k + '"'
@@ -592,7 +776,7 @@ function setsHTML(sec) {
   return '<h3 class="group-title">Suggested sets</h3><div class="sets">'
     + sec.sets.map((s) => '<div class="set"><p class="set-name">' + esc(s.name) + '</p><ul class="set-slots">'
       + slot("earth", s.earth) + slot("fire", s.fire) + slot("water", s.water)
-      + '<li data-el="air" class="slot-empty"><span class="slot-el">Air</span><span>Empty until 30</span></li></ul>'
+      + (s.air ? slot("air", s.air) : '<li data-el="air" class="slot-empty"><span class="slot-el">Air</span><span>Empty until 30</span></li>') + "</ul>"
       + (s.note ? '<p class="set-note">' + esc(s.note) + "</p>" : "") + "</div>").join("")
     + "</div>";
 }
@@ -643,8 +827,9 @@ function socketsHTML(st) {
 function plateHTML(st) {
   const n = countAll(st);
   return '<header class="plate"><p class="eyebrow">WoW Forever beta · Dwarf Shaman</p><h1>' + TITLE + "</h1>"
-    + '<p class="lede">Everything you can train, unlock and quest for at the beta’s level 20 cap. Tick things off as you play.</p>'
-    + '<p class="companion">Next: <a href="/gear">best-in-slot gear for your talent build</a>.</p>'
+    + levelbarHTML()
+    + '<p class="lede">' + esc(LEDE) + "</p>"
+    + '<p class="companion">Next: <a href="/gear">best-in-slot gear for your talent build</a> and the <a href="/dungeons">dungeon planner</a>.</p>'
     + socketsHTML(st)
     + '<div class="overall"><p class="overall-line"><span class="overall-num" id="ov-num">' + n + '</span><span class="overall-of">of ' + TOTAL + " done</span></p>"
     + '<span class="bar" aria-hidden="true"><i id="ov-bar" style="width:' + pct(n, TOTAL) + '%"></i></span></div>'
@@ -669,7 +854,8 @@ function tocHTML(st) {
 function footerHTML() {
   return '<footer class="foot"><p>Built from WoW Forever beta data and community guides as of late September 2026. Details can change before launch on November 4, and beta characters are wiped when the beta ends.</p>'
     + '<p>Tap any coordinate to copy a TomTom <code>/way</code> command.</p>'
-    + '<p>Your ticks are saved in this browser and don’t sync between devices. Fan-made and not affiliated with Blizzard Entertainment. <a href="/">Toolkit home</a></p>'
+    + '<p>Your ticks are saved in this browser and don’t sync between devices. Fan-made and not affiliated with Blizzard Entertainment.</p>'
+    + '<p><a href="/">Toolkit home</a> · <a href="/gear">Gear guide</a> · <a href="/dungeons">Dungeon planner</a> · <a href="/party">Party board</a></p>'
     + '<div class="whoami" data-whoami></div>'
     + '<h3 class="group-title">Sources</h3><ul class="sources">'
     + SOURCES.map((s) => '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + "</a> <span>" + esc(s.site) + "</span></li>").join("")
@@ -690,7 +876,7 @@ function readState() {
   try {
     const raw = localStorage.getItem(STORE_KEY);
     const p = raw ? JSON.parse(raw) : null;
-    if (p && Array.isArray(p.done)) p.done.forEach((id) => { if (VALID.has(id)) st.done.add(id); });
+    if (p && Array.isArray(p.done)) p.done.forEach((id) => { if (VALID_ALL.has(id)) st.done.add(id); });
     if (p && BUILDS[p.spec]) st.spec = p.spec;
     if (p && typeof p.savedAt === "string") st.savedAt = p.savedAt;
   } catch (e) { /* start fresh */ }
@@ -721,7 +907,20 @@ function changed() { save(); track("state", progressSummary()); }
 
 /* ---------- visit stats (see /assets/track.js) ---------- */
 function track(kind, data) { try { if (window.shamanTrack) window.shamanTrack(kind, data); } catch (e) { /* stats are optional */ } }
-function progressSummary() { return { spec: state.spec, done: countAll(state), total: TOTAL }; }
+function progressSummary() {
+  const totems = [["earth", "e"], ["fire", "f"], ["water", "w"], ["air", "a"]].filter((t) => {
+    const s = LEVELS[30].sockets.find((x) => x.el === t[0]);
+    return s && s.from && state.done.has(s.from);
+  }).map((t) => t[1]).join("");
+  return { lvl: LEVEL, spec: state.spec, done: countAll(state), total: TOTAL, totems: totems };
+}
+function levelbarHTML() {
+  const levels = SITE.levels();
+  if (levels.length < 2) return "";
+  return '<div class="lvlbar" role="radiogroup" aria-label="Level cap">'
+    + levels.map((l) => '<label class="lvlopt"><input type="radio" name="lvl" value="' + l + '"' + (l === LEVEL ? " checked" : "") + '><span>Level ' + l + "</span></label>").join("")
+    + "</div>" + (SITE.preview && LEVEL === 30 ? '<p class="preview-note">Preview: level 30 isn’t live in the beta yet.</p>' : "");
+}
 
 /* ---------- live updates ---------- */
 function refresh() {
@@ -803,7 +1002,7 @@ function onReset(btn) {
   clearTimeout(resetTimer);
   btn.textContent = "Clear all ticks";
   btn.classList.remove("armed");
-  state.done.clear();
+  VALID.forEach((id) => state.done.delete(id));
   app.querySelectorAll(".tick").forEach((cb) => {
     cb.checked = false;
     const li = cb.closest(".item");
@@ -817,11 +1016,16 @@ function onReset(btn) {
 /* ---------- boot ---------- */
 const app = document.getElementById("app");
 if (!app) return;
+useLevel(SITE.level());
 const state = readState();
 try { localStorage.setItem(STORE_KEY + ":test", "1"); localStorage.removeItem(STORE_KEY + ":test"); } catch (e) { canSave = false; }
-app.innerHTML = appHTML(state);
-applyHide(readHide());
-setStatus();
+function renderAll() {
+  document.title = TITLE;
+  app.innerHTML = appHTML(state);
+  applyHide(readHide());
+  setStatus();
+}
+renderAll();
 track("view", state.savedAt ? progressSummary() : null);
 
 app.addEventListener("change", (e) => {
@@ -843,7 +1047,20 @@ app.addEventListener("change", (e) => {
   } else if (t.id === "hide-done") {
     writeHide(t.checked);
     applyHide(t.checked);
+  } else if (t.name === "lvl") {
+    SITE.setLevel(t.value);
   }
+});
+
+// The level cap changed (the owner raised it, or the visitor picked a level).
+SITE.onChange(() => {
+  const lvl = SITE.level();
+  const hasBar = !!app.querySelector(".lvlbar");
+  const wantBar = SITE.levels().length > 1;
+  if (lvl === LEVEL && hasBar === wantBar) return;
+  useLevel(lvl);
+  renderAll();
+  track("state", progressSummary());
 });
 
 app.addEventListener("click", (e) => {
@@ -859,9 +1076,7 @@ window.addEventListener("storage", (e) => {
   state.done = next.done;
   state.spec = next.spec;
   state.savedAt = next.savedAt;
-  app.innerHTML = appHTML(state);
-  applyHide(readHide());
-  setStatus();
+  renderAll();
 });
 
 if (/^#[A-Za-z0-9._~-]+$/.test(location.hash)) {

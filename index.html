@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Forever Shaman Toolkit</title>
-<meta name="description" content="A level 20 checklist and a best-in-slot gear guide for Dwarf Shamans in the WoW Forever beta. Progress saves in your own browser.">
+<meta name="description" content="A level-cap checklist, a best-in-slot gear guide, a dungeon planner and a party board for Dwarf Shamans in the WoW Forever beta. Progress saves in your own browser.">
 <meta property="og:title" content="Forever Shaman Toolkit">
-<meta property="og:description" content="A level 20 checklist and a best-in-slot gear guide for Dwarf Shamans in the WoW Forever beta.">
+<meta property="og:description" content="A level-cap checklist, best-in-slot gear guide, dungeon planner and party board for Dwarf Shamans in the WoW Forever beta.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#EDF0F3" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0F141A" media="(prefers-color-scheme: dark)">
@@ -17,6 +17,7 @@
 <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};window.shamanTrack=window.shamanTrack||function(){(window.shamanTrackQ=window.shamanTrackQ||[]).push(arguments)};shamanTrack("view");</script>
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="/assets/track.js"></script>
+<script src="/assets/site.js"></script>
 <style>
 :root{
   color-scheme:light;
@@ -103,9 +104,9 @@ h1{margin:0;font-family:var(--font-display);font-weight:400;font-size:clamp(38px
 <body>
 <main class="wrap">
   <header class="head">
-    <p class="eyebrow">WoW Forever beta · Dwarf Shaman · Level&nbsp;20</p>
+    <p class="eyebrow">WoW Forever beta · Dwarf Shaman · <span data-cap-text>Level&nbsp;20</span></p>
     <h1>Forever Shaman Toolkit</h1>
-    <p class="lede">Two tools for getting a Dwarf Shaman ready at the beta’s level 20 cap. Everything you tick saves in your own browser.</p>
+    <p class="lede">Tools for getting a Dwarf Shaman ready at the beta’s level cap, and for keeping up with friends who play one. Everything you tick saves in your own browser.</p>
     <div class="elements" aria-hidden="true">
       <span data-el="earth"><svg viewBox="0 0 20 20"><path d="M1.8 16.6 7 7.2l2.7 4.2 3-5.5 5.5 10.7z" fill="currentColor"/></svg></span>
       <span data-el="fire"><svg viewBox="0 0 20 20"><path d="M10.2 1.6c.5 3 4.8 4.6 4.8 9.4a5 5 0 0 1-10 0c0-2 1-3.5 2.2-4.5.1 1.7.9 2.6 2 3.1-.4-2.8-.1-5.5 1-8z" fill="currentColor"/></svg></span>
@@ -117,15 +118,27 @@ h1{margin:0;font-family:var(--font-display);font-weight:400;font-size:clamp(38px
   <section class="tools" aria-label="Tools">
     <a class="tool" data-el="earth" href="/checklist">
       <span class="tool-glyph" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M6.5 2.5h7v4h-7zM5.5 7.5h9v4h-9zM6.5 12.5h7v5h-7z" fill="currentColor"/></svg></span>
-      <h2>Level 20 checklist</h2>
-      <p>Train every spell, finish Call of Water for your Water Totem, spend your 11 talent points and set up your totem bar.</p>
+      <h2 data-lvl-title="checklist">Level 20 checklist</h2>
+      <p data-lvl-text="checklist">Train every spell, finish Call of Water for your Water Totem, spend your 11 talent points and set up your totem bar.</p>
       <span class="tool-go">Open the checklist</span>
     </a>
     <a class="tool" data-el="fire" href="/gear">
       <span class="tool-glyph" aria-hidden="true"><svg viewBox="0 0 20 20"><circle cx="13.2" cy="6.8" r="3.6" fill="currentColor"/><path d="m11 9.4-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span>
       <h2>Best-in-slot gear</h2>
-      <p>The best gear you can get at 20 for Enhancement, Elemental or Restoration, where it drops, and what your professions unlock.</p>
+      <p data-lvl-text="gear">The best gear you can get at 20 for Enhancement, Elemental or Restoration, where it drops, and what your professions unlock. Share your build with a link.</p>
       <span class="tool-go">Open the gear guide</span>
+    </a>
+    <a class="tool" data-el="water" href="/dungeons">
+      <span class="tool-glyph" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M3.5 17.5V9.2a6.5 6.5 0 0 1 13 0v8.3h-3.6V9.6a2.9 2.9 0 0 0-5.8 0v7.9z" fill="currentColor"/></svg></span>
+      <h2>Dungeon planner</h2>
+      <p>Which dungeons to run for your build and in what order, the quests to pick up before you go, the upgrades inside, and how to get there.</p>
+      <span class="tool-go">Plan your runs</span>
+    </a>
+    <a class="tool" data-el="air" href="/party">
+      <span class="tool-glyph" aria-hidden="true"><svg viewBox="0 0 20 20"><circle cx="10" cy="5.6" r="2.7" fill="currentColor"/><circle cx="4.4" cy="7.8" r="2" fill="currentColor"/><circle cx="15.6" cy="7.8" r="2" fill="currentColor"/><path d="M5.4 16.8c0-3 2-5.1 4.6-5.1s4.6 2.1 4.6 5.1zM.9 16.8c0-2.4 1.5-4.1 3.5-4.1.6 0 1.1.1 1.6.4-.9 1.1-1.5 2.4-1.6 3.7zM19.1 16.8c0-2.4-1.5-4.1-3.5-4.1-.6 0-1.1.1-1.6.4.9 1.1 1.5 2.4 1.6 3.7z" fill="currentColor"/></svg></span>
+      <h2>Party board</h2>
+      <p>See how friends’ shamans are coming along: builds, checklist progress, totems and gear. Only people who choose to join show up.</p>
+      <span class="tool-go">See the board</span>
     </a>
   </section>
 
@@ -137,5 +150,35 @@ h1{margin:0;font-family:var(--font-display);font-weight:400;font-size:clamp(38px
     <p>Fan-made and not affiliated with Blizzard Entertainment. World of Warcraft is a trademark of Blizzard Entertainment, Inc.</p>
   </footer>
 </main>
+<script>
+(() => {
+  // Match the tool cards to the level cap that's live (or being previewed).
+  const TEXT = {
+    20: {
+      title: "Level 20 checklist",
+      checklist: "Train every spell, finish Call of Water for your Water Totem, spend your 11 talent points and set up your totem bar.",
+      gear: "The best gear you can get at 20 for Enhancement, Elemental or Restoration, where it drops, and what your professions unlock. Share your build with a link.",
+      cap: "Level\u00a020"
+    },
+    30: {
+      title: "Level 30 checklist",
+      checklist: "Train the new spells, look for the Air Totem quest, spend all 21 talent points and update your totem bar.",
+      gear: "The best gear you can get at 30 for Enhancement, Elemental or Restoration, where it drops, and what your professions unlock. Share your build with a link.",
+      cap: "Level\u00a030"
+    }
+  };
+  function apply() {
+    if (!window.SITE) return;
+    const t = TEXT[SITE.max() >= 30 ? 30 : 20];
+    const set = (sel, text) => document.querySelectorAll(sel).forEach((n) => { n.textContent = text; });
+    set('[data-lvl-title="checklist"]', t.title);
+    set('[data-lvl-text="checklist"]', t.checklist);
+    set('[data-lvl-text="gear"]', t.gear);
+    set("[data-cap-text]", SITE.preview ? "Previewing level\u00a030" : t.cap);
+  }
+  apply();
+  if (window.SITE) SITE.onChange(apply);
+})();
+</script>
 </body>
 </html>

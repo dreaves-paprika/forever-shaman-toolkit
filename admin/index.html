@@ -220,6 +220,23 @@ table{border-collapse:collapse;width:100%}
   .vtable tr.vdetail td{display:block;padding:4px 0 16px}
 }
 
+/* level cap */
+.cap-card{display:grid;gap:10px;padding:16px 20px}
+.cap-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
+.cap-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
+.cap-badge{display:inline-flex;align-items:center;gap:7px;padding:3px 11px;border-radius:999px;background:var(--surface-2);color:var(--ink-2);font-size:13.5px;font-weight:500}
+.cap-badge::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ink-3)}
+.cap-badge.is-30{background:var(--mark-soft);color:var(--ink)}
+.cap-badge.is-30::before{background:var(--mark)}
+.cap-card p{margin:0;max-width:80ch;font-size:15px;color:var(--ink-2)}
+.cap-links{display:flex;flex-wrap:wrap;gap:4px 14px}
+.cap-links a{font-weight:500}
+.cap-card .cap-note{color:var(--ink)}
+.cap-note:empty{display:none}
+.btn-go{border-color:var(--accent);color:var(--accent)}
+.badge-party{background:var(--mark-soft);color:var(--ink)}
+.detail-buttons{display:flex;flex-wrap:wrap;gap:8px}
+
 .fine{display:grid;gap:10px;font-size:15px;color:var(--ink-2)}
 .fine p{margin:0;max-width:78ch}
 .error-card{border-color:var(--danger)}
@@ -236,8 +253,11 @@ const KEY_STORE = "forever-shaman20:admin-key";
 const VID_KEY = "forever-shaman20:vid";
 const OFF_KEY = "forever-shaman20:notrack";
 const ANALYTICS_URL = "https://vercel.com/dreavespaprika-7476s-projects/forever-shaman-toolkit/analytics";
-const PAGE_LABEL = { checklist: "Checklist", gear: "Gear guide", home: "Home page" };
-const PAGE_THE = { checklist: "the checklist", gear: "the gear guide", home: "the home page" };
+const PAGES = ["checklist", "gear", "dungeons", "party", "home"];
+const PAGE_LABEL = { checklist: "Checklist", gear: "Gear guide", dungeons: "Dungeon planner", party: "Party board", home: "Home page" };
+const PAGE_THE = { checklist: "the checklist", gear: "the gear guide", dungeons: "the dungeon planner", party: "the party board", home: "the home page" };
+const TOTEM_LABEL = { e: "Earth", f: "Fire", w: "Water", a: "Air" };
+const PREVIEW_LINKS = [["/checklist?preview=30", "Checklist"], ["/gear?preview=30", "Gear guide"], ["/dungeons?preview=30", "Dungeon planner"]];
 const SPEC_LABEL = { enh: "Enhancement", ele: "Elemental", resto: "Restoration" };
 const PROF_LABEL = { lw: "Leatherworking", tail: "Tailoring", eng: "Engineering", ench: "Enchanting" };
 const PROF_SHORT = { lw: "LW", tail: "Tailor", eng: "Eng", ench: "Ench" };
@@ -246,7 +266,8 @@ const app = document.getElementById("app");
 const S = {
   key: null, data: null, loadedAt: 0, loading: false,
   sort: "last", dir: -1, q: "", open: new Set(),
-  chartTable: false, feedAll: false, active: -1, armed: null, armTimer: 0, notes: {}
+  chartTable: false, feedAll: false, active: -1, armed: null, armTimer: 0, notes: {},
+  capArmed: false, capTimer: 0, capBusy: false, capNote: ""
 };
 
 /* ---------- small helpers ---------- */
@@ -308,7 +329,8 @@ function rows() {
       first: Number(v.first) || 0,
       last: Number(v.last) || 0,
       views: Number(v.views) || 0,
-      pages: { home: Number(v.views_home) || 0, checklist: Number(v.views_checklist) || 0, gear: Number(v.views_gear) || 0 },
+      pages: PAGES.reduce((o, p) => { o[p] = Number(v["views_" + p]) || 0; return o; }, {}),
+      party: v.party === "1" || v.party === 1,
       device: v.device || "",
       os: v.os || "",
       browser: v.browser || "",
@@ -317,8 +339,8 @@ function rows() {
       city: v.city || "",
       ref: v.ref || "",
       me: !!me && v.id === me,
-      ck: Number(v.ck_total) > 0 ? { done: Number(v.ck_done) || 0, total: Number(v.ck_total), spec: v.ck_spec || "", at: Number(v.ck_at) || 0 } : null,
-      gear: Number(v.gear_total) > 0 ? { have: Number(v.gear_have) || 0, total: Number(v.gear_total), spec: v.gear_spec || "", profs: String(v.gear_profs || "").split(",").filter((p) => PROF_LABEL[p]), at: Number(v.gear_at) || 0 } : null
+      ck: Number(v.ck_total) > 0 ? { done: Number(v.ck_done) || 0, total: Number(v.ck_total), spec: v.ck_spec || "", lvl: Number(v.ck_lvl) === 30 ? 30 : 20, totems: String(v.ck_totems || "").replace(/[^efwa]/g, ""), at: Number(v.ck_at) || 0 } : null,
+      gear: Number(v.gear_total) > 0 ? { have: Number(v.gear_have) || 0, total: Number(v.gear_total), spec: v.gear_spec || "", lvl: Number(v.gear_lvl) === 30 ? 30 : 20, profs: String(v.gear_profs || "").split(",").filter((p) => PROF_LABEL[p]), at: Number(v.gear_at) || 0 } : null
     };
     r.short = "Visitor " + r.id.slice(0, 4);
     r.display = r.name || r.label || r.short;
@@ -374,6 +396,7 @@ async function load(quiet) {
   if (r.status === 200 && r.json && r.json.ok) {
     S.data = r.json;
     S.loadedAt = Date.now();
+    S.capNote = "";
     renderDashboard();
     return;
   }
@@ -454,15 +477,35 @@ function flashUpdated(text) {
 function tilesHTML(list) {
   const t = S.data.totals;
   const views = t.views || {};
-  const totalViews = (Number(views.home) || 0) + (Number(views.checklist) || 0) + (Number(views.gear) || 0);
+  const totalViews = PAGES.reduce((sum, p) => sum + (Number(views[p]) || 0), 0);
   const named = list.filter((r) => r.name).length;
+  const onBoard = list.filter((r) => r.party).length;
+  const peopleNote = [named ? n(named) + " added a name" : "", onBoard ? n(onBoard) + " on the party board" : ""].filter(Boolean).join(" · ") || "since tracking began";
   const tile = (label, value, note) => '<div class="card tile"><span class="tile-label">' + esc(label) + '</span><span class="tile-value">' + esc(value) + '</span><span class="tile-note">' + esc(note) + "</span></div>";
   return '<section class="tiles data" aria-label="Totals">'
-    + tile("People", n(list.length), named ? n(named) + " added a name" : "since tracking began")
+    + tile("People", n(list.length), peopleNote)
     + tile("Active today", n(t.today), "since midnight")
     + tile("Last 7 days", n(t.last7), n(t.last30) + " in the last 30 days")
     + tile("Page views", n(totalViews), "since tracking began")
     + "</section>";
+}
+
+/* level cap */
+function capCardHTML() {
+  const cfg = S.data.config || { cap: 20, at: 0 };
+  const live30 = cfg.cap === 30;
+  const since = cfg.at ? "Switched on " + when(cfg.at) + ". " : "";
+  const target = live30 ? 20 : 30;
+  const label = S.capBusy ? "Switching…" : S.capArmed ? "Tap again to switch everyone to level " + target : live30 ? "Go back to level 20" : "Switch everyone to level 30";
+  const btn = '<button class="btn' + (S.capArmed ? " btn-primary" : live30 ? "" : " btn-go") + '" type="button" id="cap-btn" data-cap="' + target + '"' + (S.capBusy ? " disabled" : "") + ">" + esc(label) + "</button>";
+  const text = live30
+    ? esc(since) + "Visitors start on level 30 and can flip back to level 20 at the top of each page."
+    : "Everyone sees the level 20 guides. The level 30 checklist, gear guide and dungeon planner are built and hidden until you switch. After you do, visitors start on level 30 and can flip back to 20 at the top of each page.";
+  const preview = live30 ? "" : '<p class="cap-links"><span>Preview level 30 in this browser:</span> ' + PREVIEW_LINKS.map((l) => '<a href="' + l[0] + '" target="_blank" rel="noopener">' + esc(l[1]) + "</a>").join(" ") + "</p>";
+  return '<section class="card cap-card" aria-labelledby="cap-title"><div class="cap-row"><div class="cap-head"><h2 id="cap-title">Level cap</h2>'
+    + '<span class="cap-badge' + (live30 ? " is-30" : "") + '">Level ' + cfg.cap + " is live</span></div>" + btn + "</div>"
+    + "<p>" + text + "</p>" + preview
+    + '<p class="cap-note" id="cap-note" role="status" aria-live="polite">' + esc(S.capNote) + "</p></section>";
 }
 
 function chartCardHTML() {
@@ -497,10 +540,12 @@ function feedItems(list) {
 }
 function eventText(e) {
   const x = e.x || {};
+  const lvl = Number(x.lvl) === 30 ? 30 : 20;
   if (e.e === "view") return "opened " + PAGE_THE[e.p];
   if (e.e === "name") return x.set ? "added their name" : "removed their name";
-  if (e.e === "state" && e.p === "checklist") return "is at " + n(x.done) + " of " + n(x.total) + " on the checklist" + (SPEC_LABEL[x.spec] ? " (" + SPEC_LABEL[x.spec] + ")" : "");
-  if (e.e === "state" && e.p === "gear") return "has " + n(x.have) + " of " + n(x.total) + " best-in-slot pieces" + (SPEC_LABEL[x.spec] ? " for " + SPEC_LABEL[x.spec] : "");
+  if (e.e === "party") return x.on ? "joined the party board" : "left the party board";
+  if (e.e === "state" && e.p === "checklist") return "is at " + n(x.done) + " of " + n(x.total) + " on the level " + lvl + " checklist" + (SPEC_LABEL[x.spec] ? " (" + SPEC_LABEL[x.spec] + ")" : "");
+  if (e.e === "state" && e.p === "gear") return "has " + n(x.have) + " of " + n(x.total) + " level " + lvl + " best-in-slot pieces" + (SPEC_LABEL[x.spec] ? " for " + SPEC_LABEL[x.spec] : "");
   return "was active";
 }
 function feedCardHTML(list) {
@@ -548,7 +593,7 @@ function breakdownCard(title, sub, inner) {
 }
 function breakdownsHTML(list) {
   const views = S.data.totals.views || {};
-  const tools = ["checklist", "gear", "home"].map((p) => ({ label: PAGE_LABEL[p], value: list.filter((r) => r.pages[p] > 0).length, note: plural(views[p] || 0, "view") }));
+  const tools = PAGES.map((p) => ({ label: PAGE_LABEL[p], value: list.filter((r) => r.pages[p] > 0).length, note: plural(views[p] || 0, "view") }));
 
   const specs = tally(list, (r) => r.spec || (r.ck || r.gear ? "none" : null));
   const specItems = topItems(specs, 4, ["none"], (k) => (k === "none" ? "No build picked" : SPEC_LABEL[k]));
@@ -598,7 +643,7 @@ const COLS = [
 function filtered(list) {
   const q = S.q.trim().toLowerCase();
   let out = list;
-  if (q) out = list.filter((r) => [r.display, r.name, r.label, r.short, r.place, r.region, country(r.country), r.device, r.os, r.browser].join(" ").toLowerCase().indexOf(q) >= 0);
+  if (q) out = list.filter((r) => [r.display, r.name, r.label, r.short, r.place, r.region, country(r.country), r.device, r.os, r.browser, r.party ? "party board" : ""].join(" ").toLowerCase().indexOf(q) >= 0);
   const f = SORTS[S.sort] || SORTS.last;
   return out.slice().sort((a, b) => {
     const x = f(a), y = f(b);
@@ -614,9 +659,10 @@ function progHTML(done, total, sub) {
     + (sub ? "<small>" + esc(sub) + "</small>" : "") + "</div>";
 }
 function detailHTML(r) {
-  const pages = ["checklist", "gear", "home"].filter((p) => r.pages[p]).map((p) => PAGE_LABEL[p] + " " + n(r.pages[p])).join(" · ") || "None yet";
-  const ck = r.ck ? n(r.ck.done) + " of " + n(r.ck.total) + (SPEC_LABEL[r.ck.spec] ? " · " + SPEC_LABEL[r.ck.spec] : "") + " · updated " + ago(r.ck.at) : "Hasn’t ticked anything";
-  const gear = r.gear ? n(r.gear.have) + " of " + n(r.gear.total) + " pieces" + (SPEC_LABEL[r.gear.spec] ? " · " + SPEC_LABEL[r.gear.spec] : "") + " · updated " + ago(r.gear.at) : "Hasn’t ticked anything";
+  const pages = PAGES.filter((p) => r.pages[p]).map((p) => PAGE_LABEL[p] + " " + n(r.pages[p])).join(" · ") || "None yet";
+  const totems = r.ck && r.ck.totems ? r.ck.totems.split("").map((c) => TOTEM_LABEL[c]).join(", ") : "";
+  const ck = r.ck ? "Level " + r.ck.lvl + " · " + n(r.ck.done) + " of " + n(r.ck.total) + (SPEC_LABEL[r.ck.spec] ? " · " + SPEC_LABEL[r.ck.spec] : "") + " · updated " + ago(r.ck.at) : "Hasn’t ticked anything";
+  const gear = r.gear ? "Level " + r.gear.lvl + " · " + n(r.gear.have) + " of " + n(r.gear.total) + " pieces" + (SPEC_LABEL[r.gear.spec] ? " · " + SPEC_LABEL[r.gear.spec] : "") + " · updated " + ago(r.gear.at) : "Hasn’t ticked anything";
   const profs = r.gear ? (r.gear.profs.map((p) => PROF_LABEL[p]).join(", ") || "None ticked") : "Not set";
   const fact = (dt, dd) => "<div><dt>" + esc(dt) + "</dt><dd>" + esc(dd) + "</dd></div>";
   const armed = S.armed === r.id;
@@ -630,8 +676,10 @@ function detailHTML(r) {
     + fact("Device", [r.device, r.os, r.browser].filter(Boolean).join(" · ") || "Unknown")
     + fact("Came from", r.ref || "Direct, or a link in an app")
     + fact("Checklist", ck)
+    + fact("Totems", r.ck ? totems || "None yet" : "Not set")
     + fact("Gear guide", gear)
     + fact("Professions", profs)
+    + fact("Party board", r.party ? "On the board" : "Not on it")
     + fact("Visitor ID", r.id)
     + "</dl>"
     + '<div class="detail-actions">'
@@ -639,20 +687,26 @@ function detailHTML(r) {
     + '<input class="field" id="lbl-' + esc(r.id) + '" maxlength="40" placeholder="e.g. Sam from the guild" value="' + esc(r.label) + '">'
     + '<button class="btn btn-small" type="submit">Save label</button>'
     + '<span class="saved-note" role="status" aria-live="polite">' + esc(note) + "</span></form>"
-    + '<div><button class="btn btn-small btn-danger' + (armed ? " armed" : "") + '" type="button" data-forget="' + esc(r.id) + '">' + (armed ? "Tap again to remove" : "Remove from stats") + "</button></div>"
+    + '<div class="detail-buttons">'
+    + (r.party ? '<button class="btn btn-small" type="button" data-unparty="' + esc(r.id) + '">Take off the party board</button>' : "")
+    + '<button class="btn btn-small btn-danger' + (armed ? " armed" : "") + '" type="button" data-forget="' + esc(r.id) + '">' + (armed ? "Tap again to remove" : "Remove from stats") + "</button></div>"
     + "</div></div>";
 }
 function rowsHTML(list) {
   const shown = filtered(list);
+  const showLevels = !!(S.data && S.data.config && S.data.config.cap === 30);
   if (!shown.length) return '<tr><td colspan="7" class="muted">' + (list.length ? "No one matches that search." : "No visitors yet. Share the site link and people show up here a few seconds after they open it.") + "</td></tr>";
   return shown.map((r) => {
     const open = S.open.has(r.id);
     const sub = r.name && r.label ? r.label : (r.name || r.label ? r.short : "No name added");
-    const ckSub = r.ck && SPEC_LABEL[r.ck.spec] ? SPEC_LABEL[r.ck.spec] : "";
-    const gearSub = r.gear ? [SPEC_LABEL[r.gear.spec] || "", r.gear.profs.map((p) => PROF_SHORT[p]).join(", ")].filter(Boolean).join(" · ") : "";
+    // Show the level once level 30 is in play (it's live, or this person previewed it).
+    const lvlTag = (lvl) => (showLevels || lvl === 30 ? "Lvl " + lvl : "");
+    const ckSub = r.ck ? [lvlTag(r.ck.lvl), SPEC_LABEL[r.ck.spec] || ""].filter(Boolean).join(" · ") : "";
+    const gearSub = r.gear ? [lvlTag(r.gear.lvl), SPEC_LABEL[r.gear.spec] || "", r.gear.profs.map((p) => PROF_SHORT[p]).join(", ")].filter(Boolean).join(" · ") : "";
     return '<tr class="vrow" data-id="' + esc(r.id) + '">'
       + '<td class="c-who"><button class="who" type="button" id="who-' + esc(r.id) + '" aria-expanded="' + (open ? "true" : "false") + '" aria-controls="d-' + esc(r.id) + '">'
-      + '<span class="who-name"><span class="chev" aria-hidden="true">›</span><span class="who-text">' + esc(r.display) + (r.me ? ' <span class="badge">This browser</span>' : "") + "</span></span>"
+      + '<span class="who-name"><span class="chev" aria-hidden="true">›</span><span class="who-text">' + esc(r.display)
+      + (r.me ? ' <span class="badge">This browser</span>' : "") + (r.party ? ' <span class="badge badge-party">Party board</span>' : "") + "</span></span>"
       + '<span class="who-sub">' + esc(sub) + "</span></button></td>"
       + '<td class="c-where">' + (r.place ? esc(r.place) : '<span class="muted">Unknown</span>') + "</td>"
       + '<td class="c-device">' + esc([r.device, r.os].filter(Boolean).join(" · ") || "Unknown") + "</td>"
@@ -688,7 +742,7 @@ function browserCardHTML(list) {
   return '<section class="card fine" aria-labelledby="browser-title"><h2 id="browser-title">Your own visits</h2>'
     + '<label class="check" for="notrack"><input type="checkbox" id="notrack"' + (counted() ? "" : " checked") + "> Don’t count visits from this browser</label>"
     + '<p id="browser-status">' + esc(status) + " Turning this on also removes this browser’s past visits. Do it once in each browser you use.</p>"
-    + '<p>Page views by country, referrers and more are also in <a href="' + ANALYTICS_URL + '" target="_blank" rel="noopener">Vercel Analytics</a>. Visitors can add a name or opt out at the bottom of each page.</p>'
+    + '<p>Page views by country, referrers and more are also in <a href="' + ANALYTICS_URL + '" target="_blank" rel="noopener">Vercel Analytics</a>. Visitors can add a name, join the party board or opt out at the bottom of each page.</p>'
     + "</section>";
 }
 
@@ -696,7 +750,7 @@ function renderDashboard() {
   const focusId = document.activeElement && document.activeElement.id;
   const list = rows();
   document.title = "Toolkit Stats";
-  app.innerHTML = '<main class="wrap">' + topHTML() + tilesHTML(list)
+  app.innerHTML = '<main class="wrap">' + topHTML() + capCardHTML() + tilesHTML(list)
     + '<div class="duo">' + chartCardHTML() + feedCardHTML(list) + "</div>"
     + visitorsCardHTML(list)
     + breakdownsHTML(list)
@@ -880,6 +934,57 @@ async function forget(btn) {
   else { btn.disabled = false; btn.textContent = "Remove from stats"; flashUpdated(problem(r)); }
 }
 
+function redrawCap(keepFocus) {
+  const card = document.querySelector(".cap-card");
+  if (!card || !S.data) return;
+  const tmp = document.createElement("div");
+  tmp.innerHTML = capCardHTML();
+  card.replaceWith(tmp.firstElementChild);
+  if (keepFocus) { const b = document.getElementById("cap-btn"); if (b) b.focus({ preventScroll: true }); }
+}
+
+// Two taps, so a stray click can't change what every visitor sees.
+async function switchCap(btn) {
+  const target = Number(btn.getAttribute("data-cap")) === 30 ? 30 : 20;
+  if (S.capBusy) return;
+  if (!S.capArmed) {
+    S.capArmed = true;
+    S.capNote = "";
+    clearTimeout(S.capTimer);
+    S.capTimer = setTimeout(() => { S.capArmed = false; redrawCap(document.activeElement && document.activeElement.id === "cap-btn"); }, 5000);
+    redrawCap(true);
+    return;
+  }
+  clearTimeout(S.capTimer);
+  S.capArmed = false;
+  S.capBusy = true;
+  redrawCap(true);
+  const r = await call("POST", { action: "config", cap: target });
+  S.capBusy = false;
+  if (r.status === 200 && r.json && r.json.ok) {
+    S.data.config = r.json.config;
+    S.capNote = target === 30
+      ? "Done. Level 30 is live. Visitors get it within a minute or two, the next time a page loads."
+      : "Done. Everyone goes back to level 20 within a minute or two.";
+    renderDashboard();
+  } else if (r.status === 401) {
+    signOut("Sign in again to make changes.");
+  } else {
+    S.capNote = problem(r);
+    redrawCap(true);
+  }
+}
+
+async function unparty(btn) {
+  const id = btn.getAttribute("data-unparty");
+  btn.disabled = true;
+  btn.textContent = "Taking them off…";
+  const r = await call("POST", { action: "unparty", vid: id });
+  if (r.status === 200) await load();
+  else if (r.status === 401) signOut("Sign in again to make changes.");
+  else { btn.disabled = false; btn.textContent = "Take off the party board"; flashUpdated(problem(r)); }
+}
+
 async function setNotrack(on) {
   if (on) {
     sset("localStorage", OFF_KEY, "1");
@@ -906,6 +1011,8 @@ app.addEventListener("click", (e) => {
   if (t.id === "refresh") { load(); return; }
   if (t.id === "signout") { signOut("You’re signed out."); return; }
   if (t.id === "feed-more") { S.feedAll = !S.feedAll; renderDashboard(); return; }
+  if (t.id === "cap-btn") { switchCap(t); return; }
+  if (t.hasAttribute("data-unparty")) { unparty(t); return; }
   if (t.id === "chart-toggle") {
     S.chartTable = !S.chartTable;
     S.active = -1;

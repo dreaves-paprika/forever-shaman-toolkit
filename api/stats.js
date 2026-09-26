@@ -1,4 +1,5 @@
-// Everything the admin page shows, plus two admin actions. Requires the ADMIN_KEY passphrase.
+// Everything the admin page shows, plus the admin actions (level cap, labels, removals).
+// Requires the ADMIN_KEY passphrase.
 const { TZ, VID_RE, pipeline, lastDays, pairs, safeEqual, readBody, cleanName, forgetVisitor } = require("./_lib");
 
 const MAX_VISITORS = 2000;
@@ -23,9 +24,10 @@ function authorized(req) {
 async function read(res) {
   const now = Date.now();
   const days = lastDays(30, now);
-  const cmds = [["SMEMBERS", "visitors"], ["HGETALL", "pv"], ["LRANGE", "events", 0, 199]];
+  const cmds = [["SMEMBERS", "visitors"], ["HGETALL", "pv"], ["LRANGE", "events", 0, 199], ["HGETALL", "config"], ["SCARD", "party"]];
   days.forEach((d) => cmds.push(["HGETALL", "dv:" + d]));
   const out = await pipeline(cmds);
+  const OFF = 5;
 
   const ids = (Array.isArray(out[0]) ? out[0] : []).slice(0, MAX_VISITORS);
   const profiles = ids.length ? await pipeline(ids.map((id) => ["HGETALL", "v:" + id])) : [];
@@ -34,7 +36,7 @@ async function read(res) {
     .filter((v) => v.first || v.last);
 
   const series = days.map((d, i) => {
-    const byVisitor = pairs(out[3 + i]);
+    const byVisitor = pairs(out[OFF + i]);
     const ids = Object.keys(byVisitor);
     return { day: d, ids: ids, views: ids.reduce((sum, k) => sum + (Number(byVisitor[k]) || 0), 0) };
   });
@@ -50,7 +52,8 @@ async function read(res) {
     ok: true,
     now: now,
     tz: TZ,
-    totals: { visitors: visitors.length, views: views, today: series[series.length - 1].ids.length, last7: union(series.slice(-7)), last30: union(series) },
+    totals: { visitors: visitors.length, views: views, today: series[series.length - 1].ids.length, last7: union(series.slice(-7)), last30: union(series), party: Number(out[4]) || 0 },
+    config: { cap: Number(pairs(out[3]).cap) === 30 ? 30 : 20, at: Number(pairs(out[3]).cap_at) || 0 },
     series: series.map((s) => ({ day: s.day, visitors: s.ids.length, views: s.views })),
     visitors: visitors,
     events: events
@@ -74,6 +77,13 @@ module.exports = async function handler(req, res) {
     if (req.method === "GET") return await read(res);
 
     const body = readBody(req) || {};
+    if (body.action === "config") {
+      // The level cap every visitor sees. Pages pick it up within a minute or two.
+      const cap = Number(body.cap) === 30 ? 30 : 20;
+      const at = Date.now();
+      await pipeline([["HSET", "config", "cap", cap, "cap_at", at]]);
+      return res.status(200).json({ ok: true, config: { cap: cap, at: at } });
+    }
     const vid = String(body.vid || "");
     if (!VID_RE.test(vid)) return res.status(400).json({ ok: false, error: "bad_request" });
 
@@ -86,6 +96,11 @@ module.exports = async function handler(req, res) {
     }
     if (body.action === "forget") {
       await forgetVisitor(vid, Date.now());
+      return res.status(200).json({ ok: true });
+    }
+    if (body.action === "unparty") {
+      // Takes someone off the party board without touching their stats. They can join again.
+      await pipeline([["HDEL", "v:" + vid, "party"], ["SREM", "party", vid]]);
       return res.status(200).json({ ok: true });
     }
     return res.status(400).json({ ok: false, error: "bad_request" });

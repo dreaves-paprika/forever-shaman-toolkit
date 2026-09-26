@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en" data-page="dungeons">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dungeon Planner</title>
+<meta name="description" content="Which dungeons a Dwarf shaman should run at the WoW Forever beta’s level cap, in order, with the quests to grab first and the upgrades each one holds for your build.">
+<meta property="og:title" content="Dungeon Planner · Forever Shaman Toolkit">
+<meta property="og:description" content="Which dungeons to run at the WoW Forever beta’s level cap, in order, with the quests to grab first and the upgrades for your build.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#EDF0F3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F141A" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&amp;family=DM+Mono:wght@400;500&amp;family=Marcellus+SC&amp;display=swap">
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};window.shamanTrack=window.shamanTrack||function(){(window.shamanTrackQ=window.shamanTrackQ||[]).push(arguments)};shamanTrack("view");</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<script defer src="/assets/track.js"></script>
+<script src="/assets/site.js"></script>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#EDF0F3;
+  --surface:#FBFCFD;
+  --surface-2:#E4E9EE;
+  --ink:#15202B;
+  --ink-2:#465465;
+  --ink-3:#5E6C7B;
+  --line:#D2D9E1;
+  --line-strong:#A9B5C2;
+  --accent:#0A62C9;
+  --on-color:#FFFFFF;
+  --focus:#0A62C9;
+  --earth:#8A591A;
+  --earth-soft:#F0E3CF;
+  --fire:#B03A0C;
+  --fire-soft:#F7DFD2;
+  --water:#0B7285;
+  --water-soft:#D4EDF1;
+  --warn:#9A5B00;
+  --warn-soft:#F6E7CC;
+  --q-rare:#005EBD;
+  --q-unc:#1F7A1F;
+  --font-display:"Marcellus SC","Marcellus",Georgia,"Times New Roman",serif;
+  --font-body:"Alegreya Sans","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+  --font-mono:"DM Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    color-scheme:dark;
+    --bg:#0F141A;
+    --surface:#161D25;
+    --surface-2:#1E2731;
+    --ink:#E6EBF0;
+    --ink-2:#A5B1BE;
+    --ink-3:#8793A0;
+    --line:#28323D;
+    --line-strong:#3A4755;
+    --accent:#5AA9FF;
+    --on-color:#0B1520;
+    --focus:#5AA9FF;
+    --earth:#D9A962;
+    --earth-soft:#33281A;
+    --fire:#FF8C57;
+    --fire-soft:#3B2319;
+    --water:#45C7D9;
+    --water-soft:#12323A;
+    --warn:#F2B35B;
+    --warn-soft:#3A2A12;
+    --q-rare:#4DA3FF;
+    --q-unc:#5DD86A;
+  }
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16.5px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-underline-offset:2px}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+[data-el="earth"]{--el:var(--earth);--el-soft:var(--earth-soft)}
+[data-el="fire"]{--el:var(--fire);--el-soft:var(--fire-soft)}
+[data-el="water"]{--el:var(--water);--el-soft:var(--water-soft)}
+#app{--spec:var(--earth);--spec-soft:var(--earth-soft)}
+#app[data-spec="ele"]{--spec:var(--fire);--spec-soft:var(--fire-soft)}
+#app[data-spec="resto"]{--spec:var(--water);--spec-soft:var(--water-soft)}
+
+.wrap{max-width:940px;margin-inline:auto;padding:clamp(28px,6vw,64px) clamp(16px,4vw,36px) 64px;display:grid;gap:24px}
+.head{display:grid;gap:12px}
+.eyebrow{margin:0;font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+h1{margin:0;font-family:var(--font-display);font-weight:400;font-size:clamp(36px,5.5vw,52px);line-height:1.04}
+.lede{margin:0;max-width:62ch;font-size:18px;color:var(--ink-2)}
+.links{margin:0;font-size:15px;color:var(--ink-2)}
+.lvlbar{display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;width:max-content;padding:3px;border:1px solid var(--line-strong);border-radius:99px;background:var(--surface)}
+.lvlopt{position:relative;cursor:pointer}
+.lvlopt input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.lvlopt span{display:block;padding:5px 14px;border-radius:99px;font-family:var(--font-mono);font-size:12.5px;letter-spacing:.04em;color:var(--ink-2);white-space:nowrap}
+.lvlopt input:checked + span{background:var(--spec);color:var(--on-color)}
+.lvlopt input:focus-visible + span{outline:2px solid var(--focus);outline-offset:2px}
+.preview-note{margin:0;font-size:14px;color:var(--warn)}
+
+.builds{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.bopt{position:relative;cursor:pointer;min-width:0}
+.bopt input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.bopt-body{display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 10px;border:1px solid var(--line);border-radius:12px;background:var(--surface);transition:background .12s,border-color .12s}
+.bopt-glyph{flex:none;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;background:var(--el-soft);color:var(--el)}
+.bopt-glyph svg{width:14px;height:14px}
+.bopt-name{font-family:var(--font-display);font-size:17px;line-height:1.1}
+.bopt input:checked + .bopt-body{border-color:var(--el);background:var(--el-soft)}
+.bopt input:checked + .bopt-body .bopt-glyph{background:var(--el);color:var(--on-color)}
+.bopt input:checked + .bopt-body .bopt-name{color:var(--el)}
+.bopt input:focus-visible + .bopt-body{outline:2px solid var(--focus);outline-offset:2px}
+@media (max-width:520px){.bopt-name .long{display:none}}
+@media (min-width:521px){.bopt-name .short{display:none}}
+
+.summary{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;padding:14px 18px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.summary strong{font-size:22px;font-weight:700}
+.summary span{color:var(--ink-2)}
+
+.runs{list-style:none;margin:0;padding:0;display:grid;gap:16px;counter-reset:run}
+.run{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;scroll-margin-top:20px}
+.run.is-done{opacity:.72}
+.run-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 14px;align-items:start;padding:16px 18px 12px}
+.run-num{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--spec-soft);color:var(--spec);font-family:var(--font-mono);font-weight:500;font-size:15px}
+.run.is-opt .run-num{background:var(--surface-2);color:var(--ink-3)}
+.run-title{margin:0;font-family:var(--font-display);font-weight:400;font-size:25px;line-height:1.12}
+.run-meta{margin:2px 0 0;font-size:14.5px;color:var(--ink-3)}
+.run-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.chip{display:inline-flex;align-items:center;font-family:var(--font-mono);font-size:11.5px;line-height:1;padding:4px 8px;border-radius:99px;border:1px solid var(--line);color:var(--ink-2);white-space:nowrap}
+.chip-opt{border-style:dashed;border-color:var(--line-strong)}
+.chip-new{border-color:transparent;background:var(--spec-soft);color:var(--spec)}
+.chip-left{border-color:transparent;background:var(--spec);color:var(--on-color)}
+.chip-done{border-color:transparent;background:var(--surface-2);color:var(--ink-2)}
+.run-why{margin:0;padding:0 18px 14px;max-width:72ch}
+.run-body{display:grid;gap:14px;padding:0 18px 18px}
+.box{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.box-title{margin:0;display:flex;justify-content:space-between;gap:10px;padding:9px 14px;background:var(--surface-2);font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.box-title span:last-child{letter-spacing:0;text-transform:none}
+.rows{list-style:none;margin:0;padding:0}
+.rows > li{padding:10px 14px;border-top:1px solid var(--line)}
+.rows > li:first-child{border-top:0}
+.up{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 12px;align-items:start}
+.tick{appearance:none;-webkit-appearance:none;margin:2px 0 0;width:22px;height:22px;border-radius:6px;border:1.5px solid var(--line-strong);background:var(--surface);display:grid;place-content:center;cursor:pointer}
+.tick::after{content:"";width:11px;height:6px;border-left:2.5px solid var(--on-color);border-bottom:2.5px solid var(--on-color);transform:translateY(-1px) rotate(-45deg) scale(0);transition:transform .12s}
+.tick:checked{background:var(--spec);border-color:var(--spec)}
+.tick:checked::after{transform:translateY(-1px) rotate(-45deg) scale(1)}
+.up-main{display:grid;gap:1px;min-width:0}
+.up-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
+.item{font-weight:500;text-decoration:none}
+.item:hover{text-decoration:underline}
+.q-r{color:var(--q-rare)}
+.q-u{color:var(--q-unc)}
+.role{font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3)}
+.role.is-bis{color:var(--spec)}
+.up-src{font-size:14.5px;color:var(--ink-2)}
+.up.is-have .item{text-decoration:line-through;text-decoration-color:var(--line-strong)}
+.none{margin:0;padding:10px 14px;font-size:15px;color:var(--ink-3)}
+.quest{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 12px;align-items:start}
+.quest-main{display:grid;gap:3px;min-width:0}
+.quest-name{font-weight:700}
+.quest-min{font-family:var(--font-mono);font-size:12px;color:var(--ink-3)}
+.quest-line{margin:0;font-size:15px;color:var(--ink-2)}
+.quest-line b{font-weight:500;color:var(--ink)}
+.rewards{margin:0;font-size:15px;color:var(--ink-2)}
+.reward-hit{font-weight:700;color:var(--spec)}
+.coord{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);font-family:var(--font-mono);font-size:12.5px;color:var(--ink-2);cursor:pointer;vertical-align:1px}
+.coord:hover{border-color:var(--accent);color:var(--ink)}
+details.more{border-top:1px solid var(--line)}
+details.more summary{padding:9px 14px;cursor:pointer;font-size:14.5px;color:var(--ink-2)}
+details.more[open] summary{border-bottom:1px solid var(--line)}
+.travel{display:grid;gap:8px}
+.travel p{margin:0;max-width:72ch}
+.bosses{margin:0;font-size:15px;color:var(--ink-2)}
+.forever{margin:0;font-size:15px;padding:10px 14px;border-radius:10px;background:var(--spec-soft)}
+.done-row{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--ink-2);cursor:pointer;width:max-content}
+.run.is-done .run-body,.run.is-done .run-why{display:none}
+.skip{display:grid;gap:8px}
+.skip h2{margin:0;font-family:var(--font-display);font-weight:400;font-size:24px}
+.skip ul{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.skip li{padding:10px 14px;border:1px dashed var(--line-strong);border-radius:12px;color:var(--ink-2)}
+.skip b{color:var(--ink);font-weight:500}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:20;padding:10px 16px;border-radius:12px;background:var(--ink);color:var(--bg);font-size:15px;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.foot{display:grid;gap:10px;padding-top:18px;border-top:1px solid var(--line);font-size:15px;color:var(--ink-2)}
+.foot p{margin:0;max-width:72ch}
+.foot ul{margin:0;padding-left:18px;display:grid;gap:3px}
+.foot li span{color:var(--ink-3)}
+.whoami{padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--surface);font-size:15px}
+.whoami:empty{display:none}
+@media (max-width:560px){
+  .run-head{grid-template-columns:auto minmax(0,1fr)}
+  .run-tags{grid-column:1 / -1;justify-content:flex-start}
+}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="/assets/gear-data.js"></script>
+<script src="/assets/dungeon-data.js"></script>
+<script>
+(() => {
+"use strict";
+
+const G = window.GEAR_DATA;
+const D = window.DUNGEON_DATA;
+const SITE = window.SITE || { level: () => 20, levels: () => [20], setLevel: () => {}, onChange: () => {}, preview: false };
+const GEAR_KEY = "forever-shaman20:gear:v1";
+const PLAN_KEY = "forever-shaman20:dungeons:v1";
+const WH = "https://www.wowhead.com/forever/item=";
+const SPEC_EL = { enh: "earth", ele: "fire", resto: "water" };
+const SPEC_NAME = { enh: ["Enhancement", "Enh"], ele: ["Elemental", "Ele"], resto: ["Restoration", "Resto"] };
+const GLYPH = {
+  earth: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M1.8 16.6 7 7.2l2.7 4.2 3-5.5 5.5 10.7z" fill="currentColor"/></svg>',
+  fire: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10.2 1.6c.5 3 4.8 4.6 4.8 9.4a5 5 0 0 1-10 0c0-2 1-3.5 2.2-4.5.1 1.7.9 2.6 2 3.1-.4-2.8-.1-5.5 1-8z" fill="currentColor"/></svg>',
+  water: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.9C7.2 5.8 4.9 8.8 4.9 12a5.1 5.1 0 0 0 10.2 0c0-3.2-2.3-6.2-5.1-10.1z" fill="currentColor"/></svg>'
+};
+// Bind on Equip drops from dungeon trash count toward that dungeon too.
+const TRASH = [[/Deadmines/i, "dm"], [/Wailing Caverns/i, "wc"], [/Shadowfang Keep/i, "sfk"], [/Blackfathom Deeps/i, "bfd"], [/Razorfen Kraul/i, "rfk"], [/Scarlet Monastery/i, "smgy"], [/Gnomeregan/i, "gnomer"], [/Stockade/i, "stocks"]];
+
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function readJSON(k) { try { const raw = localStorage.getItem(k); return raw ? JSON.parse(raw) : null; } catch (e) { return null; } }
+function writeJSON(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
+function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+
+/* ---------- state: the build and owned gear come from the gear guide's own save ---------- */
+function readGear() {
+  const g = { spec: "enh", profs: new Set(), have: new Set(), raw: null };
+  const p = readJSON(GEAR_KEY);
+  if (p) {
+    g.raw = p;
+    if (SPEC_NAME[p.spec]) g.spec = p.spec;
+    (p.profs || []).forEach((x) => { if (G.PROF_NAME[x]) g.profs.add(x); });
+    (p.have || []).forEach((x) => { if (G.ITEMS[x]) g.have.add(x); });
+  }
+  return g;
+}
+function saveGear() {
+  const base = gear.raw || { v: 1 };
+  base.v = 1;
+  base.spec = gear.spec;
+  base.profs = Array.from(gear.profs).sort();
+  base.have = Array.from(gear.have).sort();
+  base.savedAt = new Date().toISOString();
+  gear.raw = base;
+  writeJSON(GEAR_KEY, base);
+}
+function readPlan() {
+  const p = readJSON(PLAN_KEY) || {};
+  return { quests: new Set(Array.isArray(p.quests) ? p.quests : []), done: new Set(Array.isArray(p.done) ? p.done : []) };
+}
+function savePlan() {
+  writeJSON(PLAN_KEY, { v: 1, quests: Array.from(plan.quests).sort(), done: Array.from(plan.done).sort(), savedAt: new Date().toISOString() });
+}
+
+/* ---------- which items each dungeon holds for this build ---------- */
+function dungeonOf(item) {
+  const src = G.SRC[item.src.k];
+  if (!src) return null;
+  if (src.group === "ah" && item.src.by) {
+    for (const [re, key] of TRASH) if (re.test(item.src.by)) return key;
+    return null;
+  }
+  return src.group;
+}
+function upgradesFor(lvl) {
+  const rows = G.computeRows(lvl, gear.spec, gear.profs);
+  const byDungeon = {};
+  const byName = {};
+  const seen = new Set();
+  const add = (k, role, slot) => {
+    if (seen.has(k)) return;
+    seen.add(k);
+    const it = G.ITEMS[k];
+    if (!it) return;
+    byName[it.n.toLowerCase()] = { k: k, role: role };
+    const dk = dungeonOf(it);
+    if (!dk) return;
+    (byDungeon[dk] = byDungeon[dk] || []).push({ k: k, role: role, slot: slot });
+  };
+  rows.forEach((r) => { if (r.item) add(r.item, "bis", r.slot.label); });
+  rows.forEach((r) => { (r.alts || []).forEach((a) => add(a[0], "backup", r.slot.label)); });
+  Object.keys(byDungeon).forEach((dk) => byDungeon[dk].sort((a, b) => (a.role === b.role ? 0 : a.role === "bis" ? -1 : 1)));
+  return { byDungeon: byDungeon, byName: byName };
+}
+function srcLine(it) {
+  const s = it.src;
+  if (s.quest) return "Quest: " + s.quest;
+  if (s.k === "boe") return s.by + " (Bind on Equip)";
+  if (s.by) return s.by + (s.rare ? ", a rare that isn’t there every run" : "");
+  return "";
+}
+
+/* ---------- rendering ---------- */
+function levelbarHTML(lvl) {
+  const levels = SITE.levels();
+  if (levels.length < 2) return "";
+  return '<div class="lvlbar" role="radiogroup" aria-label="Level cap">'
+    + levels.map((l) => '<label class="lvlopt"><input type="radio" name="lvl" value="' + l + '"' + (l === lvl ? " checked" : "") + '><span>Level ' + l + "</span></label>").join("")
+    + "</div>" + (SITE.preview && lvl === 30 ? '<p class="preview-note">Preview: level 30 isn’t live in the beta yet.</p>' : "");
+}
+function buildsHTML() {
+  return '<div class="builds" role="radiogroup" aria-label="Talent build">' + Object.keys(SPEC_NAME).map((k) => {
+    const el = SPEC_EL[k];
+    return '<label class="bopt" data-el="' + el + '"><input type="radio" name="spec" value="' + k + '"' + (k === gear.spec ? " checked" : "") + ">"
+      + '<span class="bopt-body"><span class="bopt-glyph">' + GLYPH[el] + '</span><span class="bopt-name"><span class="long">' + SPEC_NAME[k][0] + '</span><span class="short">' + SPEC_NAME[k][1] + "</span></span></span></label>";
+  }).join("") + "</div>";
+}
+function coordHTML(w) {
+  if (!w || !w.x || !w.y) return "";
+  const zone = String(w.zone || "").replace(/\s*\(.*\)$/, "");
+  const way = "/way " + zone + " " + w.x + " " + w.y;
+  return '<button type="button" class="coord" data-way="' + esc(way) + '" title="Copy a TomTom /way command">' + esc(zone) + " " + esc(w.x) + ", " + esc(w.y) + "</button>";
+}
+function upHTML(u) {
+  const it = G.ITEMS[u.k];
+  const have = gear.have.has(u.k);
+  const id = "own-" + u.k;
+  return '<li class="up' + (have ? " is-have" : "") + '"><input type="checkbox" class="tick" id="' + id + '" data-own="' + u.k + '"' + (have ? " checked" : "") + ' aria-label="I have ' + esc(it.n) + '">'
+    + '<div class="up-main"><span class="up-line"><a class="item q-' + it.q + '" href="' + WH + it.id + '" target="_blank" rel="noopener">' + esc(it.n) + "</a>"
+    + '<span class="role' + (u.role === "bis" ? " is-bis" : "") + '">' + (u.role === "bis" ? "Best in slot" : "Backup") + " · " + esc(u.slot) + "</span></span>"
+    + '<span class="up-src">' + esc(srcLine(it)) + "</span></div></li>";
+}
+function questId(q) { return "q" + (q.id || slug(q.name)); }
+function questHTML(q, lvl, names) {
+  const qid = questId(q);
+  const picked = plan.quests.has(qid);
+  const rewards = (q.rewards || []).map((r) => {
+    const hit = names[String(r).toLowerCase()];
+    return hit ? '<span class="reward-hit">' + esc(r) + (hit.role === "bis" ? " (best in slot)" : " (backup)") + "</span>" : esc(r);
+  });
+  const extra = q.note || q.chain;
+  return '<li class="quest"><input type="checkbox" class="tick" id="qc-' + esc(qid) + '" data-quest="' + esc(qid) + '"' + (picked ? " checked" : "") + ' aria-label="Picked up ' + esc(q.name) + '">'
+    + '<div class="quest-main"><span class="up-line"><span class="quest-name">' + esc(q.name) + "</span>"
+    + (q.min ? '<span class="quest-min">from level ' + q.min + "</span>" : "") + "</span>"
+    + '<p class="quest-line"><b>' + esc(q.giver) + "</b>" + (q.where && q.where.zone ? ", " + esc(q.where.zone) : "") + " " + coordHTML(q.where) + "</p>"
+    + (extra ? '<p class="quest-line">' + esc(extra) + "</p>" : "")
+    + (q.task ? '<p class="quest-line">' + esc(q.task) + "</p>" : "")
+    + (rewards.length ? '<p class="rewards">Rewards: ' + rewards.join(" · ") + "</p>" : "")
+    + "</div></li>";
+}
+function runHTML(step, i, lvl, ups) {
+  const d = D.DUNGEONS[step.key];
+  if (!d) return "";
+  const list = ups.byDungeon[step.key] || [];
+  const left = list.filter((u) => u.role === "bis" && !gear.have.has(u.k)).length;
+  const bisCount = list.filter((u) => u.role === "bis").length;
+  const doneKey = lvl + ":" + step.key;
+  const done = plan.done.has(doneKey);
+  const quests = (d.quests || []).filter((q) => !q.min || q.min <= lvl);
+  const useful = quests.filter((q) => (q.rewards || []).some((r) => ups.byName[String(r).toLowerCase()]));
+  const others = quests.filter((q) => useful.indexOf(q) < 0);
+  const pickedN = quests.filter((q) => plan.quests.has(questId(q))).length;
+  let tags = "";
+  if (step.opt) tags += '<span class="chip chip-opt">Optional</span>';
+  if (d.cap === 30) tags += '<span class="chip chip-new">New at 30</span>';
+  if (done) tags += '<span class="chip chip-done">Done</span>';
+  else if (bisCount) tags += '<span class="chip' + (left ? " chip-left" : "") + '">' + (left ? left + " still needed" : "All collected") + "</span>";
+  const upsHTML = list.length
+    ? '<ul class="rows">' + list.map(upHTML).join("") + "</ul>"
+    : '<p class="none">' + (d.cap === 30 ? "Nobody has published this dungeon’s loot yet." : "No upgrades for your build here.") + "</p>";
+  const questBox = quests.length
+    ? '<div class="box"><p class="box-title"><span>Quests to grab first</span><span>' + pickedN + " of " + quests.length + " picked up</span></p>"
+      + (useful.length ? '<ul class="rows">' + useful.map((q) => questHTML(q, lvl, ups.byName)).join("") + "</ul>" : '<p class="none">None of these quests reward gear for your build.</p>')
+      + (others.length ? '<details class="more"><summary>' + (useful.length ? "Other quests here" : "The quests here") + " (" + others.length + ')</summary><ul class="rows">' + others.map((q) => questHTML(q, lvl, ups.byName)).join("") + "</ul></details>" : "")
+      + "</div>"
+    : "";
+  const travel = '<div class="box"><p class="box-title"><span>Getting there</span><span>' + esc(d.zone) + "</span></p>"
+    + '<div class="rows"><div style="padding:10px 14px" class="travel"><p>' + esc(d.travel) + "</p>"
+    + (d.entrance && d.entrance.x ? "<p>Entrance: " + coordHTML(d.entrance) + (d.entrance.note ? " <span class=\"quest-min\">" + esc(d.entrance.note) + "</span>" : "") + "</p>" : "")
+    + (d.bosses && d.bosses.length ? '<p class="bosses">Bosses: ' + d.bosses.map(esc).join(" → ") + "</p>" : "")
+    + "</div></div></div>";
+  return '<li class="run' + (step.opt ? " is-opt" : "") + (done ? " is-done" : "") + '" id="run-' + step.key + '">'
+    + '<div class="run-head"><span class="run-num">' + (i + 1) + '</span><div><h2 class="run-title">' + esc(d.name) + "</h2>"
+    + '<p class="run-meta">Levels ' + esc(d.levels) + " · " + esc(d.zone) + "</p></div>"
+    + '<div class="run-tags">' + tags + "</div></div>"
+    + '<p class="run-why">' + esc(step.why) + "</p>"
+    + '<div class="run-body">'
+    + '<div class="box"><p class="box-title"><span>Upgrades for you here</span><span>' + (bisCount ? (bisCount - left) + " of " + bisCount + " best-in-slot" : "") + "</span></p>" + upsHTML + "</div>"
+    + questBox + travel
+    + (d.forever ? '<p class="forever">' + esc(d.forever) + "</p>" : "")
+    + "</div>"
+    + '<div style="padding:0 18px 16px"><label class="done-row"><input type="checkbox" class="tick" data-done="' + esc(doneKey) + '"' + (done ? " checked" : "") + "> Done with this one</label></div>"
+    + "</li>";
+}
+function render() {
+  const lvl = SITE.level();
+  const P = D.PLANS[lvl] || D.PLANS[20];
+  const steps = P[gear.spec] || [];
+  const ups = upgradesFor(lvl);
+  let need = 0, total = 0;
+  steps.forEach((s) => (ups.byDungeon[s.key] || []).forEach((u) => { if (u.role === "bis") { total++; if (!gear.have.has(u.k)) need++; } }));
+  app.setAttribute("data-spec", gear.spec);
+  document.title = "Level " + lvl + " Dungeon Planner";
+  app.innerHTML = '<main class="wrap"><header class="head"><p class="eyebrow">WoW Forever beta · Dwarf Shaman</p><h1>Dungeon planner</h1>'
+    + levelbarHTML(lvl)
+    + '<p class="lede">Which dungeons to run at the level ' + lvl + " cap, in order, for your build. Ticking an item here ticks it in the gear guide too.</p>"
+    + '<p class="links"><a href="/gear">Gear guide</a> · <a href="/checklist">Checklist</a> · <a href="/party">Party board</a> · <a href="/">Toolkit home</a></p></header>'
+    + buildsHTML()
+    + '<div class="summary" role="status" aria-live="polite"><strong>' + need + "</strong><span>best-in-slot pieces still to get from these dungeons, out of " + total + ".</span></div>"
+    + '<ol class="runs">' + steps.map((s, i) => runHTML(s, i, lvl, ups)).join("") + "</ol>"
+    + (P.skip && P.skip.length ? '<section class="skip" aria-labelledby="skip-title"><h2 id="skip-title">Skip these</h2><ul>' + P.skip.map((s) => "<li><b>" + esc(D.DUNGEONS[s.key].name) + "</b>: " + esc(s.why) + "</li>").join("") + "</ul></section>" : "")
+    + '<footer class="foot"><p>Run order and notes are this page’s own picks, based on where your best-in-slot gear drops. Level ranges come from Forever’s game data on Wowhead, except Razorfen Kraul: Wowhead lists 32–42 there, which no other source agrees with, so it shows the usual 29–38. Quests and bosses come from Wowhead’s Forever guides and community loot tables, checked in late September 2026. Tap a location to copy a TomTom <code>/way</code> command.</p>'
+    + "<p>Your picks save in this browser. Fan-made and not affiliated with Blizzard Entertainment.</p>"
+    + '<div class="whoami" data-whoami></div>'
+    + "<ul>" + D.SOURCES.map((s) => '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + "</a> <span>" + esc(s.site) + "</span></li>").join("") + "</ul></footer>"
+    + '<div class="toast" id="toast" role="status" aria-live="polite" hidden></div></main>';
+}
+
+let toastTimer = 0;
+function toast(msg) {
+  const t = document.getElementById("toast");
+  if (!t) return;
+  t.textContent = msg;
+  t.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.hidden = true; }, 2400);
+}
+
+/* ---------- boot ---------- */
+const app = document.getElementById("app");
+if (!app || !G || !D) return;
+let gear = readGear();
+let plan = readPlan();
+render();
+
+app.addEventListener("change", (e) => {
+  const t = e.target;
+  if (t.name === "lvl") { SITE.setLevel(t.value); return; }
+  if (t.name === "spec") {
+    if (!SPEC_NAME[t.value]) return;
+    gear.spec = t.value;
+    saveGear();
+    render();
+    return;
+  }
+  const own = t.getAttribute("data-own");
+  if (own && G.ITEMS[own]) {
+    if (t.checked) gear.have.add(own); else gear.have.delete(own);
+    saveGear();
+    render();
+    const again = document.getElementById("own-" + own);
+    if (again) again.focus({ preventScroll: true });
+    return;
+  }
+  const q = t.getAttribute("data-quest");
+  if (q) {
+    if (t.checked) plan.quests.add(q); else plan.quests.delete(q);
+    savePlan();
+    const box = t.closest(".box");
+    const title = box && box.querySelector(".box-title span:last-child");
+    if (title) {
+      const all = box.querySelectorAll("[data-quest]");
+      const n = Array.prototype.filter.call(all, (x) => x.checked).length;
+      title.textContent = n + " of " + all.length + " picked up";
+    }
+    return;
+  }
+  const d = t.getAttribute("data-done");
+  if (d) {
+    if (t.checked) plan.done.add(d); else plan.done.delete(d);
+    savePlan();
+    render();
+    const again = app.querySelector('[data-done="' + d + '"]');
+    if (again) again.focus({ preventScroll: true });
+  }
+});
+
+app.addEventListener("click", (e) => {
+  const c = e.target.closest(".coord");
+  if (!c) return;
+  const text = c.getAttribute("data-way");
+  const done = () => toast("Copied " + text);
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, () => toast(text));
+    else toast(text);
+  } catch (err) { toast(text); }
+});
+
+SITE.onChange(() => render());
+window.addEventListener("storage", (e) => {
+  if (e.key === GEAR_KEY) { gear = readGear(); render(); }
+  if (e.key === PLAN_KEY) { plan = readPlan(); render(); }
+});
+})();
+</script>
+</body>
+</html>

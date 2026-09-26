@@ -3,7 +3,7 @@ const crypto = require("crypto");
 
 // Day boundaries for the stats (visits "today", the 30-day chart).
 const TZ = process.env.STATS_TZ || "America/Chicago";
-const PAGES = { home: "home page", checklist: "checklist", gear: "gear guide" };
+const PAGES = { home: "home page", checklist: "checklist", gear: "gear guide", dungeons: "dungeon planner", party: "party board" };
 const SPECS = { enh: "Enhancement", ele: "Elemental", resto: "Restoration" };
 const PROFS = { lw: "Leatherworking", tail: "Tailoring", eng: "Engineering", ench: "Enchanting" };
 const VID_RE = /^[a-z0-9]{12,40}$/i;
@@ -127,7 +127,7 @@ function sameOrigin(req) {
 async function forgetVisitor(vid, now) {
   const [profile, events] = await pipeline([["HGETALL", "v:" + vid], ["LRANGE", "events", 0, -1]]);
   const p = pairs(profile);
-  const cmds = [["SREM", "visitors", vid], ["DEL", "v:" + vid]];
+  const cmds = [["SREM", "visitors", vid], ["SREM", "party", vid], ["DEL", "v:" + vid]];
   Object.keys(PAGES).forEach((page) => {
     const n = Number(p["views_" + page]) || 0;
     if (n > 0) cmds.push(["HINCRBY", "pv", page, -n]);
