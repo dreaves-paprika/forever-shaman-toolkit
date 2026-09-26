@@ -1,0 +1,864 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 20 Dwarf Shaman</title>
+<meta name="description" content="Everything a level 20 Dwarf Shaman can train, unlock and quest for in the WoW Forever beta, as a checklist that saves in your browser.">
+<meta property="og:title" content="Level 20 Dwarf Shaman">
+<meta property="og:description" content="Everything a level 20 Dwarf Shaman can train, unlock and quest for in the WoW Forever beta, as a checklist that saves in your browser.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#EDF0F3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F141A" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&amp;family=DM+Mono:wght@400;500&amp;family=Marcellus+SC&amp;display=swap">
+<style>
+:root{color-scheme:light}html{-webkit-text-size-adjust:100%}[hidden]{display:none!important}
+:root{
+  --bg:#EDF0F3;
+  --surface:#FBFCFD;
+  --surface-2:#E4E9EE;
+  --ink:#15202B;
+  --ink-2:#465465;
+  --ink-3:#5E6C7B;
+  --line:#D2D9E1;
+  --line-strong:#A9B5C2;
+  --accent:#0A62C9;
+  --accent-soft:#DBE8F8;
+  --on-color:#FFFFFF;
+  --earth:#8A591A;
+  --earth-soft:#F0E3CF;
+  --fire:#B03A0C;
+  --fire-soft:#F7DFD2;
+  --water:#0B7285;
+  --water-soft:#D4EDF1;
+  --air:#54579E;
+  --air-soft:#E2E2F3;
+  --ok:#2C7A4B;
+  --warn:#9A5B00;
+  --focus:#0A62C9;
+  --font-display:"Marcellus SC","Marcellus",Georgia,"Times New Roman",serif;
+  --font-body:"Alegreya Sans","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+  --font-mono:"DM Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0F141A;
+    --surface:#161D25;
+    --surface-2:#1E2731;
+    --ink:#E6EBF0;
+    --ink-2:#A5B1BE;
+    --ink-3:#8793A0;
+    --line:#28323D;
+    --line-strong:#3A4755;
+    --accent:#5AA9FF;
+    --accent-soft:#15304E;
+    --on-color:#0B1520;
+    --earth:#D9A962;
+    --earth-soft:#33281A;
+    --fire:#FF8C57;
+    --fire-soft:#3B2319;
+    --water:#45C7D9;
+    --water-soft:#12323A;
+    --air:#AAADF3;
+    --air-soft:#25274A;
+    --ok:#6FD39A;
+    --warn:#F2B35B;
+    --focus:#5AA9FF;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0F141A;
+  --surface:#161D25;
+  --surface-2:#1E2731;
+  --ink:#E6EBF0;
+  --ink-2:#A5B1BE;
+  --ink-3:#8793A0;
+  --line:#28323D;
+  --line-strong:#3A4755;
+  --accent:#5AA9FF;
+  --accent-soft:#15304E;
+  --on-color:#0B1520;
+  --earth:#D9A962;
+  --earth-soft:#33281A;
+  --fire:#FF8C57;
+  --fire-soft:#3B2319;
+  --water:#45C7D9;
+  --water-soft:#12323A;
+  --air:#AAADF3;
+  --air-soft:#25274A;
+  --ok:#6FD39A;
+  --warn:#F2B35B;
+  --focus:#5AA9FF;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-underline-offset:2px}
+button{font:inherit;color:inherit}
+:where(a,button,summary):focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:6px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+[data-el="earth"]{--el:var(--earth);--el-soft:var(--earth-soft)}
+[data-el="fire"]{--el:var(--fire);--el-soft:var(--fire-soft)}
+[data-el="water"]{--el:var(--water);--el-soft:var(--water-soft)}
+[data-el="air"]{--el:var(--air);--el-soft:var(--air-soft)}
+
+/* Layout */
+.shell{max-width:1200px;margin-inline:auto;padding-inline:clamp(16px,3vw,32px);padding-block:28px 72px;display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
+.rail{display:contents}
+.sections{display:grid;gap:22px;min-width:0;container-type:inline-size}
+@media (min-width:960px){
+  .shell{grid-template-columns:292px minmax(0,1fr);column-gap:40px;align-items:start}
+  .rail{display:flex;flex-direction:column;gap:24px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 20px);max-height:calc(100vh - 40px);overflow-y:auto;padding-bottom:8px;scrollbar-width:thin}
+}
+
+/* Nameplate */
+.plate{display:grid;gap:14px}
+.eyebrow{margin:0;font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.plate h1{margin:0;font-family:var(--font-display);font-weight:400;font-size:clamp(32px,4vw,40px);line-height:1.04;letter-spacing:.005em;text-wrap:balance}
+.lede{margin:0;color:var(--ink-2);max-width:42ch}
+.sockets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.socket{display:grid;justify-items:center;gap:2px;padding:10px 4px 9px;border:1px dashed var(--line-strong);border-radius:12px;color:var(--ink-3);text-align:center;transition:background .2s,border-color .2s,color .2s}
+.socket svg{width:22px;height:22px;margin-bottom:2px}
+.socket-name{font-family:var(--font-display);font-size:15px;line-height:1.1;color:var(--ink-2)}
+.socket-state{font-family:var(--font-mono);font-size:11px;letter-spacing:.03em;text-transform:uppercase}
+.socket[data-has="1"]{border-style:solid;border-color:var(--el);background:var(--el-soft);color:var(--el)}
+.socket[data-has="1"] .socket-name{color:var(--el)}
+.socket[data-locked="1"]{border-style:dotted}
+.overall{display:grid;gap:8px}
+.overall-line{margin:0;display:flex;align-items:baseline;gap:6px}
+.overall-num{font-family:var(--font-mono);font-size:28px;font-weight:500;line-height:1;font-variant-numeric:tabular-nums}
+.overall-of{color:var(--ink-2);font-size:15px}
+.bar{display:block;height:6px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:inherit;transition:width .25s ease}
+.status{margin:0;display:flex;gap:9px;align-items:flex-start;font-size:14px;line-height:1.4;color:var(--ink-2)}
+.status::before{content:"";flex:none;width:8px;height:8px;margin-top:5px;border-radius:50%;background:var(--ok)}
+.status[data-tone="busy"]::before{background:var(--accent)}
+.status[data-tone="warn"]::before{background:var(--warn)}
+.status[data-tone="off"]::before{background:var(--line-strong)}
+.switch{position:relative;display:inline-flex;align-items:center;gap:10px;font-size:14.5px;color:var(--ink-2);cursor:pointer;user-select:none;width:max-content;max-width:100%}
+.switch input{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+.switch-track{position:relative;flex:none;width:34px;height:20px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line-strong);transition:background .15s,border-color .15s}
+.switch-track::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--ink-3);transition:transform .15s,background .15s}
+.switch input:checked + .switch-track{background:var(--accent);border-color:var(--accent)}
+.switch input:checked + .switch-track::after{transform:translateX(14px);background:var(--on-color)}
+.switch input:focus-visible + .switch-track{outline:2px solid var(--focus);outline-offset:2px}
+
+/* Section list */
+.toc ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.toc-link{--c:var(--accent);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;align-items:baseline;padding:9px 10px;border-radius:10px;color:var(--ink);text-decoration:none}
+.toc-link[data-el]{--c:var(--el)}
+.toc-link:hover{background:var(--surface-2)}
+.toc-name{font-size:15.5px;line-height:1.3}
+.toc-short{display:none}
+.toc-count{font-family:var(--font-mono);font-size:12.5px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.toc-bar{grid-column:1 / -1;height:4px}
+.toc-bar i{background:var(--c)}
+@media (max-width:959.98px){
+  .toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;margin-inline:calc(-1 * clamp(16px,3vw,32px));padding:8px clamp(16px,3vw,32px);background:var(--bg);background:color-mix(in srgb,var(--bg) 92%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .toc ul{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+  .toc ul::-webkit-scrollbar{display:none}
+  .toc li{flex:none}
+  .toc-link{display:flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
+  .toc-long,.toc-bar{display:none}
+  .toc-short{display:inline}
+  .toc-name{font-size:14.5px;white-space:nowrap}
+}
+
+/* Panels */
+.panel{--sec:var(--accent);--sec-soft:var(--accent-soft);background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;scroll-margin-top:calc(env(safe-area-inset-top,0px) + 76px)}
+.panel[data-el]{--sec:var(--el);--sec-soft:var(--el-soft)}
+.panel-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.glyph{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--sec-soft);color:var(--sec)}
+.glyph svg{width:20px;height:20px}
+.panel-head h2{margin:0;font-family:var(--font-display);font-weight:400;font-size:23px;line-height:1.15;text-wrap:balance}
+.panel-count{font-family:var(--font-mono);font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums;padding:4px 9px;border-radius:99px;background:var(--surface-2)}
+.panel-intro{margin:16px 20px 0;color:var(--ink-2);max-width:68ch}
+.panel-where{display:flex;flex-wrap:wrap;gap:8px;margin:12px 20px 0}
+.tips{margin:14px 20px 0;padding:12px 16px 12px 34px;border-radius:12px;background:var(--sec-soft);font-size:15px;line-height:1.45;display:grid;gap:6px}
+.tips li::marker{color:var(--sec)}
+.tips-after{margin-bottom:20px}
+.group-title{margin:22px 20px 2px;font-family:var(--font-mono);font-weight:500;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.group-hint{margin:2px 20px 0;font-size:14.5px;color:var(--ink-2)}
+.footnote{margin:4px 20px 20px;font-size:14px;color:var(--ink-2);max-width:72ch}
+
+/* Checklist rows */
+.items{list-style:none;margin:8px 0 0;padding:0 8px 8px}
+.item{display:grid;grid-template-columns:22px minmax(0,1fr);column-gap:14px;row-gap:8px;padding:13px 12px;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.tick{appearance:none;-webkit-appearance:none;margin:1px 0 0;width:22px;height:22px;border-radius:6px;border:1.5px solid var(--line-strong);background:var(--surface);display:grid;place-content:center;cursor:pointer;transition:background .12s,border-color .12s}
+.tick::after{content:"";width:11px;height:6px;border-left:2.5px solid var(--on-color);border-bottom:2.5px solid var(--on-color);transform:translateY(-1px) rotate(-45deg) scale(0);transition:transform .12s ease}
+.tick:hover{border-color:var(--sec)}
+.tick:checked{background:var(--sec);border-color:var(--sec)}
+.item[data-el] .tick:checked{background:var(--el);border-color:var(--el)}
+.tick:checked::after{transform:translateY(-1px) rotate(-45deg) scale(1)}
+.tick:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.item-body{display:grid;gap:3px;min-width:0;cursor:pointer}
+.item-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
+.item-title{font-weight:500;font-size:16.5px;line-height:1.3}
+.item-note{display:block;color:var(--ink-2);font-size:15px;line-height:1.45;max-width:68ch}
+.item-note a{color:var(--sec)}
+.item.is-done .item-title{color:var(--ink-3);text-decoration:line-through;text-decoration-thickness:1.5px;text-decoration-color:var(--line-strong)}
+.item.is-done .item-note{color:var(--ink-3)}
+.item-meta{grid-column:2;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start}
+.where-text{font-size:13.5px;line-height:1.35;color:var(--ink-2)}
+.step-num{display:inline-grid;place-items:center;min-width:24px;height:22px;padding:0 6px;border-radius:99px;background:var(--sec-soft);color:var(--sec);font-family:var(--font-mono);font-size:12px;font-weight:500;font-variant-numeric:tabular-nums}
+.item.is-info .item-body{cursor:default}
+.info-mark{width:22px;height:22px;border-radius:6px;border:1.5px dashed var(--line-strong);display:grid;place-items:center;color:var(--ink-3);font-family:var(--font-mono);font-size:13px;line-height:1}
+.chip{display:inline-flex;align-items:center;font-family:var(--font-mono);font-size:11.5px;line-height:1;padding:4px 7px;border-radius:99px;border:1px solid var(--line);color:var(--ink-2);white-space:nowrap;font-variant-numeric:tabular-nums}
+.chip-new{border-color:transparent;background:var(--accent-soft);color:var(--accent)}
+.chip-el{border-color:transparent;background:var(--el-soft);color:var(--el)}
+.chip-opt{border-style:dashed}
+.coord{display:inline-flex;align-items:baseline;gap:6px;padding:5px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-family:var(--font-mono);font-size:12.5px;line-height:1.2;color:var(--ink-3);cursor:pointer;white-space:nowrap;transition:border-color .12s,color .12s}
+.coord:hover{border-color:var(--sec);color:var(--ink-2)}
+.coord-xy{color:var(--ink);font-weight:500}
+#app[data-hide-done="1"] .item.is-done{display:none}
+
+/* Catch-up quests */
+.steps{grid-column:2;margin:4px 0 2px;padding:0;list-style:none;counter-reset:step;display:grid;gap:10px}
+.steps li{counter-increment:step;display:grid;grid-template-columns:22px minmax(0,1fr);column-gap:10px;row-gap:6px;font-size:15px;line-height:1.45;color:var(--ink-2)}
+.steps li::before{content:counter(step);display:grid;place-items:center;width:22px;height:22px;border-radius:99px;background:var(--el-soft);color:var(--el);font-family:var(--font-mono);font-size:12px;font-weight:500}
+.step-where{grid-column:2;display:flex;flex-wrap:wrap;gap:6px}
+.quest.is-done .steps{display:none}
+.air-note{display:flex;gap:10px;align-items:flex-start;margin:6px 20px 20px;padding:12px 14px;border:1px dotted var(--line-strong);border-radius:12px;color:var(--ink-2);font-size:15px;line-height:1.45}
+.air-note svg{flex:none;width:20px;height:20px;color:var(--air);margin-top:1px}
+
+/* Talents */
+.spec{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;margin:16px 20px 0;padding:0;border:0;min-width:0}
+.seg{position:relative;display:block;cursor:pointer}
+.seg input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.seg-body{display:grid;gap:2px;height:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);transition:background .12s,border-color .12s}
+.seg-name{font-family:var(--font-display);font-size:17px;line-height:1.15}
+.seg-use{font-size:13.5px;color:var(--ink-2)}
+.seg:hover .seg-body{border-color:var(--line-strong)}
+.seg input:checked + .seg-body{border-color:var(--accent);background:var(--accent-soft)}
+.seg input:focus-visible + .seg-body{outline:2px solid var(--focus);outline-offset:2px}
+.build-blurb{margin:14px 20px 0;color:var(--ink-2);max-width:68ch}
+.build{list-style:none;margin:10px 20px 0;padding:0;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.build li{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:3px 12px;align-items:baseline;padding:10px 14px;border-top:1px solid var(--line)}
+.build li:first-child{border-top:0}
+.build-name{font-weight:500}
+.build-pts{font-family:var(--font-mono);font-size:13.5px;font-weight:500;color:var(--accent);font-variant-numeric:tabular-nums}
+.build-row{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3)}
+.build-fx{grid-column:1 / -1;color:var(--ink-2);font-size:14.5px}
+.build-src{margin:8px 20px 0;font-size:13px;color:var(--ink-3)}
+
+/* Totem bar */
+.sets{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin:10px 20px 0}
+.set{display:grid;gap:8px;align-content:start;padding:12px 14px;border:1px solid var(--line);border-radius:12px}
+.set-name{margin:0;font-family:var(--font-display);font-size:16px}
+.set-slots{list-style:none;margin:0;padding:0;display:grid;gap:5px;font-size:14.5px}
+.set-slots li{display:grid;grid-template-columns:52px minmax(0,1fr);gap:8px;align-items:baseline}
+.slot-el{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--el)}
+.slot-empty{color:var(--ink-3)}
+.set-note{margin:0;font-size:13.5px;color:var(--ink-2)}
+
+/* Level 30 preview */
+.next-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin:16px 20px 20px}
+.lvl{padding:12px 14px;border:1px dashed var(--line-strong);border-radius:12px}
+.lvl-num{margin:0 0 6px;font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.lvl ul{margin:0;padding-left:18px;display:grid;gap:3px;font-size:14.5px;line-height:1.4;color:var(--ink-2)}
+
+@container (min-width:480px){
+  .spec{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .next-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@container (min-width:620px){
+  .item{grid-template-columns:22px minmax(0,1fr) auto}
+  .item-meta{grid-column:auto;justify-content:flex-end;max-width:260px}
+  .item-meta .where-text{text-align:right}
+  .quest .steps,.item .steps{grid-column:2 / -1}
+  .build li{grid-template-columns:minmax(0,1.1fr) auto 64px minmax(0,2fr)}
+  .build-fx{grid-column:auto}
+  .sets{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@container (min-width:720px){
+  .next-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
+/* Footer, toast */
+.foot{display:grid;gap:10px;padding:6px 4px 0;font-size:14.5px;color:var(--ink-2)}
+.foot p{margin:0;max-width:72ch}
+.foot .group-title{margin:10px 0 0}
+.sources{margin:0;padding-left:18px;display:grid;gap:4px}
+.sources span{color:var(--ink-3)}
+.reset-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:10px}
+.reset{padding:8px 14px;border-radius:10px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink-2);cursor:pointer}
+.reset:hover{border-color:var(--fire);color:var(--fire)}
+.reset.armed{border-color:var(--fire);background:var(--fire-soft);color:var(--fire)}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:50;display:flex;flex-wrap:wrap;align-items:center;gap:10px;max-width:calc(100vw - 32px);padding:10px 14px;border-radius:12px;background:var(--ink);color:var(--bg);font-size:14.5px;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.toast input{width:280px;max-width:100%;padding:6px 8px;border-radius:8px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);font-family:var(--font-mono);font-size:13px}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}
+}
+.companion{margin:0;font-size:14.5px;color:var(--ink-2)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(() => {
+"use strict";
+
+const TITLE = "Level 20 Dwarf Shaman";
+const HIDE_KEY = "forever-shaman20:hide-done";
+
+const EL_NAME = { earth: "Earth", fire: "Fire", water: "Water", air: "Air" };
+const GLYPH = {
+  bolt: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M11.6 1.8 4.2 11h5l-1.1 7.2L15.8 9h-5.1l.9-7.2z" fill="currentColor"/></svg>',
+  earth: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M1.8 16.6 7 7.2l2.7 4.2 3-5.5 5.5 10.7z" fill="currentColor"/></svg>',
+  fire: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10.2 1.6c.5 3 4.8 4.6 4.8 9.4a5 5 0 0 1-10 0c0-2 1-3.5 2.2-4.5.1 1.7.9 2.6 2 3.1-.4-2.8-.1-5.5 1-8z" fill="currentColor"/></svg>',
+  water: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.9C7.2 5.8 4.9 8.8 4.9 12a5.1 5.1 0 0 0 10.2 0c0-3.2-2.3-6.2-5.1-10.1z" fill="currentColor"/></svg>',
+  air: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2.5 7.5h9.2a2.6 2.6 0 1 0-2.6-2.6M2.5 11h12.6a2.6 2.6 0 1 1-2.6 2.6M2.5 14.5h5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  rune: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2v16M5 5.5l10 9M15 5.5l-10 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  totem: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6.5 2.5h7v4h-7zM5.5 7.5h9v4h-9zM6.5 12.5h7v5h-7z" fill="currentColor"/></svg>',
+  mace: '<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="13.2" cy="6.8" r="3.6" fill="currentColor"/><path d="m11 9.4-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+  next: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 16.5v-12M5 9l5-5 5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+};
+
+const TRAINER = { zone: "Ironforge", x: "46.2", y: "13.0" };
+const NORRIC = { zone: "Loch Modan", x: "41.9", y: "19.0" };
+
+const BUILDS = {
+  enh: { label: "Enhancement", use: "Solo questing", src: "Icy Veins", blurb: "The easiest way to quest alone: hit things, shock them, heal between pulls.", rows: [
+    { n: "Thundering Strikes", row: 1, pts: "5/5", fx: "+5% crit chance on spells and attacks" },
+    { n: "Mental Dexterity", row: 2, pts: "3/3", fx: "Your Intellect also adds Attack Power" },
+    { n: "Improved Ghost Wolf", row: 2, pts: "2/2", fx: "Faster Ghost Wolf that also works indoors" },
+    { n: "Shamanistic Focus", row: 3, pts: "1/1", fx: "Shocks and Lightning Shield cost 45% less mana" }
+  ] },
+  resto: { label: "Restoration", use: "Dungeon healing", src: "Wowhead", blurb: "Built for healing groups. Wowhead’s guide suggests these same points at 20 even if you plan to play Elemental later.", rows: [
+    { n: "Improved Healing Wave", row: 1, pts: "5/5", fx: "Healing Wave casts 0.5 seconds faster" },
+    { n: "Mindfulness", row: 2, pts: "3/3", fx: "Half your mana regeneration keeps going while you cast" },
+    { n: "Tidal Focus", row: 2, pts: "2/5", fx: "Heals cost 2% less mana; +2% hit" },
+    { n: "Water Shield", row: 3, pts: "1/1", fx: "Mana back when you’re hit or land a critical heal" }
+  ] },
+  ele: { label: "Elemental", use: "Caster damage", src: "Icy Veins", blurb: "Stand back and throw lightning and fire.", rows: [
+    { n: "Concussion", row: 1, pts: "5/5", fx: "+5% damage for Lightning Bolt and Earth Shock" },
+    { n: "Call of Flame", row: 2, pts: "3/3", fx: "+15% damage for Fire totems, Flame Shock and Fire Nova" },
+    { n: "Elemental Warding", row: 2, pts: "2/3", fx: "Take less Fire, Frost and Nature damage" },
+    { n: "Elemental Focus", row: 3, pts: "1/1", fx: "Sometimes makes your next damage spell free" }
+  ] }
+};
+
+const SECTIONS = [
+  {
+    id: "spells", short: "Spells", title: "Train your spells", glyph: "bolt",
+    intro: "Level 20 is a big training stop. Visit Eldrun Stormbreaker, the Shaman trainer in Ironforge’s Mystic Ward, and buy everything on this list.",
+    where: [Object.assign({ label: "Eldrun Stormbreaker" }, TRAINER)],
+    groups: [
+      { title: "New at level 20", items: [
+        { id: "s-ghostwolf", name: "Ghost Wolf", lvl: 20, note: "Wolf form that runs 40% faster. You’ll want it for every leg of Call of Water." },
+        { id: "s-cote", name: "Call of the Elements", lvl: 20, tag: "new", note: "Drops every totem on your totem bar in one cast. Until you earn an Air totem at 30, that means Earth, Fire and Water." },
+        { id: "s-recall", name: "Totemic Recall", lvl: 20, tag: "new", note: "Picks your totems back up and refunds 25% of the mana they cost." },
+        { id: "s-lb4", name: "Lightning Bolt", rank: 4, lvl: 20, note: "Casts in 2.5 seconds in Forever (3 in Classic) and costs less mana." },
+        { id: "s-frostshock", name: "Frost Shock", rank: 1, lvl: 20, note: "Damage plus a 50% slow for 8 seconds. Stops fleeing mobs cold." },
+        { id: "s-frostbrand", name: "Frostbrand Weapon", rank: 1, lvl: 20, note: "Imbue with a chance to deal Frost damage and slow. Imbues now last 60 minutes instead of 5." },
+        { id: "s-lhw", name: "Lesser Healing Wave", rank: 1, lvl: 20, note: "A quicker, smaller heal for when a pull goes sideways." },
+        { id: "s-searing2", name: "Searing Totem", rank: 2, lvl: 20, el: "fire", note: "Needs the Fire Totem in your bags." },
+        { id: "s-hst", info: true, name: "Healing Stream Totem", rank: 1, lvl: 20, el: "water", noteHTML: 'The trainer doesn’t sell this one. It’s the reward for <a href="#water">Call of Water</a>.' }
+      ] },
+      { title: "Top ranks from levels 1–18", hint: "If you trained at every stop, tick these off. Buy any you skipped.", items: [
+        { id: "s-hw4", name: "Healing Wave", rank: 4, lvl: 18, note: "Your main heal." },
+        { id: "s-fs2", name: "Flame Shock", rank: 2, lvl: 18, note: "Instant Fire damage plus a burn." },
+        { id: "s-ftw2", name: "Flametongue Weapon", rank: 2, lvl: 18, note: "Imbue that adds Fire damage to every hit." },
+        { id: "s-claw2", name: "Stoneclaw Totem", rank: 2, lvl: 18, el: "earth", note: "Draws enemy attacks away from you." },
+        { id: "s-tremor", name: "Tremor Totem", lvl: 18, el: "earth", note: "Removes Fear, Charm and Sleep from your party." },
+        { id: "s-ls2", name: "Lightning Shield", rank: 2, lvl: 16, note: "Zaps whatever hits you. Lasts 10 minutes." },
+        { id: "s-rb3", name: "Rockbiter Weapon", rank: 3, lvl: 16, note: "Imbue that adds attack power and extra threat." },
+        { id: "s-curepoison", name: "Cure Poison", lvl: 16, note: "Removes a poison from you or a party member." },
+        { id: "s-es3", name: "Earth Shock", rank: 3, lvl: 14, note: "Instant damage that also interrupts a spellcast." },
+        { id: "s-skin2", name: "Stoneskin Totem", rank: 2, lvl: 14, el: "earth", note: "Now reduces all Physical damage, not just melee, out to 30 yards." },
+        { id: "s-firenova", name: "Fire Nova", rank: 1, lvl: 12, tag: "new", note: "Replaces Fire Nova Totem. It’s now a spell that explodes your active Fire totem, so drop Searing Totem first." },
+        { id: "s-purge", name: "Purge", rank: 1, lvl: 12, note: "Strips a magic buff off an enemy." },
+        { id: "s-ancestral", name: "Ancestral Spirit", rank: 1, lvl: 12, note: "Brings a dead party member back to life." },
+        { id: "s-soe", name: "Strength of Earth Totem", rank: 1, lvl: 10, el: "earth", note: "More Strength for you and your party." },
+        { id: "s-earthbind", name: "Earthbind Totem", lvl: 6, el: "earth", note: "Slows enemies near it. Your escape button." }
+      ] }
+    ]
+  },
+  {
+    id: "water", short: "Call of Water", title: "Call of Water", el: "water", glyph: "water", steps: true,
+    intro: "The level 20 totem quest. It has one fight and a lot of travel, about two hours with Ghost Wolf. The reward is the Water Totem and Healing Stream Totem.",
+    tips: [
+      "Set your hearthstone at the Thelsamar inn in Loch Modan before you start. Norric and Hervdana are both a short run from there, and the hearth saves you the long trip back from Ashenvale.",
+      "Pick up flight paths as you pass through Menethil Harbor, Lakeshire, Auberdine, Astranaar and Sentinel Hill."
+    ],
+    items: [
+      { id: "w1", name: "Pick up Call of Water", note: "From Eldrun Stormbreaker once you’re level 20.", where: [TRAINER] },
+      { id: "w2", name: "Talk to Norric Lochthane", note: "He stands outside a stone hut on the north shore of Loch Modan, below Stonewrought Dam.", where: [NORRIC] },
+      { id: "w3", name: "Find Hervdana Saegrund", note: "Take the road north through Dun Algaz into the Wetlands. Her cave sits behind the southern waterfall: climb the winding path, then drop from the ledge into the cave.", where: [{ zone: "Wetlands", x: "65.7", y: "76.4" }] },
+      { id: "w4", name: "Brown waterskin: the waterfall", note: "Jump into the water right outside her cave, use the Unfilled Brown Waterskin, and hand it back to her." },
+      { id: "w5", name: "Red waterskin: Redridge", note: "Fly or take the Deeprun Tram to Stormwind and run east through Elwynn Forest. Grab the Lakeshire flight path on the way in, fill the skin in the lake at Stonewatch Falls (murloc country), then fly back to Thelsamar and hand it to Hervdana.", where: [{ zone: "Redridge Mountains", x: "73.7", y: "61.6" }] },
+      { id: "w6", name: "Blue waterskin: Ashenvale", note: "Take the boat from Menethil Harbor’s north pier to Auberdine. It stops at Southshore first, so stay aboard. Run south into Ashenvale, fill the skin in the lake at Astranaar, then hearth to Thelsamar and hand it to Hervdana.", where: [{ label: "Pier", zone: "Wetlands", x: "4.7", y: "57.3" }, { label: "Lake", zone: "Ashenvale", x: "37.0", y: "51.6" }] },
+      { id: "w7", name: "Take the Water Sapta to Norric", note: "Hervdana hands you the Sapta after the third sample. Norric then sends you to Westfall.", where: [NORRIC] },
+      { id: "w8", name: "Forgotten Shrine, Westfall", note: "Stendel’s Pond is a short run southwest of Sentinel Hill. Drink the Water Sapta there, kill the Corrupt Minor Manifestation of Water and loot its bracers.", where: [{ zone: "Westfall", x: "47.5", y: "60.4" }] },
+      { id: "w9", name: "Wake the pond", note: "Click the Forgotten Shrine (the big stone) to hand in the bracers. Wait for the Minor Manifestation of Water to rise in the pond, swim out, and take the Shard of Water." },
+      { id: "w10", name: "Bring the Shard of Water to Norric", note: "Reward: the Water Totem, which has to stay in your bags, and Healing Stream Totem.", where: [NORRIC] }
+    ],
+    footnote: "Snowbound, a level 20 Loch Modan quest, also ends at Norric. If you have it, hand it in on one of these visits; the Jar of Snow melts 10 minutes after you fill it."
+  },
+  {
+    id: "totems", short: "Earth & Fire", title: "Earth and Fire totems", el: "earth", glyph: "earth",
+    intro: "You can’t cast a totem unless that element’s Totem item is in your bags. Tick each one you already carry. If one is missing, its quest steps are listed under it.",
+    quests: [
+      { id: "q-earth", el: "earth", name: "Earth Totem in your bags", sub: "Call of Earth · level 4", reward: "Earth Totem and Stoneskin Totem", steps: [
+        { t: "Talk to Teo Hammerstorm inside Anvilmar, Coldridge Valley.", where: [{ zone: "Dun Morogh", x: "28.8", y: "66.2" }] },
+        { t: "Bring him 2 Iceclaw Bear Pendants from Frostmane Troll Whelps.", where: [{ zone: "Dun Morogh", x: "27.3", y: "79.6" }] },
+        { t: "Carry the Earth Sapta up the rubble-marked path to the Earth Spirit Stone, drink it there, and talk to the Minor Manifestation of Earth.", where: [{ label: "Path", zone: "Dun Morogh", x: "25.8", y: "69.3" }, { label: "Stone", zone: "Dun Morogh", x: "25.0", y: "62.4" }] },
+        { t: "Bring the Rough Quartz back to Teo." }
+      ] },
+      { id: "q-fire", el: "fire", name: "Fire Totem in your bags", sub: "Call of Fire · level 10", reward: "Fire Totem and Searing Totem", steps: [
+        { t: "Pick up Call of Fire from Eldrun Stormbreaker in Ironforge.", where: [TRAINER] },
+        { t: "Find Bruegs Kindleborn in a cave in eastern Dun Morogh. The path starts behind a farm.", where: [{ label: "Path", zone: "Dun Morogh", x: "86.7", y: "47.0" }, { label: "Cave", zone: "Dun Morogh", x: "87.6", y: "43.6" }] },
+        { t: "Carry the Torch of the Dormant Flame to Braldir Ashmantle, up a stone-marked path off the road to Thelsamar.", where: [{ zone: "Loch Modan", x: "32.0", y: "66.3" }] },
+        { t: "Get Fire Tar from Tunnel Rat Geomancers in Silver Stream Mine and a Reagent Pouch from Stonesplinter Seers. They top out around level 14, so this goes fast at 20.", where: [{ label: "Mine", zone: "Loch Modan", x: "35.6", y: "20.2" }, { label: "Seers", zone: "Loch Modan", x: "31.0", y: "77.4" }] },
+        { t: "Take the Fire Sapta to the peak above Braldir, drink it at the Fire Spirit Stone, kill the Minor Manifestation of Fire, loot it, then click the Brazier of the Dormant Flame.", where: [{ zone: "Loch Modan", x: "31.9", y: "64.5" }] },
+        { t: "Bring the Torch of Eternal Flame back to Bruegs Kindleborn." }
+      ] }
+    ],
+    air: "Air Totem: Call of Air opens at level 30, once the beta cap rises. Step-by-step guides for it aren’t out yet."
+  },
+  {
+    id: "talents", short: "Talents", title: "Spend your talent points", glyph: "rune",
+    intro: "You have 11 points at level 20, one per level from 10. Each row of a tree needs 5 more points spent in that tree, so 11 points reach row 3. Pick the build that fits how you play.",
+    builds: BUILDS,
+    check: { id: "t-spent", name: "All 11 talent points spent", note: "Open the talent window (N) and check that no points are left unspent." }
+  },
+  {
+    id: "bar", short: "Totem bar", title: "Set up your totem bar", glyph: "totem",
+    intro: "Call of the Elements drops whatever sits on your totem bar. Set it once and every pull starts with a single cast.",
+    items: [
+      { id: "b1", name: "Put Call of the Elements and Totemic Recall on your action bar", note: "Drop your totems with one. After the fight, pick them up with the other for 25% of the mana back." },
+      { id: "b2", name: "Fill the Earth, Fire and Water slots", note: "Suggested sets are below. The Air slot stays empty until 30." },
+      { id: "b3", name: "Keep Tremor Totem and Earthbind Totem on quick keys", note: "Swap Tremor in against casters that fear, charm or sleep. Drop Earthbind to slow adds or to escape." }
+    ],
+    sets: [
+      { name: "Solo, melee", earth: "Strength of Earth", fire: "Searing Totem", water: "Healing Stream" },
+      { name: "Solo, caster", earth: "Stoneskin", fire: "Searing Totem", water: "Healing Stream" },
+      { name: "Dungeon group", earth: "Stoneskin", fire: "Searing Totem", water: "Healing Stream", note: "Use Strength of Earth instead when your group is melee-heavy." }
+    ],
+    after: [
+      "Buff totems now last 5 minutes and reach 30 yards, so you rarely recast mid-fight.",
+      "Fire Nova only works while a Fire totem is down."
+    ]
+  },
+  {
+    id: "gear", short: "Gear & extras", title: "Weapons, gear and extras", glyph: "mace",
+    items: [
+      { id: "g1", name: "Learn Two-Handed Maces", whereText: "Buliwyf Stonehand, Hall of Arms, Ironforge", note: "Classic’s Two-Handed Axes and Maces talent is gone, so Shamans simply train them. He also teaches Two-Handed Axes, One-Handed Axes and Fist Weapons. You already know One-Handed Maces and Staves." },
+      { id: "g2", name: "Equip a mace", note: "Dwarf Mace Specialization adds 1% crit to all your spells and attacks while a mace is equipped. A one-hander with a shield suits casters; a two-hander suits Enhancement." },
+      { id: "g3", name: "Level up your weapon skill", note: "A newly trained weapon type starts at low skill and misses a lot. Swing it on easy mobs until the Skills tab shows it at your level’s cap." },
+      { id: "g4", name: "Hall of Thanes: Ironforge Greathammer", opt: true, note: "New Alliance dungeon for levels 13–18, in Old Ironforge beneath the High Seat. The quest Old Ironforge Incursion rewards this two-handed mace, and Important Heirlooms rewards the Dwarven Tome off-hand for casters. The trash hits hard, so bring a full group." },
+      { id: "g5", name: "Stretch goal: an extra talent point", opt: true, note: "The Legacy system (press Y) opens with your first Legacy Point. With the cap at 20, the realistic way to earn one is a crafting profession at 150 skill. Spend it on Talented in the Adventure tree: each rank starts your talent points one level earlier, so one rank gives you a 12th point at 20. Perk values come from demo tooltips and could change." }
+    ]
+  },
+  { id: "next", short: "At 30", title: "Coming at level 30", glyph: "next",
+    intro: "Blizzard plans to raise the beta cap to 30 a couple of weeks into testing. This is what opens up then; nothing here can be done yet." }
+];
+
+const NEXT = [
+  { lvl: "22", items: ["Totemic Projection (new: moves your active totems)", "Poison Cleansing Totem", "Cure Disease", "Water Breathing", "Fire Nova rank 2"] },
+  { lvl: "24", items: ["Frost Resistance Totem", "Strength of Earth rank 2", "Stoneskin rank 3", "Healing Wave rank 5", "Earth Shock rank 4", "Lightning Shield rank 3", "Rockbiter rank 4", "Ancestral Spirit rank 2"] },
+  { lvl: "25", items: ["Your 16th talent point opens row 4: Stormstrike for Enhancement, Mana Tide Totem for Restoration"] },
+  { lvl: "26", items: ["Magma Totem", "Mana Spring Totem", "Far Sight", "Lightning Bolt rank 5", "Flametongue Weapon rank 3"] },
+  { lvl: "28", items: ["Flametongue Totem", "Fire Resistance Totem", "Water Walking", "Flame Shock rank 3", "Frostbrand rank 2", "Lesser Healing Wave rank 2", "Stoneclaw rank 3"] },
+  { lvl: "30", items: ["Call of Air quest for the Air Totem", "Call of the Ancestors (new: a second totem-bar set)", "Windfury Weapon", "Reincarnation (needs an Ankh unless you take the Reagent Economy Legacy perk)", "Grounding Totem", "Nature Resistance Totem", "Astral Recall", "Healing Stream rank 2", "Searing Totem rank 3"] }
+];
+
+const SOURCES = [
+  { name: "Dwarf Shaman Totem Quests Guide", site: "Warcraft Tavern", url: "https://www.warcrafttavern.com/forever/guides/dwarf-shaman-totem-quests/" },
+  { name: "Shaman Guide: weapons, talents and totems", site: "Warcraft Tavern", url: "https://www.warcrafttavern.com/forever/guides/shaman/" },
+  { name: "Shaman abilities in WoW Forever (beta client data)", site: "wowclassicforever.info", url: "https://wowclassicforever.info/classes/shaman/abilities/" },
+  { name: "Shaman talent calculator and level 20 builds", site: "wowclassicforever.info", url: "https://wowclassicforever.info/talent/shaman/" },
+  { name: "Call of Water", site: "Wowhead", url: "https://www.wowhead.com/forever/quest=94505/call-of-water" },
+  { name: "Hall of Thanes walkthrough", site: "Wowhead", url: "https://www.wowhead.com/forever/news/the-hall-of-thanes-new-dungeon-walkthrough-for-wow-forever-382991" },
+  { name: "Shaman class overview", site: "Icy Veins", url: "https://www.icy-veins.com/wow-forever/shaman-class-overview" },
+  { name: "Dwarf and Gnome 1–20 route", site: "ForeverWisp", url: "https://www.foreverwisp.com/guides/wow-forever-dwarf-gnome-leveling-guide" },
+  { name: "Legacy System guide", site: "Warcraft Tavern", url: "https://www.warcrafttavern.com/forever/guides/legacy/" }
+];
+
+const SOCKETS = [
+  { el: "earth", from: "q-earth" },
+  { el: "fire", from: "q-fire" },
+  { el: "water", from: "w10" },
+  { el: "air", from: null }
+];
+
+/* ---------- derived ---------- */
+function sectionItems(sec) {
+  if (sec.groups) return sec.groups.reduce((all, g) => all.concat(g.items), []);
+  if (sec.quests) return sec.quests;
+  if (sec.check) return [sec.check];
+  return sec.items || [];
+}
+const CHECKABLE = {};
+const VALID = new Set();
+SECTIONS.forEach((sec) => {
+  const ids = sectionItems(sec).filter((it) => !it.info).map((it) => it.id);
+  ids.forEach((id) => VALID.add(id));
+  CHECKABLE[sec.id] = ids;
+});
+const TOTAL = VALID.size;
+
+/* ---------- helpers ---------- */
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function pct(d, t) { return t ? Math.round((d / t) * 100) : 0; }
+function countIn(st, ids) { return ids.filter((id) => st.done.has(id)).length; }
+function countAll(st) { let n = 0; st.done.forEach((id) => { if (VALID.has(id)) n++; }); return n; }
+function fmtTime(iso) {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "";
+  try { return d.toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }); }
+  catch (e) { return d.toISOString().slice(0, 16).replace("T", " "); }
+}
+function wayText(w) { return "/way " + w.zone + " " + w.x + " " + w.y; }
+function coordBtn(w) {
+  return '<button type="button" class="coord" data-way="' + esc(wayText(w)) + '" title="Copy a TomTom /way command">'
+    + (w.label ? "<span>" + esc(w.label) + " ·</span>" : "")
+    + "<span>" + esc(w.zone) + "</span>"
+    + '<span class="coord-xy">' + esc(w.x) + ", " + esc(w.y) + "</span></button>";
+}
+function chips(it) {
+  let h = "";
+  if (it.rank) h += '<span class="chip">Rank ' + it.rank + "</span>";
+  if (it.lvl) h += '<span class="chip">Lvl ' + it.lvl + "</span>";
+  if (it.tag === "new") h += '<span class="chip chip-new">New in Forever</span>';
+  if (it.el) h += '<span class="chip chip-el" data-el="' + it.el + '">' + EL_NAME[it.el] + " totem</span>";
+  if (it.opt) h += '<span class="chip chip-opt">Optional</span>';
+  return h;
+}
+
+/* ---------- rendering ---------- */
+function itemHTML(it, isDone, num) {
+  const note = it.noteHTML ? it.noteHTML : (it.note ? esc(it.note) : "");
+  if (it.info) {
+    return '<li class="item is-info"><span class="info-mark" aria-hidden="true">↓</span>'
+      + '<div class="item-body"><span class="item-head"><span class="item-title">' + esc(it.name) + "</span>" + chips(it) + "</span>"
+      + (note ? '<span class="item-note">' + note + "</span>" : "") + "</div></li>";
+  }
+  const cid = "cb-" + it.id;
+  let meta = "";
+  if (it.where) meta = '<div class="item-meta">' + it.where.map(coordBtn).join("") + "</div>";
+  else if (it.whereText) meta = '<div class="item-meta"><span class="where-text">' + esc(it.whereText) + "</span></div>";
+  return '<li class="item' + (isDone ? " is-done" : "") + '" data-item="' + it.id + '">'
+    + '<input type="checkbox" class="tick" id="' + cid + '" data-id="' + it.id + '"' + (isDone ? " checked" : "") + ">"
+    + '<label class="item-body" for="' + cid + '"><span class="item-head">'
+    + (num ? '<span class="step-num">' + num + "</span>" : "")
+    + '<span class="item-title">' + esc(it.name) + "</span>" + chips(it) + "</span>"
+    + (note ? '<span class="item-note">' + note + "</span>" : "") + "</label>" + meta + "</li>";
+}
+
+function questHTML(q, isDone) {
+  const cid = "cb-" + q.id;
+  return '<li class="item quest' + (isDone ? " is-done" : "") + '" data-item="' + q.id + '" data-el="' + q.el + '">'
+    + '<input type="checkbox" class="tick" id="' + cid + '" data-id="' + q.id + '"' + (isDone ? " checked" : "") + ">"
+    + '<label class="item-body" for="' + cid + '"><span class="item-head"><span class="item-title">' + esc(q.name) + "</span>"
+    + '<span class="chip chip-el" data-el="' + q.el + '">' + esc(q.sub) + "</span></span>"
+    + '<span class="item-note">Reward: ' + esc(q.reward) + ". Steps if you still need it:</span></label>"
+    + '<ol class="steps">' + q.steps.map((s) => '<li><span>' + esc(s.t) + "</span>"
+      + (s.where ? '<span class="step-where">' + s.where.map(coordBtn).join("") + "</span>" : "") + "</li>").join("")
+    + "</ol></li>";
+}
+
+function buildHTML(b) {
+  return '<p class="build-blurb">' + esc(b.blurb) + '</p><ul class="build">'
+    + b.rows.map((r) => '<li><span class="build-name">' + esc(r.n) + '</span><span class="build-pts">' + r.pts
+      + '</span><span class="build-row">Row ' + r.row + '</span><span class="build-fx">' + esc(r.fx) + "</span></li>").join("")
+    + '</ul><p class="build-src">Build source: ' + esc(b.src) + "</p>";
+}
+
+function talentsHTML(sec, st) {
+  const spec = BUILDS[st.spec] ? st.spec : "enh";
+  return '<fieldset class="spec"><legend class="sr-only">Choose a build</legend>'
+    + Object.keys(BUILDS).map((k) => '<label class="seg"><input type="radio" name="spec" id="spec-' + k + '" value="' + k + '"'
+      + (k === spec ? " checked" : "") + '><span class="seg-body"><span class="seg-name">' + esc(BUILDS[k].label)
+      + '</span><span class="seg-use">' + esc(BUILDS[k].use) + "</span></span></label>").join("")
+    + '</fieldset><div id="build-slot">' + buildHTML(BUILDS[spec]) + "</div>"
+    + '<ul class="items">' + itemHTML(sec.check, st.done.has(sec.check.id)) + "</ul>";
+}
+
+function setsHTML(sec) {
+  const slot = (el, v) => '<li data-el="' + el + '"><span class="slot-el">' + EL_NAME[el] + "</span><span>" + esc(v) + "</span></li>";
+  return '<h3 class="group-title">Suggested sets</h3><div class="sets">'
+    + sec.sets.map((s) => '<div class="set"><p class="set-name">' + esc(s.name) + '</p><ul class="set-slots">'
+      + slot("earth", s.earth) + slot("fire", s.fire) + slot("water", s.water)
+      + '<li data-el="air" class="slot-empty"><span class="slot-el">Air</span><span>Empty until 30</span></li></ul>'
+      + (s.note ? '<p class="set-note">' + esc(s.note) + "</p>" : "") + "</div>").join("")
+    + "</div>";
+}
+
+function nextHTML() {
+  return '<div class="next-grid">' + NEXT.map((n) => '<div class="lvl"><p class="lvl-num">Level ' + n.lvl + "</p><ul>"
+    + n.items.map((t) => "<li>" + esc(t) + "</li>").join("") + "</ul></div>").join("") + "</div>";
+}
+
+function panelHTML(sec, st) {
+  const ids = CHECKABLE[sec.id];
+  let body = "";
+  if (sec.intro) body += '<p class="panel-intro">' + esc(sec.intro) + "</p>";
+  if (sec.where) body += '<div class="panel-where">' + sec.where.map(coordBtn).join("") + "</div>";
+  if (sec.tips) body += '<ul class="tips">' + sec.tips.map((t) => "<li>" + esc(t) + "</li>").join("") + "</ul>";
+  if (sec.groups) {
+    body += sec.groups.map((g) => '<h3 class="group-title">' + esc(g.title) + "</h3>"
+      + (g.hint ? '<p class="group-hint">' + esc(g.hint) + "</p>" : "")
+      + '<ul class="items">' + g.items.map((it) => itemHTML(it, st.done.has(it.id))).join("") + "</ul>").join("");
+  }
+  if (sec.items) {
+    body += sec.steps
+      ? '<ol class="items">' + sec.items.map((it, i) => itemHTML(it, st.done.has(it.id), i + 1)).join("") + "</ol>"
+      : '<ul class="items">' + sec.items.map((it) => itemHTML(it, st.done.has(it.id))).join("") + "</ul>";
+  }
+  if (sec.quests) body += '<ul class="items">' + sec.quests.map((q) => questHTML(q, st.done.has(q.id))).join("") + "</ul>";
+  if (sec.air) body += '<p class="air-note">' + GLYPH.air + "<span>" + esc(sec.air) + "</span></p>";
+  if (sec.builds) body += talentsHTML(sec, st);
+  if (sec.sets) body += setsHTML(sec);
+  if (sec.after) body += '<ul class="tips tips-after">' + sec.after.map((t) => "<li>" + esc(t) + "</li>").join("") + "</ul>";
+  if (sec.footnote) body += '<p class="footnote">' + esc(sec.footnote) + "</p>";
+  if (sec.id === "next") body += nextHTML();
+  return '<section class="panel" id="' + sec.id + '"' + (sec.el ? ' data-el="' + sec.el + '"' : "") + ' aria-labelledby="h-' + sec.id + '">'
+    + '<div class="panel-head"><span class="glyph">' + GLYPH[sec.glyph] + '</span><h2 id="h-' + sec.id + '">' + esc(sec.title) + "</h2>"
+    + (ids.length ? '<span class="panel-count" data-pcount="' + sec.id + '">' + countIn(st, ids) + "/" + ids.length + "</span>" : "")
+    + "</div>" + body + "</section>";
+}
+
+function socketsHTML(st) {
+  return '<div class="sockets" aria-label="Your elemental totems">' + SOCKETS.map((s) => {
+    const has = !!(s.from && st.done.has(s.from));
+    return '<div class="socket" data-el="' + s.el + '" data-socket="' + s.el + '" data-has="' + (has ? "1" : "0") + '"' + (s.from ? "" : ' data-locked="1"') + ">"
+      + GLYPH[s.el] + '<span class="socket-name">' + EL_NAME[s.el] + '</span><span class="socket-state">'
+      + (s.from ? (has ? "In bags" : "Not yet") : "Level 30") + "</span></div>";
+  }).join("") + "</div>";
+}
+
+function plateHTML(st) {
+  const n = countAll(st);
+  return '<header class="plate"><p class="eyebrow">WoW Forever beta · Dwarf Shaman</p><h1>' + TITLE + "</h1>"
+    + '<p class="lede">Everything you can train, unlock and quest for at the beta’s level 20 cap. Tick things off as you play.</p>'
+    + '<p class="companion">Next: <a href="/gear">best-in-slot gear for your talent build</a>.</p>'
+    + socketsHTML(st)
+    + '<div class="overall"><p class="overall-line"><span class="overall-num" id="ov-num">' + n + '</span><span class="overall-of">of ' + TOTAL + " done</span></p>"
+    + '<span class="bar" aria-hidden="true"><i id="ov-bar" style="width:' + pct(n, TOTAL) + '%"></i></span></div>'
+    + '<p class="status" id="save-status" role="status" aria-live="polite"></p>'
+    + '<label class="switch" for="hide-done"><input type="checkbox" id="hide-done"><span class="switch-track" aria-hidden="true"></span><span>Hide finished items</span></label>'
+    + "</header>";
+}
+
+function tocHTML(st) {
+  return '<nav class="toc" aria-label="Sections"><ul>' + SECTIONS.map((sec) => {
+    const ids = CHECKABLE[sec.id];
+    const d = countIn(st, ids);
+    return '<li><a class="toc-link" href="#' + sec.id + '"' + (sec.el ? ' data-el="' + sec.el + '"' : "") + ">"
+      + '<span class="toc-name"><span class="toc-long">' + esc(sec.title) + '</span><span class="toc-short">' + esc(sec.short) + "</span></span>"
+      + (ids.length
+        ? '<span class="toc-count" data-count="' + sec.id + '">' + d + "/" + ids.length + '</span><span class="bar toc-bar" aria-hidden="true"><i data-bar="' + sec.id + '" style="width:' + pct(d, ids.length) + '%"></i></span>'
+        : '<span class="toc-count">Preview</span>')
+      + "</a></li>";
+  }).join("") + "</ul></nav>";
+}
+
+function footerHTML() {
+  return '<footer class="foot"><p>Built from WoW Forever beta data and community guides as of late September 2026. Details can change before launch on November 4, and beta characters are wiped when the beta ends.</p>'
+    + '<p>Tap any coordinate to copy a TomTom <code>/way</code> command.</p>'
+    + '<p>Your ticks are saved in this browser only. Fan-made and not affiliated with Blizzard Entertainment. <a href="/">Toolkit home</a></p>'
+    + '<h3 class="group-title">Sources</h3><ul class="sources">'
+    + SOURCES.map((s) => '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + "</a> <span>" + esc(s.site) + "</span></li>").join("")
+    + '</ul><div class="reset-row"><button type="button" class="reset" id="reset-btn">Clear all ticks</button></div></footer>';
+}
+
+function appHTML(st) {
+  return '<div class="shell"><aside class="rail">' + plateHTML(st) + tocHTML(st) + '</aside><main class="sections">'
+    + SECTIONS.map((sec) => panelHTML(sec, st)).join("") + footerHTML() + "</main></div>"
+    + '<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>';
+}
+
+/* ---------- state (saved in this browser) ---------- */
+const STORE_KEY = "forever-shaman20:checklist:v1";
+let canSave = true;
+function readState() {
+  const st = { done: new Set(), spec: "enh", savedAt: null };
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    const p = raw ? JSON.parse(raw) : null;
+    if (p && Array.isArray(p.done)) p.done.forEach((id) => { if (VALID.has(id)) st.done.add(id); });
+    if (p && BUILDS[p.spec]) st.spec = p.spec;
+    if (p && typeof p.savedAt === "string") st.savedAt = p.savedAt;
+  } catch (e) { /* start fresh */ }
+  return st;
+}
+function readHide() { try { return localStorage.getItem(HIDE_KEY) === "1"; } catch (e) { return false; } }
+function writeHide(on) { try { localStorage.setItem(HIDE_KEY, on ? "1" : "0"); } catch (e) { /* ignore */ } }
+function save() {
+  const savedAt = new Date().toISOString();
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify({ v: 1, done: Array.from(state.done).sort(), spec: state.spec, savedAt: savedAt }));
+    state.savedAt = savedAt;
+    canSave = true;
+  } catch (e) { canSave = false; }
+  setStatus();
+}
+function setStatus() {
+  const el = document.getElementById("save-status");
+  if (!el) return;
+  let text = "Your ticks save in this browser.";
+  let tone = "ok";
+  if (!canSave) { text = "This browser won’t let the page save, so ticks last until you close the tab. Private windows often do this."; tone = "warn"; }
+  else if (state.savedAt) text = "Saved in this browser " + fmtTime(state.savedAt) + ".";
+  el.textContent = text;
+  el.setAttribute("data-tone", tone);
+}
+function changed() { save(); }
+
+/* ---------- live updates ---------- */
+function refresh() {
+  let total = 0;
+  SECTIONS.forEach((sec) => {
+    const ids = CHECKABLE[sec.id];
+    if (!ids.length) return;
+    const d = countIn(state, ids);
+    total += d;
+    app.querySelectorAll('[data-count="' + sec.id + '"],[data-pcount="' + sec.id + '"]').forEach((el) => { el.textContent = d + "/" + ids.length; });
+    const bar = app.querySelector('[data-bar="' + sec.id + '"]');
+    if (bar) bar.style.width = pct(d, ids.length) + "%";
+  });
+  const num = document.getElementById("ov-num");
+  if (num) num.textContent = String(total);
+  const bar = document.getElementById("ov-bar");
+  if (bar) bar.style.width = pct(total, TOTAL) + "%";
+  SOCKETS.forEach((s) => {
+    if (!s.from) return;
+    const el = app.querySelector('[data-socket="' + s.el + '"]');
+    if (!el) return;
+    const has = state.done.has(s.from);
+    el.setAttribute("data-has", has ? "1" : "0");
+    const lab = el.querySelector(".socket-state");
+    if (lab) lab.textContent = has ? "In bags" : "Not yet";
+  });
+}
+
+function applyHide(on) {
+  app.setAttribute("data-hide-done", on ? "1" : "0");
+  const cb = document.getElementById("hide-done");
+  if (cb) cb.checked = on;
+}
+
+let toastTimer = 0;
+function showToast(msg, copyText) {
+  const t = document.getElementById("toast");
+  if (!t) return;
+  t.textContent = "";
+  const span = document.createElement("span");
+  span.textContent = msg;
+  t.appendChild(span);
+  if (copyText) {
+    const inp = document.createElement("input");
+    inp.type = "text";
+    inp.readOnly = true;
+    inp.id = "toast-copy";
+    inp.value = copyText;
+    inp.setAttribute("aria-label", "Waypoint command");
+    t.appendChild(inp);
+  }
+  t.hidden = false;
+  if (copyText) { const inp = document.getElementById("toast-copy"); if (inp) { inp.focus(); inp.select(); } }
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.hidden = true; }, copyText ? 9000 : 2600);
+}
+
+function copyWay(text) {
+  const fallback = () => showToast("Copy this:", text);
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => showToast("Copied " + text), fallback);
+    } else fallback();
+  } catch (e) { fallback(); }
+}
+
+let resetArmed = false;
+let resetTimer = 0;
+function onReset(btn) {
+  if (!resetArmed) {
+    resetArmed = true;
+    btn.textContent = "Tap again to clear every tick";
+    btn.classList.add("armed");
+    clearTimeout(resetTimer);
+    resetTimer = setTimeout(() => { resetArmed = false; btn.textContent = "Clear all ticks"; btn.classList.remove("armed"); }, 4000);
+    return;
+  }
+  resetArmed = false;
+  clearTimeout(resetTimer);
+  btn.textContent = "Clear all ticks";
+  btn.classList.remove("armed");
+  state.done.clear();
+  app.querySelectorAll(".tick").forEach((cb) => {
+    cb.checked = false;
+    const li = cb.closest(".item");
+    if (li) li.classList.remove("is-done");
+  });
+  refresh();
+  changed();
+  showToast("Cleared every tick");
+}
+
+/* ---------- boot ---------- */
+const app = document.getElementById("app");
+if (!app) return;
+const state = readState();
+try { localStorage.setItem(STORE_KEY + ":test", "1"); localStorage.removeItem(STORE_KEY + ":test"); } catch (e) { canSave = false; }
+app.innerHTML = appHTML(state);
+applyHide(readHide());
+setStatus();
+
+app.addEventListener("change", (e) => {
+  const t = e.target;
+  if (t.classList && t.classList.contains("tick")) {
+    const id = t.getAttribute("data-id");
+    if (!VALID.has(id)) return;
+    if (t.checked) state.done.add(id); else state.done.delete(id);
+    const li = t.closest(".item");
+    if (li) li.classList.toggle("is-done", t.checked);
+    refresh();
+    changed();
+  } else if (t.name === "spec") {
+    if (!BUILDS[t.value]) return;
+    state.spec = t.value;
+    const slot = document.getElementById("build-slot");
+    if (slot) slot.innerHTML = buildHTML(BUILDS[t.value]);
+    changed();
+  } else if (t.id === "hide-done") {
+    writeHide(t.checked);
+    applyHide(t.checked);
+  }
+});
+
+app.addEventListener("click", (e) => {
+  const coord = e.target.closest(".coord");
+  if (coord) { copyWay(coord.getAttribute("data-way")); return; }
+  const reset = e.target.closest("#reset-btn");
+  if (reset) onReset(reset);
+});
+
+window.addEventListener("storage", (e) => {
+  if (e.key !== STORE_KEY) return;
+  const next = readState();
+  state.done = next.done;
+  state.spec = next.spec;
+  state.savedAt = next.savedAt;
+  app.innerHTML = appHTML(state);
+  applyHide(readHide());
+  setStatus();
+});
+
+if (/^#[A-Za-z0-9._~-]+$/.test(location.hash)) {
+  const target = document.getElementById(location.hash.slice(1));
+  if (target) requestAnimationFrame(() => target.scrollIntoView());
+}
+
+})();
+</script>
+</body>
+</html>
