@@ -238,6 +238,36 @@ table{border-collapse:collapse;width:100%}
 .detail-buttons{display:flex;flex-wrap:wrap;gap:8px}
 
 .fine{display:grid;gap:10px;font-size:15px;color:var(--ink-2)}
+
+/* notes from visitors */
+.notes-card .card-head{margin-bottom:8px}
+.notes-tools{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.nfilter{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line-strong);border-radius:999px;background:var(--surface)}
+.nfilter button{height:30px;padding:0 12px;border:0;border-radius:999px;background:none;color:var(--ink-2);font:inherit;font-size:14px;cursor:pointer;white-space:nowrap}
+.nfilter button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.nlist{list-style:none;margin:0;padding:0;display:grid}
+.nitem{display:grid;gap:8px;padding:14px 0;border-top:1px solid var(--line)}
+.nitem:first-child{border-top:0;padding-top:4px}
+.nhead{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.kchip{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--surface-2);color:var(--ink);font-size:13px;font-weight:700}
+.nctx{min-width:0;font-size:14px;color:var(--ink-2);overflow-wrap:anywhere}
+.nstatus{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink-2);white-space:nowrap}
+.nstatus::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ink-3)}
+.nstatus.s-new{color:var(--ink);font-weight:500}
+.nstatus.s-new::before{background:var(--accent)}
+.nstatus.s-looking::before{background:var(--mark)}
+.nstatus.s-done::before{background:var(--line-strong)}
+.npick{margin:0;font-size:14px;color:var(--ink-3)}
+.ntext{margin:0;padding:10px 14px;border-left:3px solid var(--line-strong);border-radius:0 10px 10px 0;background:color-mix(in srgb,var(--surface-2) 45%,transparent);color:var(--ink);font-size:15.5px;white-space:pre-wrap;overflow-wrap:anywhere}
+.nitem.is-new .ntext{border-left-color:var(--accent)}
+.nitem.is-done .ntext{color:var(--ink-2)}
+.nmeta{margin:0;font-size:13.5px;color:var(--ink-3)}
+.nmeta strong{color:var(--ink);font-weight:700}
+.nactions{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.linkish{padding:0;border:0;background:none;color:var(--accent);font:inherit;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.notes-msg{margin:10px 0 0;font-size:14.5px;color:var(--ink-2)}
+.notes-msg:empty{display:none}
+.copy-box{width:100%;min-height:140px;margin-top:10px;padding:10px 12px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--ink);font-family:var(--font-mono);font-size:13px}
 .fine p{margin:0;max-width:78ch}
 .error-card{border-color:var(--danger)}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{transition:none!important}}
@@ -257,6 +287,8 @@ const PAGES = ["checklist", "gear", "dungeons", "party", "home"];
 const PAGE_LABEL = { checklist: "Checklist", gear: "Gear guide", dungeons: "Dungeon planner", party: "Party board", home: "Home page" };
 const PAGE_THE = { checklist: "the checklist", gear: "the gear guide", dungeons: "the dungeon planner", party: "the party board", home: "the home page" };
 const TOTEM_LABEL = { e: "Earth", f: "Fire", w: "Water", a: "Air" };
+const KIND_LABEL = { better: "Better option", wrong: "Something’s wrong", idea: "Idea", other: "Note" };
+const STATUS_LABEL = { new: "New", looking: "Looking into it", done: "Done" };
 const PREVIEW_LINKS = [["/checklist?preview=30", "Checklist"], ["/gear?preview=30", "Gear guide"], ["/dungeons?preview=30", "Dungeon planner"]];
 const SPEC_LABEL = { enh: "Enhancement", ele: "Elemental", resto: "Restoration" };
 const PROF_LABEL = { lw: "Leatherworking", tail: "Tailoring", eng: "Engineering", ench: "Enchanting" };
@@ -267,7 +299,8 @@ const S = {
   key: null, data: null, loadedAt: 0, loading: false,
   sort: "last", dir: -1, q: "", open: new Set(),
   chartTable: false, feedAll: false, active: -1, armed: null, armTimer: 0, notes: {},
-  capArmed: false, capTimer: 0, capBusy: false, capNote: ""
+  capArmed: false, capTimer: 0, capBusy: false, capNote: "",
+  notesView: "open", notesAll: false, noteArmed: null, noteTimer: 0, noteBusy: new Set(), notesMsg: "", copyText: ""
 };
 
 /* ---------- small helpers ---------- */
@@ -397,6 +430,8 @@ async function load(quiet) {
     S.data = r.json;
     S.loadedAt = Date.now();
     S.capNote = "";
+    S.notesMsg = "";
+    S.copyText = "";
     renderDashboard();
     return;
   }
@@ -508,6 +543,79 @@ function capCardHTML() {
     + '<p class="cap-note" id="cap-note" role="status" aria-live="polite">' + esc(S.capNote) + "</p></section>";
 }
 
+/* notes from visitors */
+function noteAbout(nt) {
+  const parts = [PAGE_LABEL[nt.page] || "The site"];
+  if (nt.label) parts.push(nt.label);
+  if (nt.about) parts.push(nt.about);
+  const build = [nt.lvl ? "Level " + nt.lvl : "", SPEC_LABEL[nt.spec] || ""].filter(Boolean).join(" ");
+  if (build) parts.push(build);
+  return parts.join(" · ");
+}
+function noteWho(nt, byId) {
+  const r = nt.vid ? byId[nt.vid] : null;
+  if (nt.name) return nt.name + (r && r.label && r.label !== nt.name ? " (" + r.label + ")" : "");
+  return r ? r.display : "No name given";
+}
+function notesFor(view) {
+  const all = (S.data && S.data.notes) || [];
+  if (view === "open") return all.filter((nt) => nt.status !== "done");
+  if (view === "done") return all.filter((nt) => nt.status === "done");
+  return all;
+}
+function noteHTML(nt, byId) {
+  const id = nt.id;
+  const busy = S.noteBusy.has(id);
+  const armed = S.noteArmed === id;
+  const status = STATUS_LABEL[nt.status] ? nt.status : "new";
+  const r = nt.vid ? byId[nt.vid] : null;
+  const act = (label, st) => '<button class="btn btn-small" type="button" data-nstatus="' + st + '" data-nid="' + id + '"' + (busy ? " disabled" : "") + ">" + label + "</button>";
+  let actions = "";
+  if (status === "new") actions += act("Looking into it", "looking") + act("Mark done", "done");
+  else if (status === "looking") actions += act("Mark done", "done") + act("Back to new", "new");
+  else actions += act("Reopen", "new");
+  actions += '<button class="btn btn-small" type="button" data-ncopy="' + id + '">Copy</button>'
+    + '<button class="btn btn-small btn-danger' + (armed ? " armed" : "") + '" type="button" data-ndelete="' + id + '"' + (busy ? " disabled" : "") + ">" + (armed ? "Tap again to delete" : "Delete") + "</button>";
+  return '<li class="nitem is-' + status + '" id="note-' + id + '">'
+    + '<div class="nhead"><span class="kchip">' + esc(KIND_LABEL[nt.kind] || "Note") + '</span><span class="nctx">' + esc(noteAbout(nt)) + "</span>"
+    + '<span class="nstatus s-' + status + '">' + esc(STATUS_LABEL[status]) + "</span></div>"
+    + (nt.item ? '<p class="npick">Their current pick there: ' + esc(nt.item) + "</p>" : "")
+    + '<p class="ntext">' + esc(nt.text) + "</p>"
+    + '<p class="nmeta"><strong>' + esc(noteWho(nt, byId)) + '</strong> · <time datetime="' + new Date(nt.t).toISOString() + '" title="' + esc(when(nt.t)) + '">' + esc(ago(nt.t)) + "</time> · #" + id
+    + (r ? ' · <button class="linkish" type="button" data-goto-visitor="' + esc(r.id) + '">See their visits</button>' : "") + "</p>"
+    + '<div class="nactions">' + actions + "</div></li>";
+}
+function notesCardHTML(list) {
+  const all = (S.data && S.data.notes) || [];
+  const byId = {};
+  list.forEach((r) => { byId[r.id] = r; });
+  const count = { new: 0, looking: 0, done: 0 };
+  all.forEach((nt) => { count[STATUS_LABEL[nt.status] ? nt.status : "new"]++; });
+  const open = count.new + count.looking;
+  const sub = all.length
+    ? [n(count.new) + " new", count.looking ? n(count.looking) + " looking into" : "", count.done ? n(count.done) + " done" : ""].filter(Boolean).join(" · ")
+    : "What friends send from the gear slots, dungeon cards and page footers";
+  const views = [["open", "Open", open], ["done", "Done", count.done], ["all", "All", all.length]];
+  const shownAll = notesFor(S.notesView);
+  const FEW = 5;
+  const shown = S.notesAll ? shownAll : shownAll.slice(0, FEW);
+  let body;
+  if (!all.length) body = '<p class="none">No notes yet. Friends can send one with the “Note to admin” button on any gear slot or dungeon card, or from the bottom of each page.</p>';
+  else if (!shownAll.length) body = '<p class="none">' + (S.notesView === "open" ? "Nothing open. Everything’s been handled." : "Nothing marked done yet.") + "</p>";
+  else {
+    body = '<ol class="nlist">' + shown.map((nt) => noteHTML(nt, byId)).join("") + "</ol>"
+      + (shownAll.length > FEW ? '<button class="btn btn-small feed-more" type="button" id="notes-more" aria-expanded="' + (S.notesAll ? "true" : "false") + '">' + (S.notesAll ? "Show fewer" : "Show all " + n(shownAll.length)) + "</button>" : "");
+  }
+  return '<section class="card notes-card" id="notes" aria-labelledby="notes-title"><div class="card-head"><div><h2 id="notes-title">Notes from visitors</h2><p class="sub">' + esc(sub) + "</p></div>"
+    + (all.length ? '<div class="notes-tools"><div class="nfilter" role="group" aria-label="Show notes">'
+      + views.map((v) => '<button type="button" data-nfilter="' + v[0] + '" aria-pressed="' + (S.notesView === v[0] ? "true" : "false") + '">' + v[1] + " (" + n(v[2]) + ")</button>").join("")
+      + "</div>" + (open ? '<button class="btn btn-small" type="button" id="copy-open">Copy open notes</button>' : "") + "</div>" : "")
+    + "</div>" + body
+    + '<p class="notes-msg" id="notes-msg" role="status" aria-live="polite">' + esc(S.notesMsg) + "</p>"
+    + (S.copyText ? '<label class="sr-only" for="copy-box">Notes to copy</label><textarea class="copy-box" id="copy-box" readonly>' + esc(S.copyText) + "</textarea>" : "")
+    + "</section>";
+}
+
 function chartCardHTML() {
   const s = S.data.series;
   const rowsHTML = s.slice().reverse().map((d) => "<tr><td>" + esc(dayLong.format(dayDate(d.day))) + '</td><td class="num">' + n(d.visitors) + '</td><td class="num">' + n(d.views) + "</td></tr>").join("");
@@ -544,6 +652,7 @@ function eventText(e) {
   if (e.e === "view") return "opened " + PAGE_THE[e.p];
   if (e.e === "name") return x.set ? "added their name" : "removed their name";
   if (e.e === "party") return x.on ? "joined the party board" : "left the party board";
+  if (e.e === "note") return "sent a note" + (x.label ? (e.p === "gear" ? " about the " + x.label + " slot" : " about " + x.label) : " from " + PAGE_THE[e.p]);
   if (e.e === "state" && e.p === "checklist") return "is at " + n(x.done) + " of " + n(x.total) + " on the level " + lvl + " checklist" + (SPEC_LABEL[x.spec] ? " (" + SPEC_LABEL[x.spec] + ")" : "");
   if (e.e === "state" && e.p === "gear") return "has " + n(x.have) + " of " + n(x.total) + " level " + lvl + " best-in-slot pieces" + (SPEC_LABEL[x.spec] ? " for " + SPEC_LABEL[x.spec] : "");
   return "was active";
@@ -680,6 +789,7 @@ function detailHTML(r) {
     + fact("Gear guide", gear)
     + fact("Professions", profs)
     + fact("Party board", r.party ? "On the board" : "Not on it")
+    + fact("Notes sent", plural((S.data.notes || []).filter((nt) => nt.vid === r.id).length, "note"))
     + fact("Visitor ID", r.id)
     + "</dl>"
     + '<div class="detail-actions">'
@@ -749,8 +859,9 @@ function browserCardHTML(list) {
 function renderDashboard() {
   const focusId = document.activeElement && document.activeElement.id;
   const list = rows();
-  document.title = "Toolkit Stats";
-  app.innerHTML = '<main class="wrap">' + topHTML() + capCardHTML() + tilesHTML(list)
+  const fresh = ((S.data && S.data.notes) || []).filter((nt) => nt.status === "new").length;
+  document.title = (fresh ? "(" + fresh + ") " : "") + "Toolkit Stats";
+  app.innerHTML = '<main class="wrap">' + topHTML() + capCardHTML() + notesCardHTML(list) + tilesHTML(list)
     + '<div class="duo">' + chartCardHTML() + feedCardHTML(list) + "</div>"
     + visitorsCardHTML(list)
     + breakdownsHTML(list)
@@ -975,6 +1086,108 @@ async function switchCap(btn) {
   }
 }
 
+function redrawNotes(focusSel) {
+  const card = document.getElementById("notes");
+  if (!card || !S.data) return;
+  const tmp = document.createElement("div");
+  tmp.innerHTML = notesCardHTML(rows());
+  card.replaceWith(tmp.firstElementChild);
+  const fresh = S.data.notes.filter((nt) => nt.status === "new").length;
+  document.title = (fresh ? "(" + fresh + ") " : "") + "Toolkit Stats";
+  if (focusSel) {
+    const f = document.querySelector(focusSel);
+    if (f) f.focus({ preventScroll: true });
+  }
+}
+function noteFocusAfter(id) {
+  // Keep keyboard focus near the note that changed, or on the next one if it left this view.
+  if (document.querySelector("#note-" + id + " .nactions button")) return "#note-" + id + " .nactions button";
+  const first = document.querySelector("#notes .nactions button");
+  return first ? "#notes .nactions button" : "#notes [data-nfilter][aria-pressed=true]";
+}
+async function setNoteStatus(btn) {
+  const id = Number(btn.getAttribute("data-nid"));
+  const status = btn.getAttribute("data-nstatus");
+  S.noteBusy.add(id);
+  S.notesMsg = "";
+  redrawNotes();
+  const r = await call("POST", { action: "note_status", id: id, status: status });
+  S.noteBusy.delete(id);
+  if (r.status === 200 && r.json && r.json.ok) {
+    const i = S.data.notes.findIndex((nt) => nt.id === id);
+    if (i >= 0) S.data.notes[i] = r.json.note;
+    S.notesMsg = "Note #" + id + (status === "done" ? " marked done." : status === "looking" ? " marked looking into it." : " moved back to new.");
+    redrawNotes();
+    const f = document.querySelector(noteFocusAfter(id));
+    if (f) f.focus({ preventScroll: true });
+  } else if (r.status === 401) {
+    signOut("Sign in again to make changes.");
+  } else {
+    S.notesMsg = problem(r);
+    redrawNotes();
+  }
+}
+async function deleteNote(btn) {
+  const id = Number(btn.getAttribute("data-ndelete"));
+  if (S.noteArmed !== id) {
+    S.noteArmed = id;
+    btn.classList.add("armed");
+    btn.textContent = "Tap again to delete";
+    clearTimeout(S.noteTimer);
+    S.noteTimer = setTimeout(() => {
+      S.noteArmed = null;
+      const b = document.querySelector('[data-ndelete="' + id + '"]');
+      if (b) { b.classList.remove("armed"); b.textContent = "Delete"; }
+    }, 4000);
+    return;
+  }
+  clearTimeout(S.noteTimer);
+  S.noteArmed = null;
+  S.noteBusy.add(id);
+  redrawNotes();
+  const r = await call("POST", { action: "note_delete", id: id });
+  S.noteBusy.delete(id);
+  if (r.status === 200) {
+    S.data.notes = S.data.notes.filter((nt) => nt.id !== id);
+    S.notesMsg = "Note #" + id + " deleted.";
+    redrawNotes(noteFocusAfter(id));
+  } else if (r.status === 401) {
+    signOut("Sign in again to make changes.");
+  } else {
+    S.notesMsg = problem(r);
+    redrawNotes();
+  }
+}
+function noteAsText(nt, byId) {
+  return "#" + nt.id + " · " + (KIND_LABEL[nt.kind] || "Note") + " · " + (STATUS_LABEL[nt.status] || "New") + "\n"
+    + "About: " + noteAbout(nt) + (nt.item ? " · their current pick: " + nt.item : "") + "\n"
+    + "From: " + noteWho(nt, byId) + " · " + when(nt.t) + "\n"
+    + "Note: " + nt.text.replace(/\n/g, "\n  ");
+}
+async function copyNotes(ids) {
+  const byId = {};
+  rows().forEach((r) => { byId[r.id] = r; });
+  const list = S.data.notes.filter((nt) => ids.indexOf(nt.id) >= 0);
+  const text = (list.length > 1 ? "Notes from the Forever Shaman Toolkit (" + list.length + ")\n\n" : "") + list.map((nt) => noteAsText(nt, byId)).join("\n\n");
+  let copied = false;
+  try { if (navigator.clipboard && navigator.clipboard.writeText) { await navigator.clipboard.writeText(text); copied = true; } } catch (e) { copied = false; }
+  S.copyText = copied ? "" : text;
+  S.notesMsg = copied ? (list.length > 1 ? "Copied " + list.length + " notes. Paste them anywhere, like a chat with Claude." : "Copied note #" + list[0].id + ".") : "Your browser blocked copying. Select the text below and copy it.";
+  redrawNotes(copied ? null : "#copy-box");
+  if (!copied) { const box = document.getElementById("copy-box"); if (box) box.select(); }
+}
+function gotoVisitor(id) {
+  S.open.add(id);
+  S.q = "";
+  renderDashboard();
+  const row = document.querySelector('tr.vrow[data-id="' + id + '"]');
+  if (row) {
+    row.scrollIntoView({ block: "center" });
+    const who = document.getElementById("who-" + id);
+    if (who) who.focus({ preventScroll: true });
+  }
+}
+
 async function unparty(btn) {
   const id = btn.getAttribute("data-unparty");
   btn.disabled = true;
@@ -1012,6 +1225,13 @@ app.addEventListener("click", (e) => {
   if (t.id === "signout") { signOut("You’re signed out."); return; }
   if (t.id === "feed-more") { S.feedAll = !S.feedAll; renderDashboard(); return; }
   if (t.id === "cap-btn") { switchCap(t); return; }
+  if (t.hasAttribute("data-nfilter")) { S.notesView = t.getAttribute("data-nfilter"); S.notesAll = false; S.notesMsg = ""; S.copyText = ""; redrawNotes('[data-nfilter="' + S.notesView + '"]'); return; }
+  if (t.id === "notes-more") { S.notesAll = !S.notesAll; redrawNotes("#notes-more"); return; }
+  if (t.hasAttribute("data-nstatus")) { setNoteStatus(t); return; }
+  if (t.hasAttribute("data-ndelete")) { deleteNote(t); return; }
+  if (t.hasAttribute("data-ncopy")) { copyNotes([Number(t.getAttribute("data-ncopy"))]); return; }
+  if (t.id === "copy-open") { copyNotes(notesFor("open").map((nt) => nt.id)); return; }
+  if (t.hasAttribute("data-goto-visitor")) { gotoVisitor(t.getAttribute("data-goto-visitor")); return; }
   if (t.hasAttribute("data-unparty")) { unparty(t); return; }
   if (t.id === "chart-toggle") {
     S.chartTable = !S.chartTable;

@@ -18,6 +18,7 @@
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="/assets/track.js"></script>
 <script src="/assets/site.js"></script>
+<script src="/assets/notes.js"></script>
 <style>
 :root{color-scheme:light}html{-webkit-text-size-adjust:100%}[hidden]{display:none!important}
 :root{
@@ -246,6 +247,8 @@ button.tile:hover{border-color:var(--spec);color:var(--ink)}
 .slot:first-child{border-top:0}
 .slot-label{grid-area:label;align-self:center;font-family:var(--font-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
 .slot-main{grid-area:main;min-width:0;display:grid;gap:4px}
+.slot-note{margin:6px 0 0}
+.slot-note:empty{display:none}
 .have{grid-area:have;display:inline-flex;align-items:center;gap:8px;align-self:start;font-size:14px;color:var(--ink-2);cursor:pointer;white-space:nowrap}
 .tick{appearance:none;-webkit-appearance:none;margin:0;width:22px;height:22px;border-radius:6px;border:1.5px solid var(--line-strong);background:var(--surface);display:grid;place-content:center;cursor:pointer;transition:background .12s,border-color .12s}
 .tick::after{content:"";width:11px;height:6px;border-left:2.5px solid var(--on-color);border-bottom:2.5px solid var(--on-color);transform:translateY(-1px) rotate(-45deg) scale(0);transition:transform .12s ease}
@@ -611,6 +614,7 @@ function altHTML(a, st) {
     + '<span class="alt-src">' + esc(srcShort(it)) + '</span><span class="alt-stats">' + esc(statsShort(it, st.spec)) + "</span></span>"
     + (a[1] ? '<span class="alt-why">' + esc(a[1]) + "</span>" : "") + "</li>";
 }
+function noteBtn(o) { return window.shamanNoteButton ? window.shamanNoteButton(o) : ""; }
 function rowHTML(r, st) {
   const slot = r.slot;
   const it = r.item ? ITEMS[r.item] : null;
@@ -627,6 +631,7 @@ function rowHTML(r, st) {
   }
   if (r.ups.length) main += '<ul class="ups">' + r.ups.map((o) => upHTML(o, st)).join("") + "</ul>";
   if (r.alts.length) main += '<ul class="alts">' + r.alts.map((a) => altHTML(a, st)).join("") + "</ul>";
+  main += '<p class="slot-note">' + noteBtn({ slot: slot.key, label: r.label, item: it ? it.n : "", kind: "better" }) + "</p>";
   const tick = it
     ? '<label class="have" for="have-' + r.item + '"><input type="checkbox" class="tick" id="have-' + r.item + '" data-id="' + r.item + '"' + (have ? " checked" : "") + (shared ? " disabled" : "") + '><span>' + (shared ? "They have it" : "Have it") + "</span></label>"
     : "";
@@ -698,6 +703,7 @@ function notesHTML(st) {
 }
 function footerHTML() {
   return '<footer class="foot"><p>Your ticks, build and professions are saved in this browser and don’t sync between devices. Fan-made and not affiliated with Blizzard Entertainment.</p>'
+    + (window.shamanNoteButton ? "<p>Spotted a mistake, or know a better option? " + noteBtn({ link: true, text: "Send a note to the admin" }) + "</p>" : "")
     + '<p><a href="/">Toolkit home</a> · <a href="/checklist">Checklist</a> · <a href="/dungeons">Dungeon planner</a> · <a href="/party">Party board</a></p>'
     + '<div class="whoami" data-whoami></div><h3 class="rail-title">Sources</h3><ul class="sources">'
     + SOURCES.map((s) => '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + "</a> <span>" + esc(s.site) + "</span></li>").join("")
@@ -878,6 +884,8 @@ if (!shared) {
 }
 renderAll();
 track("view", !shared && state.savedAt ? progressSummary() : null);
+// Notes to the admin carry the level and build being looked at.
+window.shamanNoteContext = () => ({ lvl: state.lvl, spec: state.spec, about: shared ? (shared.by ? shared.by + "’s shared build" : "a shared build") : "" });
 
 app.addEventListener("change", (e) => {
   if (shared) return;

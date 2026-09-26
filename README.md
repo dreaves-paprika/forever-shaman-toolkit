@@ -9,7 +9,7 @@ Small tools for a Dwarf Shaman in the WoW Forever beta:
 
 Each page is a single self-contained HTML file. Progress (ticks, build, professions, dungeons done) is saved in the visitor's own browser with `localStorage`, so every friend gets their own tracker. The gear guide and the dungeon planner share the same "have it" ticks.
 
-There's also a private **stats page** (`/admin`) for the site owner. It shows who uses the toolkit and how far along they are, and holds the level cap switch.
+There's also a private **stats page** (`/admin`) for the site owner. It shows who uses the toolkit and how far along they are, holds the level cap switch, and collects notes visitors send.
 
 ## Level 20 and level 30
 
@@ -24,6 +24,14 @@ The beta's cap is level 20, rising to 30 later. The checklist, gear guide and du
 - **Share my build** on the gear guide copies a link like `/gear?share=1&lvl=20&spec=resto&profs=lw&have=…&by=Name`. It opens a read-only copy that never touches the viewer's own tracker.
 - The **party board** only lists people who join it, from the board itself or with the checkbox under the name box. A card shows their name, build, checklist and gear progress, totems, professions and roughly when they were last on (rounded to the hour). Leaving, removing the name or choosing "Don't count me" takes them off. The owner can also take someone off from `/admin`.
 
+## Notes to the admin
+
+Every gear slot and dungeon card has a **Note to admin** button, and every page has a "Send a note to the admin" link at the bottom. Visitors pick a kind (a better option, something's wrong, or an idea), write the note and can add a name. The note records what it's about: the page, the slot or dungeon, the level and build, and the item currently picked there.
+
+Notes show up in the **Notes from visitors** card on `/admin`. Mark each one "Looking into it" or "Done", reopen it, delete it, or copy the open ones as plain text to work through somewhere else.
+
+Limits: 8 notes an hour from one browser, 60 an hour across the site, 1,000 kept in all, and a hidden field that catches simple bots. Browsers that chose "Don't count me" can still send notes; theirs aren't linked to a visitor.
+
 ## Structure
 
 ```
@@ -37,10 +45,12 @@ assets/site.js          live level cap, level choice and preview (shared by the 
 assets/gear-data.js     items, sources and best-in-slot picks for both levels
 assets/dungeon-data.js  dungeons, quests, travel and run order for both levels
 assets/track.js         visit stats, the optional name box and party board joining
+assets/notes.js         the "Note to admin" form
 api/track.js            records visits, progress, names and party board joins
 api/stats.js            stats for the admin page, plus its actions
 api/config.js           the live level cap
 api/party.js            the party board (only people who joined, only what they agreed to show)
+api/note.js             takes notes for the admin
 api/_lib.js             shared helpers (not a route)
 favicon.svg
 vercel.json             clean URLs and headers

@@ -18,6 +18,7 @@
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="/assets/track.js"></script>
 <script src="/assets/site.js"></script>
+<script src="/assets/notes.js"></script>
 <style>
 :root{
   color-scheme:light;
@@ -175,6 +176,7 @@ details.more[open] summary{border-bottom:1px solid var(--line)}
 .bosses{margin:0;font-size:15px;color:var(--ink-2)}
 .forever{margin:0;font-size:15px;padding:10px 14px;border-radius:10px;background:var(--spec-soft)}
 .done-row{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--ink-2);cursor:pointer;width:max-content}
+.run-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;padding:0 18px 16px}
 .run.is-done .run-body,.run.is-done .run-why{display:none}
 .skip{display:grid;gap:8px}
 .skip h2{margin:0;font-family:var(--font-display);font-weight:400;font-size:24px}
@@ -383,7 +385,8 @@ function runHTML(step, i, lvl, ups) {
     + questBox + travel
     + (d.forever ? '<p class="forever">' + esc(d.forever) + "</p>" : "")
     + "</div>"
-    + '<div style="padding:0 18px 16px"><label class="done-row"><input type="checkbox" class="tick" data-done="' + esc(doneKey) + '"' + (done ? " checked" : "") + "> Done with this one</label></div>"
+    + '<div class="run-foot"><label class="done-row"><input type="checkbox" class="tick" data-done="' + esc(doneKey) + '"' + (done ? " checked" : "") + "> Done with this one</label>"
+    + (window.shamanNoteButton ? window.shamanNoteButton({ about: d.name, kind: "better" }) : "") + "</div>"
     + "</li>";
 }
 function render() {
@@ -405,6 +408,7 @@ function render() {
     + (P.skip && P.skip.length ? '<section class="skip" aria-labelledby="skip-title"><h2 id="skip-title">Skip these</h2><ul>' + P.skip.map((s) => "<li><b>" + esc(D.DUNGEONS[s.key].name) + "</b>: " + esc(s.why) + "</li>").join("") + "</ul></section>" : "")
     + '<footer class="foot"><p>Run order and notes are this page’s own picks, based on where your best-in-slot gear drops. Level ranges come from Forever’s game data on Wowhead, except Razorfen Kraul: Wowhead lists 32–42 there, which no other source agrees with, so it shows the usual 29–38. Quests and bosses come from Wowhead’s Forever guides and community loot tables, checked in late September 2026. Tap a location to copy a TomTom <code>/way</code> command.</p>'
     + "<p>Your picks save in this browser. Fan-made and not affiliated with Blizzard Entertainment.</p>"
+    + (window.shamanNoteButton ? "<p>Spotted a mistake, or know a better route? " + window.shamanNoteButton({ link: true, text: "Send a note to the admin" }) + "</p>" : "")
     + '<div class="whoami" data-whoami></div>'
     + "<ul>" + D.SOURCES.map((s) => '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + "</a> <span>" + esc(s.site) + "</span></li>").join("") + "</ul></footer>"
     + '<div class="toast" id="toast" role="status" aria-live="polite" hidden></div></main>';
@@ -426,6 +430,8 @@ if (!app || !G || !D) return;
 let gear = readGear();
 let plan = readPlan();
 render();
+// Notes to the admin carry the level and build being looked at.
+window.shamanNoteContext = () => ({ lvl: SITE.level(), spec: gear.spec });
 
 app.addEventListener("change", (e) => {
   const t = e.target;

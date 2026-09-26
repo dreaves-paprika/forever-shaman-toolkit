@@ -24,10 +24,10 @@ function authorized(req) {
 async function read(res) {
   const now = Date.now();
   const days = lastDays(30, now);
-  const cmds = [["SMEMBERS", "visitors"], ["HGETALL", "pv"], ["LRANGE", "events", 0, 199], ["HGETALL", "config"], ["SCARD", "party"]];
+  const cmds = [["SMEMBERS", "visitors"], ["HGETALL", "pv"], ["LRANGE", "events", 0, 199], ["HGETALL", "config"], ["SCARD", "party"], ["HGETALL", "notes"]];
   days.forEach((d) => cmds.push(["HGETALL", "dv:" + d]));
   const out = await pipeline(cmds);
-  const OFF = 5;
+  const OFF = 6;
 
   const ids = (Array.isArray(out[0]) ? out[0] : []).slice(0, MAX_VISITORS);
   const profiles = ids.length ? await pipeline(ids.map((id) => ["HGETALL", "v:" + id])) : [];
@@ -48,6 +48,12 @@ async function read(res) {
     .map((s) => { try { return JSON.parse(s); } catch (e) { return null; } })
     .filter(Boolean);
 
+  const rawNotes = pairs(out[5]);
+  const notes = Object.keys(rawNotes)
+    .map((id) => { try { return Object.assign(JSON.parse(rawNotes[id]), { id: Number(id) }); } catch (e) { return null; } })
+    .filter(Boolean)
+    .sort((a, b) => b.t - a.t);
+
   return res.status(200).json({
     ok: true,
     now: now,
@@ -56,7 +62,8 @@ async function read(res) {
     config: { cap: Number(pairs(out[3]).cap) === 30 ? 30 : 20, at: Number(pairs(out[3]).cap_at) || 0 },
     series: series.map((s) => ({ day: s.day, visitors: s.ids.length, views: s.views })),
     visitors: visitors,
-    events: events
+    events: events,
+    notes: notes
   });
 }
 
@@ -83,6 +90,24 @@ module.exports = async function handler(req, res) {
       const at = Date.now();
       await pipeline([["HSET", "config", "cap", cap, "cap_at", at]]);
       return res.status(200).json({ ok: true, config: { cap: cap, at: at } });
+    }
+    if (body.action === "note_status" || body.action === "note_delete") {
+      const id = String(Math.floor(Number(body.id)) || "");
+      if (!/^[1-9][0-9]{0,8}$/.test(id)) return res.status(400).json({ ok: false, error: "bad_request" });
+      if (body.action === "note_delete") {
+        await pipeline([["HDEL", "notes", id]]);
+        return res.status(200).json({ ok: true });
+      }
+      const status = { new: 1, looking: 1, done: 1 }[body.status] ? body.status : null;
+      if (!status) return res.status(400).json({ ok: false, error: "bad_request" });
+      const [raw] = await pipeline([["HGET", "notes", id]]);
+      if (!raw) return res.status(404).json({ ok: false, error: "not_found" });
+      let note;
+      try { note = JSON.parse(raw); } catch (e) { return res.status(500).json({ ok: false, error: "server" }); }
+      note.status = status;
+      note.status_at = Date.now();
+      await pipeline([["HSET", "notes", id, JSON.stringify(note)]]);
+      return res.status(200).json({ ok: true, note: Object.assign(note, { id: Number(id) }) });
     }
     const vid = String(body.vid || "");
     if (!VID_RE.test(vid)) return res.status(400).json({ ok: false, error: "bad_request" });
