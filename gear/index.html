@@ -306,6 +306,22 @@ button.tile:hover{border-color:var(--spec);color:var(--ink)}
 .ench-name{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-weight:500;font-size:16px}
 .ench-fx{margin:0;font-family:var(--font-mono);font-size:13px;color:var(--ink)}
 .ench-how{margin:0;font-size:14.5px;color:var(--ink-2)}
+.ench-alt{margin:2px 0 0;font-size:14.5px;color:var(--ink-2)}
+/* The enchant or armor kit under each best-in-slot item */
+.se{margin:6px 0 2px;padding:8px 12px 9px;border-left:3px solid var(--spec);border-radius:0 10px 10px 0;background:var(--surface-2);display:grid;gap:3px;max-width:72ch}
+.se-line{margin:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
+.se-k{display:inline-flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--spec);white-space:nowrap}
+.se-k svg{width:12px;height:12px;align-self:center}
+.se-name{font-weight:500;font-size:15.5px;color:var(--ink)}
+.se-fx{font-family:var(--font-mono);font-size:12.5px;color:var(--ink-2)}
+.se .chip{align-self:center}
+.se-how{margin:0;font-size:14px;line-height:1.45;color:var(--ink-2)}
+.se-alt{margin:3px 0 0;font-size:14px;line-height:1.45;color:var(--ink-2)}
+.se-k2{margin-right:8px;font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap}
+.se-alt-name{font-weight:500;color:var(--ink)}
+.se-alt-how{display:block;margin-top:1px}
+.se-none{margin:6px 0 0;display:flex;align-items:center;gap:6px;font-size:14px;color:var(--ink-3)}
+.se-none svg{flex:none;width:12px;height:12px}
 @container (min-width:620px){
   .ench li{grid-template-columns:150px minmax(0,1fr)}
   .ench-slot{padding-top:3px}
@@ -615,6 +631,20 @@ function altHTML(a, st) {
     + (a[1] ? '<span class="alt-why">' + esc(a[1]) + "</span>" : "") + "</li>";
 }
 function noteBtn(o) { return window.shamanNoteButton ? window.shamanNoteButton(o) : ""; }
+// The enchant or armor kit recommended for a slot, with easier or stronger options.
+function slotEnchHTML(key, st) {
+  const e = G.enchFor(st.lvl, st.spec, key);
+  if (!e) return "";
+  if (e.none) return '<p class="se-none">' + GLYPH.spark + esc(e.none) + "</p>";
+  const p = e.pick;
+  const kit = p.tag === "Kit";
+  return '<div class="se"><p class="se-line"><span class="se-k">' + GLYPH.spark + (kit ? "Armor kit" : "Enchant") + '</span><span class="se-name">' + esc(p.name) + "</span>"
+    + '<span class="se-fx">' + esc(p.fx) + "</span>" + (p.tag && !kit ? '<span class="chip chip-new">' + esc(p.tag) + "</span>" : "") + "</p>"
+    + (p.how ? '<p class="se-how">' + esc(p.how) + "</p>" : "")
+    + e.alts.map((a) => '<p class="se-alt"><span class="se-k2">' + esc(a.label) + '</span><span class="se-alt-name">' + esc(a.name) + '</span> <span class="se-fx">' + esc(a.fx) + "</span>"
+      + (a.note || a.how ? '<span class="se-alt-how">' + esc([a.note, a.how].filter(Boolean).join(" ")) + "</span>" : "") + "</p>").join("")
+    + "</div>";
+}
 function rowHTML(r, st) {
   const slot = r.slot;
   const it = r.item ? ITEMS[r.item] : null;
@@ -626,6 +656,7 @@ function rowHTML(r, st) {
     main += '<p class="src">' + srcChips(it, st) + '<span class="src-text">' + esc(srcText(it)) + "</span></p>";
     const why = slot.why && slot.why[r.item];
     if (why) main += '<p class="why">' + esc(why) + "</p>";
+    main += slotEnchHTML(slot.key, st);
   } else {
     main += '<p class="none">' + esc(slot.none || LV(st).none) + "</p>";
   }
@@ -646,13 +677,22 @@ function gearHTML(st, rows) {
     + (s.set ? '<div id="set-slot">' + setHTML(st) + "</div>" : "") + "</div>"
     + '<ul class="slots">' + rows.map((r) => rowHTML(r, st)).join("") + "</ul></section>";
 }
+function joinSlots(labels) {
+  const l = labels.map((x, i) => (i ? x.toLowerCase() : x));
+  return l.length > 1 ? l.slice(0, -1).join(", ") + " and " + l[l.length - 1] : l[0];
+}
 function enchHTML(st) {
-  const s = SPEC(st);
+  const groups = G.enchGroups(st.lvl, st.spec);
   return '<section class="panel" id="enchants" aria-labelledby="h-enchants">' + panelHead("enchants", "spark", "Enchants and kits", null)
-    + '<div class="pad"><p class="intro">Enchants and armor kits share one slot on each item, so a kit replaces an enchant. The new Forever formulas cost the enchanter Merchant’s Favor, so ask around before you count on one.</p>'
-    + '<ul class="ench">' + s.ench.map((e) => '<li><span class="ench-slot">' + esc(e.slot) + '</span><div class="ench-main"><p class="ench-name"><span>' + esc(e.name) + "</span>"
-      + (e.tag ? '<span class="chip chip-new">' + esc(e.tag) + "</span>" : "") + '</p><p class="ench-fx">' + esc(e.fx) + "</p>"
-      + (e.how ? '<p class="ench-how">' + esc(e.how) + "</p>" : "") + "</div></li>").join("") + "</ul></div></section>";
+    + '<div class="pad"><p class="intro">Your shopping list for an enchanter and a leatherworker. An item holds one enchant or one armor kit, so a kit replaces an enchant. Each slot above shows its pick too. Forever raised a lot of old enchants, so these beat what Classic guides list.</p>'
+    + '<ul class="ench">' + groups.map((g) => {
+      const p = g.pick;
+      return '<li><span class="ench-slot">' + esc(joinSlots(g.slots)) + '</span><div class="ench-main"><p class="ench-name"><span>' + esc(p.name) + "</span>"
+        + (p.tag ? '<span class="chip chip-new">' + esc(p.tag) + "</span>" : "") + '</p><p class="ench-fx">' + esc(p.fx + (g.slots.length > 1 ? " on each" : "")) + "</p>"
+        + (p.how ? '<p class="ench-how">' + esc(p.how) + "</p>" : "")
+        + g.alts.map((a) => '<p class="ench-alt"><span class="se-k2">' + esc(a.label) + "</span>" + esc(a.name) + " (" + esc(a.fx) + ")" + (a.note ? " " + esc(a.note) : "") + "</p>").join("")
+        + "</div></li>";
+    }).join("") + "</ul></div></section>";
 }
 function whereHTML(st, rows) {
   const buckets = {};

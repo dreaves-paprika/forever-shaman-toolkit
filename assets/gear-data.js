@@ -264,15 +264,6 @@ const SPECS20 = {
       { key: "relic", label: "Relic", opts: ["driftwood:ench"], none: "Alliance shamans can’t get a relic at 20 without Enchanting.",
         why: { driftwood: "Keeps 8% of your mana regen going while you cast." } }
     ],
-    ench: [
-      { slot: "Two-hand", name: "2H Weapon – Lesser Impact", fx: "+5 weapon damage", how: "Impact (+6) is the step up if you find an enchanter with the skill." },
-      { slot: "Neck", name: "Necklace – Strength", fx: "+5 Strength", how: "The enchanter needs skill 210 and a 120-Favor formula.", tag: "New in Forever" },
-      { slot: "Hands", name: "Gloves – Strength", fx: "+7 Strength", how: "A high-skill enchant. Use a Forceful kit until you find someone who has it." },
-      { slot: "Wrist", name: "Bracer – Strength", fx: "+5 Strength", how: "Bracer – Lesser Strength (+4) is the cheaper step down." },
-      { slot: "Chest", name: "Chest – Lesser Stats", fx: "+2 to every stat", how: "" },
-      { slot: "Back", name: "Cloak – Minor Agility", fx: "+3 Agility", how: "Cheap, and a small gain." },
-      { slot: "Legs and feet", name: "Forceful Medium Armor Kit", fx: "+4 attack power and +16 armor on each", how: "Leatherworking 80. Leatherworking supply vendors in Ironforge sell the pattern, and kits trade, so anyone can buy them.", tag: "Kit" }
-    ],
     favor: "Buy the Defender’s Leather Hood pattern first. It’s your biggest crafted upgrade. Totemic Leather Boots come next."
   },
   ele: {
@@ -323,12 +314,6 @@ const SPECS20 = {
       { key: "relic", label: "Relic", opts: ["driftwood:ench"], none: "Alliance shamans can’t get a relic at 20 without Enchanting.",
         why: { driftwood: "Keeps 8% of your mana regen going while you cast." } }
     ],
-    ench: [
-      { slot: "Main hand", name: "Weapon – Revelation", fx: "When a spell fails to crit, a chance that your next spell crits", how: "Skill 140 and a 45-Favor formula.", tag: "New in Forever" },
-      { slot: "Neck", name: "Necklace – Spell Power", fx: "+6 spell power", how: "Skill 210 and a 120-Favor formula.", tag: "New in Forever" },
-      { slot: "Wrist", name: "Bracer – Intellect", fx: "+5 Intellect", how: "" },
-      { slot: "Chest, hands, legs and feet", name: "Mystic Medium Armor Kit", fx: "+2 spell power and +16 armor on each", how: "Leatherworking 80. Leatherworking supply vendors in Ironforge sell the pattern, and kits trade, so anyone can buy them.", tag: "Kit" }
-    ],
     favor: "Buy the Totemic Leather Hood pattern first, or the Pristine Circlet if you tailor. The belt and gloves patterns add only a point or two each."
   },
   resto: {
@@ -377,13 +362,6 @@ const SPECS20 = {
         why: { recomb: "Engineers only. An emergency heal and a mana top-up.", spyglass: "Just 1 Spirit, but it beats an empty slot." } },
       { key: "relic", label: "Relic", opts: ["driftwood:ench"], none: "Alliance shamans can’t get a relic at 20 without Enchanting.",
         why: { driftwood: "Keeps another 8% of your mana regen going while you cast." } }
-    ],
-    ench: [
-      { slot: "Two-hand", name: "2H Weapon – Lesser Intellect", fx: "+5 Intellect", how: "Weapon – Insight (new, 45 Favor) may be better, but Wowhead’s two descriptions of it disagree, so check it in game first." },
-      { slot: "Neck", name: "Necklace – Healing Power", fx: "+11 healing and +4 spell damage", how: "Skill 210 and a 120-Favor formula.", tag: "New in Forever" },
-      { slot: "Wrist", name: "Bracer – Intellect", fx: "+5 Intellect", how: "" },
-      { slot: "Chest", name: "Chest – Lesser Stats", fx: "+2 to every stat", how: "About equal to a Mystic kit on the chest." },
-      { slot: "Hands, legs and feet", name: "Mystic Medium Armor Kit", fx: "+2 spell power and +16 armor on each", how: "Leatherworking 80. Leatherworking supply vendors in Ironforge sell the pattern, and kits trade, so anyone can buy them.", tag: "Kit" }
     ],
     favor: "Buy the hood pattern first: Wisdom’s Leather Hood, or the Pristine Circlet if you tailor. The gloves and belt come next."
   }
@@ -449,6 +427,9 @@ const SOURCES = [
   { name: "Shaman guide and stat values", site: "Warcraft Tavern", url: "https://www.warcrafttavern.com/forever/guides/shaman/" },
   { name: "New leatherworking patterns", site: "Warcraft Tavern", url: "https://www.warcrafttavern.com/forever/news/new-leatherworking-patterns-for-world-of-warcraft-forever/" },
   { name: "New enchanting formulas", site: "Warcraft Tavern", url: "https://www.warcrafttavern.com/forever/news/new-enchanting-formulas-for-world-of-warcraft-forever/" },
+  { name: "Every new enchant in WoW Forever", site: "Blizzard Watch", url: "https://blizzardwatch.com/2026/09/21/every-new-enchant-world-warcraft-forever/" },
+  { name: "Bracer – Lesser Intellect (Forever values)", site: "Wowhead", url: "https://www.wowhead.com/forever/spell=13622/enchant-bracer-lesser-intellect" },
+  { name: "Formula: Enchant Weapon – Insight", site: "Wowhead", url: "https://www.wowhead.com/forever/item=249479" },
   { name: "Ruins of Lordaeron access", site: "wowhandbook", url: "https://wowhandbook.com/zones/dungeons/ruins-of-lordaeron/" },
   { name: "Raene's Cleansing quest chain", site: "Warcraft Wiki", url: "https://warcraft.wiki.gg/wiki/Raene%27s_Cleansing_quest_chain" },
   { name: "Dungeon loot tables (Forever)", site: "zockify", url: "https://www.zockify.com/forever/dungeons/" },
@@ -510,14 +491,6 @@ const SPECS30 = {
       TRINKET30,
       RELIC30
     ],
-    ench: [
-      { slot: "Two-hand", name: "2H Weapon – Impact", fx: "+6 weapon damage", how: "The enchanter needs skill 200." },
-      { slot: "Neck", name: "Necklace – Strength", fx: "+5 Strength", how: "The enchanter needs skill 210 and a 120-Favor formula.", tag: "New in Forever" },
-      { slot: "Hands", name: "Gloves – Strength", fx: "+7 Strength", how: "Needs an enchanter at the 225 skill cap." },
-      { slot: "Wrist", name: "Bracer – Strength", fx: "+5 Strength", how: "Skill 180." },
-      { slot: "Chest", name: "Chest – Lesser Stats", fx: "+2 to every stat", how: "Skill 200." },
-      { slot: "Legs and feet", name: "Forceful Heavy Armor Kit", fx: "+6 attack power and +24 armor on each", how: "Leatherworkers make it, and kits trade, so anyone can buy one. Needs level 30.", tag: "Kit" }
-    ],
     favor: "Buy the Totemic Leather Tunic pattern first (30 Favor). The Totemic Leather Leggings pattern (30 Favor) tides you over until Ferine Leggings drop. The Prowler’s belt pattern costs 20 silver in Ironforge."
   },
   ele: {
@@ -571,12 +544,6 @@ const SPECS30 = {
       TRINKET30,
       RELIC30
     ],
-    ench: [
-      { slot: "Main hand", name: "Weapon – Revelation", fx: "When a spell fails to crit, a chance that your next spell crits", how: "Skill 140 and a 45-Favor formula.", tag: "New in Forever" },
-      { slot: "Neck", name: "Necklace – Spell Power", fx: "+6 spell power", how: "Skill 210 and a 120-Favor formula.", tag: "New in Forever" },
-      { slot: "Wrist", name: "Bracer – Intellect", fx: "+5 Intellect", how: "Skill 210." },
-      { slot: "Chest, hands, legs and feet", name: "Mystic Heavy Armor Kit", fx: "+4 spell power and +24 armor on each", how: "Leatherworking 135, from a cheap vendor pattern. Kits trade, so anyone can buy one. Needs level 30.", tag: "Kit" }
-    ],
     favor: "Leatherworkers: buy the Stormrider’s Leather Tunic pattern (30 Favor), then the Skycaller’s belt pattern (20 silver in Ironforge). Enchanters: the Orb of Mystic Insight formula (45 Favor)."
   },
   resto: {
@@ -627,13 +594,6 @@ const SPECS30 = {
         alts: [["darkhorde", "6 spell power and 6 Stamina."], ["snakehoop", "Intellect and Spirit."]] },
       TRINKET30,
       RELIC30
-    ],
-    ench: [
-      { slot: "Main hand", name: "Weapon – Insight", fx: "A chance when you cast to double your Spirit for 10 seconds", how: "Skill 140 and a 45-Favor formula. Wowhead’s two descriptions of it disagree, so check it in game first.", tag: "New in Forever" },
-      { slot: "Neck", name: "Necklace – Healing Power", fx: "+11 healing and +4 spell damage", how: "Skill 210 and a 120-Favor formula.", tag: "New in Forever" },
-      { slot: "Wrist", name: "Bracer – Intellect", fx: "+5 Intellect", how: "Skill 210." },
-      { slot: "Chest", name: "Chest – Lesser Stats", fx: "+2 to every stat", how: "Skill 200. About equal to a Mystic kit on the chest." },
-      { slot: "Hands, legs and feet", name: "Mystic Heavy Armor Kit", fx: "+4 spell power and +24 armor on each", how: "Leatherworking 135, from a cheap vendor pattern. Kits trade, so anyone can buy one. Needs level 30.", tag: "Kit" }
     ],
     favor: "Tailors: buy the Pristine Leggings pattern first (30 Favor). Leatherworkers: Wisdom’s Leather Leggings (30 Favor), then the Mender’s belt pattern (20 silver in Ironforge). Enchanters: the Orb of Souls formula (45 Favor)."
   }
@@ -725,6 +685,132 @@ const LEVELS = {
 };
 
 /* ---------- shared logic ---------- */
+/* ---------- enchants and armor kits, per slot ----------
+   Forever raised many Classic enchants, so these are Forever's own values, checked on Wowhead's Forever
+   database in late September 2026. Skill levels are the Classic ones Wowhead still lists.
+   An item holds one enchant or one kit, so each slot gets one pick, plus easier or stronger options. */
+const EN = {
+  impact2hL: { name: "2H Weapon – Lesser Impact", fx: "+5 weapon damage", how: "Enchanter skill 145. Minor Impact (+4, skill 100) is the cheap step down." },
+  impact2h: { name: "2H Weapon – Impact", fx: "+6 weapon damage", how: "Enchanter skill 200. Lesser Impact (+5, skill 145) is nearly as good." },
+  str2hL: { name: "2H Weapon – Lesser Strength", fx: "+15 Strength", how: "Skill 220. New in Forever, but nobody has confirmed where the formula comes from yet.", tag: "New in Forever" },
+  int2hL: { name: "2H Weapon – Lesser Intellect", fx: "+5 Intellect", how: "Enchanter skill 100, from a vendor formula." },
+  revelation: { name: "Weapon – Revelation", fx: "When a spell fails to crit, a chance your next spell crits", how: "Skill 140 and a 45-Favor formula from the Merchant’s Favor vendors.", tag: "New in Forever" },
+  insight: { name: "Weapon – Insight", fx: "A chance on each cast to double your Spirit for 10 seconds", how: "Skill 140 and a 45-Favor formula. The extra Spirit only restores mana while you aren’t casting, so try it before you pay for it.", tag: "New in Forever" },
+  neckStr: { name: "Necklace – Strength", fx: "+5 Strength", how: "Skill 210 and a 120-Favor formula, and the materials are costly.", tag: "New in Forever" },
+  neckSp: { name: "Necklace – Spell Power", fx: "+6 spell power", how: "Skill 210 and a 120-Favor formula, and the materials are costly.", tag: "New in Forever" },
+  neckHeal: { name: "Necklace – Healing Power", fx: "+11 healing and +4 spell damage", how: "Skill 210 and a 120-Favor formula, and the materials are costly.", tag: "New in Forever" },
+  cloakAgi: { name: "Cloak – Minor Agility", fx: "+3 Agility", how: "Skill 110. Small but cheap. Forever raised it to match Lesser Agility." },
+  chestStats: { name: "Chest – Minor Stats", fx: "+2 to every stat", how: "Skill 150. Forever made it match Lesser Stats (skill 200), so ask for the cheaper one." },
+  chestInt: { name: "Chest – Greater Intellect", fx: "+6 Intellect", how: "Skill 185. Forever turned the old mana enchants into Intellect." },
+  bracerStr: { name: "Bracer – Strength", fx: "+5 Strength", how: "Skill 180." },
+  bracerStrL: { name: "Bracer – Lesser Strength", fx: "+4 Strength", how: "Skill 140." },
+  bracerHealL: { name: "Bracer – Lesser Healing Power", fx: "+16 healing and +6 spell damage", how: "Skill 205. The formula is new in Forever and sold in Desolace.", tag: "New in Forever" },
+  bracerHealMin: { name: "Bracer – Minor Healing Power", fx: "+8 healing and +3 spell damage", how: "Skill 90. New in Forever, but where its formula comes from isn’t known yet." },
+  bracerIntL: { name: "Bracer – Lesser Intellect", fx: "+5 Intellect", how: "Skill 150. Forever gives it the same +5 as Bracer – Intellect (skill 210), which may get patched." },
+  glovesStr: { name: "Gloves – Strength", fx: "+7 Strength", how: "Skill 225, as high as an enchanter can go before level 35." },
+  kitForceM: { name: "Forceful Medium Armor Kit", fx: "+4 attack power and +16 armor", how: "Leatherworking 80, from a vendor pattern in Ironforge. Kits trade, so anyone can buy one. Needs level 15.", tag: "Kit" },
+  kitForceH: { name: "Forceful Heavy Armor Kit", fx: "+6 attack power and +24 armor", how: "Leatherworking 135, pattern from Saenorion in Darnassus. Kits trade. Needs level 30. Wowhead doesn’t show its numbers yet, so they come from one site.", tag: "Kit" },
+  kitMysticM: { name: "Mystic Medium Armor Kit", fx: "+2 spell power and +16 armor", how: "Leatherworking 80, from a vendor pattern in Ironforge. Kits trade, so anyone can buy one. Needs level 15.", tag: "Kit" },
+  kitMysticH: { name: "Mystic Heavy Armor Kit", fx: "+4 spell power and +24 armor", how: "Leatherworking 135, pattern from Saenorion in Darnassus. Kits trade. Needs level 30. Wowhead doesn’t show its numbers yet, so they come from one site.", tag: "Kit" }
+};
+const NO_CLOAK = "No cloak enchant helps a caster at this level.";
+const NO_HELD = "Off-hand items that aren’t shields can’t be enchanted.";
+// For each slot: the pick, then [option, label, short note] entries, or a note when nothing is worth it.
+const ENCH_PLAN = {
+  20: {
+    enh: {
+      weapon: { pick: "impact2hL", alts: [["str2hL", "Stronger, if you find it"]] },
+      neck: { pick: "neckStr" },
+      back: { pick: "cloakAgi" },
+      chest: { pick: "chestStats", alts: [["kitForceM", "Easier"]] },
+      wrist: { pick: "bracerStr", alts: [["bracerStrL", "Easier"]] },
+      hands: { pick: "glovesStr", alts: [["kitForceM", "Until then"]] },
+      legs: { pick: "kitForceM" },
+      feet: { pick: "kitForceM" }
+    },
+    ele: {
+      mh: { pick: "revelation" },
+      oh: { none: NO_HELD },
+      neck: { pick: "neckSp" },
+      back: { none: NO_CLOAK },
+      chest: { pick: "chestInt", alts: [["kitMysticM", "Easier", "Nearly as good."]] },
+      wrist: { pick: "bracerHealL", alts: [["bracerIntL", "Easier"]] },
+      hands: { pick: "kitMysticM" },
+      legs: { pick: "kitMysticM" },
+      feet: { pick: "kitMysticM" }
+    },
+    resto: {
+      weapon: { pick: "int2hL", alts: [["insight", "Worth a try"]] },
+      neck: { pick: "neckHeal" },
+      back: { none: NO_CLOAK },
+      chest: { pick: "chestInt", alts: [["kitMysticM", "Easier", "Nearly as good."]] },
+      wrist: { pick: "bracerHealL", alts: [["bracerHealMin", "Easier"], ["bracerIntL", "Or"]] },
+      hands: { pick: "kitMysticM" },
+      legs: { pick: "kitMysticM" },
+      feet: { pick: "kitMysticM" }
+    }
+  },
+  30: {
+    enh: {
+      weapon: { pick: "impact2h", alts: [["str2hL", "Stronger, if you find it"]] },
+      neck: { pick: "neckStr" },
+      back: { pick: "cloakAgi" },
+      chest: { pick: "chestStats", alts: [["kitForceH", "Easier"]] },
+      wrist: { pick: "bracerStr", alts: [["bracerStrL", "Easier"]] },
+      hands: { pick: "glovesStr", alts: [["kitForceH", "Until then"]] },
+      legs: { pick: "kitForceH" },
+      feet: { pick: "kitForceH" }
+    },
+    ele: {
+      mh: { pick: "revelation" },
+      oh: { none: NO_HELD },
+      neck: { pick: "neckSp" },
+      back: { none: NO_CLOAK },
+      chest: { pick: "kitMysticH", alts: [["chestInt", "Or", "Close behind the kit."]] },
+      wrist: { pick: "bracerHealL", alts: [["bracerIntL", "Easier"]] },
+      hands: { pick: "kitMysticH" },
+      legs: { pick: "kitMysticH" },
+      feet: { pick: "kitMysticH" }
+    },
+    resto: {
+      mh: { pick: "insight" },
+      oh: { none: NO_HELD },
+      neck: { pick: "neckHeal" },
+      back: { none: NO_CLOAK },
+      chest: { pick: "kitMysticH", alts: [["chestInt", "Or", "Close behind the kit."]] },
+      wrist: { pick: "bracerHealL", alts: [["bracerHealMin", "Easier"], ["bracerIntL", "Or"]] },
+      hands: { pick: "kitMysticH" },
+      legs: { pick: "kitMysticH" },
+      feet: { pick: "kitMysticH" }
+    }
+  }
+};
+// The enchant or kit for one slot: { pick, alts } or { none }, or null for slots nothing can go on.
+function enchFor(lvl, specKey, slotKey) {
+  const plan = ((ENCH_PLAN[lvl] || ENCH_PLAN[20])[specKey] || {})[slotKey];
+  if (!plan) return null;
+  if (plan.none) return { none: plan.none };
+  return {
+    pick: Object.assign({ key: plan.pick }, EN[plan.pick]),
+    alts: (plan.alts || []).map((a) => Object.assign({ key: a[0], label: a[1], note: a[2] || "" }, EN[a[0]]))
+  };
+}
+// The same picks as a shopping list: one entry per enchant, with the slots it goes on.
+function enchGroups(lvl, specKey) {
+  const groups = [];
+  const byKey = {};
+  LEVELS[lvl].specs[specKey].slots.forEach((slot) => {
+    const e = enchFor(lvl, specKey, slot.key);
+    if (!e || !e.pick) return;
+    // Slots share an entry only when their options match too.
+    const id = [e.pick.key].concat(e.alts.map((a) => a.key + ":" + a.label)).join("|");
+    let g = byKey[id];
+    if (!g) { g = byKey[id] = { pick: e.pick, alts: e.alts, slots: [] }; groups.push(g); }
+    g.slots.push(slot.label);
+  });
+  return groups;
+}
+
 function parseOpt(o) {
   const i = o.indexOf(":");
   return i < 0 ? { k: o, p: null } : { k: o.slice(0, i), p: o.slice(i + 1) };
@@ -764,6 +850,7 @@ function whereText(g, lvl) { return typeof g.where === "string" ? g.where : (g.w
 
 window.GEAR_DATA = {
   PROFS: PROFS, PROF_NAME: PROF_NAME, ITEMS: ITEMS, SRC: SRC, GROUPS: GROUPS, WEIGHT: WEIGHT, SOURCES: SOURCES, STAT_ORDER: STAT_ORDER,
-  LEVELS: LEVELS, parseOpt: parseOpt, isAvail: isAvail, computeRows: computeRows, whereText: whereText
+  LEVELS: LEVELS, parseOpt: parseOpt, isAvail: isAvail, computeRows: computeRows, whereText: whereText,
+  ENCH: EN, ENCH_PLAN: ENCH_PLAN, enchFor: enchFor, enchGroups: enchGroups
 };
 })();

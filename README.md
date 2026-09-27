@@ -3,7 +3,7 @@
 Small tools for a Dwarf Shaman in the WoW Forever beta:
 
 - **Level-cap checklist** (`/checklist`): spells to train, the totem quests, talents and totem bar setup.
-- **Best-in-slot gear** (`/gear`): the best gear you can get at the cap for Enhancement, Elemental or Restoration, with sources, profession options, enchants and quest reward picks. **Share my build** makes a read-only link to your picks.
+- **Best-in-slot gear** (`/gear`): the best gear you can get at the cap for Enhancement, Elemental or Restoration, with sources, profession options and quest reward picks. Each slot also shows its recommended enchant or armor kit (Forever's values, which differ from Classic), with easier or stronger options. **Share my build** makes a read-only link to your picks.
 - **Dungeon planner** (`/dungeons`): which dungeons to run for your build and in what order, the quests to pick up first, the upgrades in each one, and how to get there.
 - **Party board** (`/party`): builds, checklist progress, totems and gear for friends who choose to join.
 
