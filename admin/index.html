@@ -383,7 +383,7 @@ function rows() {
       ref: v.ref || "",
       me: !!me && v.id === me,
       ck: Number(v.ck_total) > 0 ? { done: Number(v.ck_done) || 0, total: Number(v.ck_total), spec: v.ck_spec || "", lvl: Number(v.ck_lvl) === 30 ? 30 : 20, totems: String(v.ck_totems || "").replace(/[^efwa]/g, ""), at: Number(v.ck_at) || 0 } : null,
-      gear: Number(v.gear_total) > 0 ? { have: Number(v.gear_have) || 0, total: Number(v.gear_total), spec: v.gear_spec || "", lvl: Number(v.gear_lvl) === 30 ? 30 : 20, profs: String(v.gear_profs || "").split(",").filter((p) => PROF_LABEL[p]), at: Number(v.gear_at) || 0 } : null
+      gear: Number(v.gear_total) > 0 ? { have: Number(v.gear_have) || 0, total: Number(v.gear_total), spec: v.gear_spec || "", lvl: Number(v.gear_lvl) === 30 ? 30 : 20, profs: String(v.gear_profs || "").split(",").filter((p) => PROF_LABEL[p]), enchDone: Number(v.gear_ench_done) || 0, enchTotal: Number(v.gear_ench_total) || 0, at: Number(v.gear_at) || 0 } : null
     };
     r.short = "Visitor " + r.id.slice(0, 4);
     r.display = r.name || r.label || r.short;
@@ -684,7 +684,7 @@ function eventText(e) {
   if (e.e === "party") return x.on ? "joined the party board" : "left the party board";
   if (e.e === "note") return "sent a note" + (x.label ? (e.p === "gear" ? " about the " + x.label + " slot" : " about " + x.label) : " from " + PAGE_THE[e.p]);
   if (e.e === "state" && e.p === "checklist") return "is at " + n(x.done) + " of " + n(x.total) + " on the level " + lvl + " checklist" + (SPEC_LABEL[x.spec] ? " (" + SPEC_LABEL[x.spec] + ")" : "");
-  if (e.e === "state" && e.p === "gear") return "has " + n(x.have) + " of " + n(x.total) + " level " + lvl + " best-in-slot pieces" + (SPEC_LABEL[x.spec] ? " for " + SPEC_LABEL[x.spec] : "");
+  if (e.e === "state" && e.p === "gear") return "has " + n(x.have) + " of " + n(x.total) + " level " + lvl + " best-in-slot pieces" + (SPEC_LABEL[x.spec] ? " for " + SPEC_LABEL[x.spec] : "") + (x.enchTotal ? ", " + n(x.enchDone) + " of " + n(x.enchTotal) + " enchanted" : "");
   return "was active";
 }
 function feedCardHTML(list) {
@@ -801,7 +801,7 @@ function detailHTML(r) {
   const pages = PAGES.filter((p) => r.pages[p]).map((p) => PAGE_LABEL[p] + " " + n(r.pages[p])).join(" · ") || "None yet";
   const totems = r.ck && r.ck.totems ? r.ck.totems.split("").map((c) => TOTEM_LABEL[c]).join(", ") : "";
   const ck = r.ck ? "Level " + r.ck.lvl + " · " + n(r.ck.done) + " of " + n(r.ck.total) + (SPEC_LABEL[r.ck.spec] ? " · " + SPEC_LABEL[r.ck.spec] : "") + " · updated " + ago(r.ck.at) : "Hasn’t ticked anything";
-  const gear = r.gear ? "Level " + r.gear.lvl + " · " + n(r.gear.have) + " of " + n(r.gear.total) + " pieces" + (SPEC_LABEL[r.gear.spec] ? " · " + SPEC_LABEL[r.gear.spec] : "") + " · updated " + ago(r.gear.at) : "Hasn’t ticked anything";
+  const gear = r.gear ? "Level " + r.gear.lvl + " · " + n(r.gear.have) + " of " + n(r.gear.total) + " pieces" + (r.gear.enchTotal ? " · " + n(r.gear.enchDone) + " of " + n(r.gear.enchTotal) + " enchanted" : "") + (SPEC_LABEL[r.gear.spec] ? " · " + SPEC_LABEL[r.gear.spec] : "") + " · updated " + ago(r.gear.at) : "Hasn’t ticked anything";
   const profs = r.gear ? (r.gear.profs.map((p) => PROF_LABEL[p]).join(", ") || "None ticked") : "Not set";
   const fact = (dt, dd) => "<div><dt>" + esc(dt) + "</dt><dd>" + esc(dd) + "</dd></div>";
   const armed = S.armed === r.id;

@@ -3,7 +3,7 @@
 Small tools for a Dwarf Shaman in the WoW Forever beta:
 
 - **Level-cap checklist** (`/checklist`): spells to train, the totem quests, talents and totem bar setup.
-- **Best-in-slot gear** (`/gear`): the best gear you can get at the cap for Enhancement, Elemental or Restoration, with sources, profession options and quest reward picks. Each slot also shows its recommended enchant or armor kit (Forever's values, which differ from Classic), with easier or stronger options. **Share my build** makes a read-only link to your picks.
+- **Best-in-slot gear** (`/gear`): the best gear you can get at the cap for Enhancement, Elemental or Restoration, with sources, profession options and quest reward picks. Each slot also shows its recommended enchant or armor kit (Forever's values, which differ from Classic), with easier or stronger options, and lets you mark what's on your item. Choosing one ticks Have it; unticking Have it clears it. **Share my build** makes a read-only link to your picks.
 - **Dungeon planner** (`/dungeons`): which dungeons to run for your build and in what order, the quests to pick up first, the upgrades in each one, and how to get there.
 - **Party board** (`/party`): builds, checklist progress, totems and gear for friends who choose to join.
 
@@ -22,7 +22,7 @@ The beta's cap is level 20, rising to 30 later. The checklist, gear guide and du
 ## Sharing and the party board
 
 - **Share my build** on the gear guide copies a link like `/gear?share=1&lvl=20&spec=resto&profs=lw&have=…&by=Name`. It opens a read-only copy that never touches the viewer's own tracker.
-- The **party board** only lists people who join it, from the board itself or with the checkbox under the name box. A card shows their name, build, checklist and gear progress, totems, professions and roughly when they were last on (rounded to the hour). Leaving, removing the name or choosing "Don't count me" takes them off. The owner can also take someone off from `/admin`.
+- The **party board** only lists people who join it, from the board itself or with the checkbox under the name box. A card shows their name, build, checklist and gear progress, enchants and kits applied, totems, professions and roughly when they were last on (rounded to the hour). Leaving, removing the name or choosing "Don't count me" takes them off. The owner can also take someone off from `/admin`.
 
 ## Notes to the admin
 

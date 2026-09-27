@@ -3,6 +3,7 @@
 const { SPECS, PROFS, pipeline, pairs } = require("./_lib");
 
 const ITEM_RE = /^[a-z0-9]{2,24}$/;
+const PAIR_RE = /^[a-z0-9]{2,24}~[A-Za-z0-9]{2,24}$/;
 
 module.exports = async function handler(req, res) {
   if (req.method !== "GET") {
@@ -32,7 +33,10 @@ module.exports = async function handler(req, res) {
         total: Number(v.gear_total) || 0,
         spec: SPECS[v.gear_spec] ? v.gear_spec : "",
         profs: String(v.gear_profs || "").split(",").filter((p) => PROFS[p]),
-        own: String(v.gear_own || "").split(",").filter((k) => ITEM_RE.test(k)).slice(0, 60)
+        own: String(v.gear_own || "").split(",").filter((k) => ITEM_RE.test(k)).slice(0, 60),
+        enchDone: Number(v.gear_ench_done) || 0,
+        enchTotal: Number(v.gear_ench_total) || 0,
+        ench: String(v.gear_ench || "").split(".").filter((x) => PAIR_RE.test(x)).slice(0, 30)
       } : null;
       const last = Number(v.last) || 0;
       // Round "last seen" to the hour so the board doesn't show anyone's exact activity.

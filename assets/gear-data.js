@@ -805,8 +805,9 @@ function enchGroups(lvl, specKey) {
     // Slots share an entry only when their options match too.
     const id = [e.pick.key].concat(e.alts.map((a) => a.key + ":" + a.label)).join("|");
     let g = byKey[id];
-    if (!g) { g = byKey[id] = { pick: e.pick, alts: e.alts, slots: [] }; groups.push(g); }
+    if (!g) { g = byKey[id] = { pick: e.pick, alts: e.alts, slots: [], keys: [] }; groups.push(g); }
     g.slots.push(slot.label);
+    g.keys.push(slot.key);
   });
   return groups;
 }

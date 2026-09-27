@@ -246,7 +246,7 @@ button.tile:hover{border-color:var(--spec);color:var(--ink)}
 .slot{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"label have" "main main";gap:6px 14px;padding:14px 12px;border-top:1px solid var(--line);scroll-margin-top:calc(env(safe-area-inset-top,0px) + 76px)}
 .slot:first-child{border-top:0}
 .slot-label{grid-area:label;align-self:center;font-family:var(--font-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
-.slot-main{grid-area:main;min-width:0;display:grid;gap:4px}
+.slot-main{grid-area:main;min-width:0;display:grid;grid-template-columns:minmax(0,1fr);gap:4px}
 .slot-note{margin:6px 0 0}
 .slot-note:empty{display:none}
 .have{grid-area:have;display:inline-flex;align-items:center;gap:8px;align-self:start;font-size:14px;color:var(--ink-2);cursor:pointer;white-space:nowrap}
@@ -308,7 +308,9 @@ button.tile:hover{border-color:var(--spec);color:var(--ink)}
 .ench-how{margin:0;font-size:14.5px;color:var(--ink-2)}
 .ench-alt{margin:2px 0 0;font-size:14.5px;color:var(--ink-2)}
 /* The enchant or armor kit under each best-in-slot item */
-.se{margin:6px 0 2px;padding:8px 12px 9px;border-left:3px solid var(--spec);border-radius:0 10px 10px 0;background:var(--surface-2);display:grid;gap:3px;max-width:72ch}
+.se{margin:6px 0 2px;padding:8px 12px 9px;border-left:3px solid var(--spec);border-radius:0 10px 10px 0;background:var(--surface-2);display:grid;grid-template-columns:minmax(0,1fr);gap:3px;min-width:0;max-width:72ch}
+.se > *{min-width:0}
+.se-name{overflow-wrap:anywhere}
 .se-line{margin:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
 .se-k{display:inline-flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--spec);white-space:nowrap}
 .se-k svg{width:12px;height:12px;align-self:center}
@@ -321,6 +323,20 @@ button.tile:hover{border-color:var(--spec);color:var(--ink)}
 .se-alt-name{font-weight:500;color:var(--ink)}
 .se-alt-how{display:block;margin-top:1px}
 .se-none{margin:6px 0 0;display:flex;align-items:center;gap:6px;font-size:14px;color:var(--ink-3)}
+.se-apply{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:6px;padding-top:7px;border-top:1px dashed var(--line-strong)}
+.se-apply label,.se-apply .se-on{font-size:14px;font-weight:500;color:var(--ink)}
+.se-select{min-width:0;max-width:100%;height:34px;padding:0 30px 0 10px;border:1px solid var(--line-strong);border-radius:9px;background-color:var(--surface);color:var(--ink);font:inherit;font-size:14.5px}
+.se-state{display:inline-flex;align-items:center;gap:5px;font-size:13.5px;font-weight:500;color:var(--ok)}
+.se-state svg{width:14px;height:14px}
+.se.is-applied{border-left-color:var(--ok)}
+.se-theirs{font-weight:500;color:var(--ink)}
+.doll-ench{margin:2px 0 0;display:flex;align-items:center;gap:5px;font-size:13px;color:var(--ink-2)}
+.doll-ench svg{width:12px;height:12px;color:var(--spec)}
+.tile{position:relative}
+.tile[data-ench="1"]::after{content:"";position:absolute;top:3px;right:3px;width:6px;height:6px;border-radius:50%;background:var(--on-color);box-shadow:0 0 0 1.5px var(--spec)}
+.ench li.is-done{opacity:.7}
+.ench-left{font-family:var(--font-mono);font-size:12px;color:var(--ink-3)}
+.ench li.is-done .ench-left{color:var(--ok)}
 .se-none svg{flex:none;width:12px;height:12px}
 @container (min-width:620px){
   .ench li{grid-template-columns:150px minmax(0,1fr)}
@@ -560,8 +576,9 @@ function tileHTML(t, byId, st) {
   if (!r) return '<span class="tile" data-state="off">' + esc(label) + "</span>";
   const it = r.item ? ITEMS[r.item] : null;
   const state = !it ? "none" : (st.have.has(r.item) ? "have" : "need");
-  const name = r.label + ": " + (it ? it.n + (state === "have" ? ", owned" : ", not owned yet") : "nothing available");
-  return '<button type="button" class="tile" data-state="' + state + '" data-go="' + r.rid + '" aria-label="' + esc(name) + '" title="' + esc(name) + '">' + esc(label) + "</button>";
+  const enchanted = state === "have" && !!st.ench[r.item];
+  const name = r.label + ": " + (it ? it.n + (state === "have" ? ", owned" : ", not owned yet") + (enchanted ? ", enchanted" : "") : "nothing available");
+  return '<button type="button" class="tile" data-state="' + state + '"' + (enchanted ? ' data-ench="1"' : "") + ' data-go="' + r.rid + '" aria-label="' + esc(name) + '" title="' + esc(name) + '">' + esc(label) + "</button>";
 }
 function dollHTML(st, rows) {
   const spec = SPEC(st);
@@ -575,7 +592,8 @@ function dollHTML(st, rows) {
   return '<section class="doll" aria-label="' + (shared ? "Their gear at a glance" : "Your gear at a glance") + '">'
     + '<div class="doll-col">' + left.map(tile).join("") + "</div>"
     + '<div class="doll-mid"><p class="doll-spec">' + esc(spec.label) + '</p><p class="doll-num"><span>' + c.have + '</span><span class="doll-of">/' + c.total + "</span></p>"
-    + '<p class="doll-cap">' + (shared ? "best-in-slot pieces they have" : "best-in-slot pieces you have") + '</p><span class="bar" aria-hidden="true"><i style="width:' + pct(c.have, c.total) + '%"></i></span></div>'
+    + '<p class="doll-cap">' + (shared ? "best-in-slot pieces they have" : "best-in-slot pieces you have") + '</p><span class="bar" aria-hidden="true"><i style="width:' + pct(c.have, c.total) + '%"></i></span>'
+    + (function () { const ec = enchCount(st, rows); return ec.total ? '<p class="doll-ench">' + GLYPH.spark + ec.done + " of " + ec.total + " enchanted</p>" : ""; })() + "</div>"
     + '<div class="doll-col">' + right.map(tile).join("") + "</div>"
     + '<div class="doll-bottom">' + bottom.map(tile).join("") + "</div></section>";
 }
@@ -597,7 +615,8 @@ function sharedHTML(st, rows) {
   const c = ownedCount(st, rows);
   const profs = Array.from(st.profs).map((p) => PROF_NAME[p]).join(", ");
   return '<section class="shared" aria-labelledby="shared-title"><p class="shared-title" id="shared-title">' + esc(shared.by ? shared.by + "’s build" : "A shared build") + "</p>"
-    + '<p class="shared-sub">Level ' + st.lvl + " " + esc(SPEC(st).label) + (profs ? " · " + esc(profs) : "") + " · " + c.have + " of " + c.total + " best-in-slot pieces</p>"
+    + '<p class="shared-sub">Level ' + st.lvl + " " + esc(SPEC(st).label) + (profs ? " · " + esc(profs) : "") + " · " + c.have + " of " + c.total + " best-in-slot pieces"
+    + (function () { const ec = enchCount(st, rows); return ec.done ? " · " + ec.done + " of " + ec.total + " enchanted" : ""; })() + "</p>"
     + '<p class="shared-hint">This is a read-only copy. Nothing here changes your own tracker.</p>'
     + '<a class="shared-back" href="/gear">Open my own gear guide</a></section>';
 }
@@ -631,18 +650,56 @@ function altHTML(a, st) {
     + (a[1] ? '<span class="alt-why">' + esc(a[1]) + "</span>" : "") + "</li>";
 }
 function noteBtn(o) { return window.shamanNoteButton ? window.shamanNoteButton(o) : ""; }
+const ICON_CHECK = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4.5 10.5 3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+// Which enchant is on each item: { itemKey: enchantKey or "other" }.
+function cleanEnch(obj) {
+  const out = {};
+  Object.keys(obj || {}).slice(0, 60).forEach((k) => {
+    const v = obj[k];
+    if (ITEMS[k] && (v === "other" || (G.ENCH[v] && /^[A-Za-z0-9]{2,24}$/.test(v)))) out[k] = v;
+  });
+  return out;
+}
+function enchName(v) { return v === "other" ? "Something else" : (G.ENCH[v] ? G.ENCH[v].name : ""); }
+// Slots with a recommended enchant, and how many of the items you own there are enchanted.
+function enchCount(st, rows) {
+  let total = 0, done = 0;
+  rows.forEach((r) => {
+    if (!r.item) return;
+    const e = G.enchFor(st.lvl, st.spec, r.slot.key);
+    if (!e || !e.pick) return;
+    total++;
+    if (st.have.has(r.item) && st.ench[r.item]) done++;
+  });
+  return { done: done, total: total };
+}
+function applyHTML(e, item, label, st) {
+  const cur = st.ench[item] || "";
+  if (shared) {
+    return '<p class="se-apply"><span class="se-on">On theirs:</span> <span class="' + (cur ? "se-theirs" : "") + '">' + esc(cur ? enchName(cur) : "Not yet") + "</span></p>";
+  }
+  const opts = [["", "Not yet"], [e.pick.key, e.pick.name + " (recommended)"]].concat(e.alts.map((a) => [a.key, a.name]));
+  // Keep a choice made for another level or build, even if it isn't listed here now.
+  if (cur && cur !== "other" && !opts.some((o) => o[0] === cur)) opts.push([cur, enchName(cur)]);
+  opts.push(["other", "Something else"]);
+  const id = "ench-" + item;
+  return '<div class="se-apply"><label for="' + id + '">On yours:</label><select class="se-select" id="' + id + '" data-ench-item="' + esc(item) + '" aria-label="Enchant on your ' + esc(label) + '">'
+    + opts.map((o) => '<option value="' + esc(o[0]) + '"' + (o[0] === cur ? " selected" : "") + ">" + esc(o[1]) + "</option>").join("") + "</select>"
+    + (cur ? '<span class="se-state">' + ICON_CHECK + (cur === e.pick.key ? "Done" : "Applied") + "</span>" : "") + "</div>";
+}
 // The enchant or armor kit recommended for a slot, with easier or stronger options.
-function slotEnchHTML(key, st) {
+function slotEnchHTML(key, st, item, label) {
   const e = G.enchFor(st.lvl, st.spec, key);
   if (!e) return "";
   if (e.none) return '<p class="se-none">' + GLYPH.spark + esc(e.none) + "</p>";
   const p = e.pick;
   const kit = p.tag === "Kit";
-  return '<div class="se"><p class="se-line"><span class="se-k">' + GLYPH.spark + (kit ? "Armor kit" : "Enchant") + '</span><span class="se-name">' + esc(p.name) + "</span>"
+  return '<div class="se' + (st.ench[item] ? " is-applied" : "") + '" data-se-item="' + esc(item) + '"><p class="se-line"><span class="se-k">' + GLYPH.spark + (kit ? "Armor kit" : "Enchant") + '</span><span class="se-name">' + esc(p.name) + "</span>"
     + '<span class="se-fx">' + esc(p.fx) + "</span>" + (p.tag && !kit ? '<span class="chip chip-new">' + esc(p.tag) + "</span>" : "") + "</p>"
     + (p.how ? '<p class="se-how">' + esc(p.how) + "</p>" : "")
     + e.alts.map((a) => '<p class="se-alt"><span class="se-k2">' + esc(a.label) + '</span><span class="se-alt-name">' + esc(a.name) + '</span> <span class="se-fx">' + esc(a.fx) + "</span>"
       + (a.note || a.how ? '<span class="se-alt-how">' + esc([a.note, a.how].filter(Boolean).join(" ")) + "</span>" : "") + "</p>").join("")
+    + applyHTML(e, item, label, st)
     + "</div>";
 }
 function rowHTML(r, st) {
@@ -656,7 +713,7 @@ function rowHTML(r, st) {
     main += '<p class="src">' + srcChips(it, st) + '<span class="src-text">' + esc(srcText(it)) + "</span></p>";
     const why = slot.why && slot.why[r.item];
     if (why) main += '<p class="why">' + esc(why) + "</p>";
-    main += slotEnchHTML(slot.key, st);
+    main += slotEnchHTML(slot.key, st, r.item, r.label);
   } else {
     main += '<p class="none">' + esc(slot.none || LV(st).none) + "</p>";
   }
@@ -681,18 +738,27 @@ function joinSlots(labels) {
   const l = labels.map((x, i) => (i ? x.toLowerCase() : x));
   return l.length > 1 ? l.slice(0, -1).join(", ") + " and " + l[l.length - 1] : l[0];
 }
-function enchHTML(st) {
-  const groups = G.enchGroups(st.lvl, st.spec);
-  return '<section class="panel" id="enchants" aria-labelledby="h-enchants">' + panelHead("enchants", "spark", "Enchants and kits", null)
-    + '<div class="pad"><p class="intro">Your shopping list for an enchanter and a leatherworker. An item holds one enchant or one armor kit, so a kit replaces an enchant. Each slot above shows its pick too. Forever raised a lot of old enchants, so these beat what Classic guides list.</p>'
-    + '<ul class="ench">' + groups.map((g) => {
-      const p = g.pick;
-      return '<li><span class="ench-slot">' + esc(joinSlots(g.slots)) + '</span><div class="ench-main"><p class="ench-name"><span>' + esc(p.name) + "</span>"
-        + (p.tag ? '<span class="chip chip-new">' + esc(p.tag) + "</span>" : "") + '</p><p class="ench-fx">' + esc(p.fx + (g.slots.length > 1 ? " on each" : "")) + "</p>"
-        + (p.how ? '<p class="ench-how">' + esc(p.how) + "</p>" : "")
-        + g.alts.map((a) => '<p class="ench-alt"><span class="se-k2">' + esc(a.label) + "</span>" + esc(a.name) + " (" + esc(a.fx) + ")" + (a.note ? " " + esc(a.note) : "") + "</p>").join("")
-        + "</div></li>";
-    }).join("") + "</ul></div></section>";
+function enchListHTML(st, rows) {
+  const bySlot = {};
+  rows.forEach((r) => { if (r.item) bySlot[r.slot.key] = r.item; });
+  return '<ul class="ench">' + G.enchGroups(st.lvl, st.spec).map((g) => {
+    const p = g.pick;
+    const items = g.keys.map((k) => bySlot[k]).filter(Boolean);
+    const done = items.filter((k) => st.have.has(k) && st.ench[k]).length;
+    const all = items.length > 0 && done === items.length;
+    const left = items.length ? (all ? "Done" : done ? done + " of " + items.length + " done" : "") : "";
+    return '<li' + (all ? ' class="is-done"' : "") + '><span class="ench-slot">' + esc(joinSlots(g.slots)) + (left ? ' <span class="ench-left">· ' + esc(left) + "</span>" : "") + '</span><div class="ench-main"><p class="ench-name"><span>' + esc(p.name) + "</span>"
+      + (p.tag ? '<span class="chip chip-new">' + esc(p.tag) + "</span>" : "") + '</p><p class="ench-fx">' + esc(p.fx + (g.slots.length > 1 ? " on each" : "")) + "</p>"
+      + (p.how ? '<p class="ench-how">' + esc(p.how) + "</p>" : "")
+      + g.alts.map((a) => '<p class="ench-alt"><span class="se-k2">' + esc(a.label) + "</span>" + esc(a.name) + " (" + esc(a.fx) + ")" + (a.note ? " " + esc(a.note) : "") + "</p>").join("")
+      + "</div></li>";
+  }).join("") + "</ul>";
+}
+function enchHTML(st, rows) {
+  const ec = enchCount(st, rows);
+  return '<section class="panel" id="enchants" aria-labelledby="h-enchants">' + panelHead("enchants", "spark", "Enchants and kits", ec.total ? ec.done + "/" + ec.total + " enchanted" : null, "ench-count")
+    + '<div class="pad"><p class="intro">Your shopping list for an enchanter and a leatherworker. An item holds one enchant or one armor kit, so a kit replaces an enchant. Each slot above shows its pick' + (shared ? " and what’s on theirs" : ", and you can mark what’s on yours") + '. Forever raised a lot of old enchants, so these beat what Classic guides list.</p>'
+    + '<div id="ench-list">' + enchListHTML(st, rows) + "</div></div></section>";
 }
 function whereHTML(st, rows) {
   const buckets = {};
@@ -750,7 +816,7 @@ function footerHTML() {
     + "</ul>" + (shared ? "" : '<div class="reset-row"><button type="button" class="reset" id="reset-btn">Clear all ticks</button></div>') + "</footer>";
 }
 function mainHTML(st, rows) {
-  return sharedHTML(st, rows) + talentsHTML(st) + gearHTML(st, rows) + enchHTML(st) + sourcesPanelHTML(st, rows) + notesHTML(st) + footerHTML();
+  return sharedHTML(st, rows) + talentsHTML(st) + gearHTML(st, rows) + enchHTML(st, rows) + sourcesPanelHTML(st, rows) + notesHTML(st) + footerHTML();
 }
 function appHTML(st) {
   const rows = rowsFor(st);
@@ -764,11 +830,12 @@ function appHTML(st) {
 const STORE_KEY = "forever-shaman20:gear:v1";
 let canSave = true;
 function readState() {
-  const st = { have: new Set(), profs: new Set(), spec: "enh", savedAt: null, lvl: SITE.level() };
+  const st = { have: new Set(), profs: new Set(), spec: "enh", savedAt: null, lvl: SITE.level(), ench: {} };
   try {
     const raw = localStorage.getItem(STORE_KEY);
     const p = raw ? JSON.parse(raw) : null;
     if (p && Array.isArray(p.have)) p.have.forEach((k) => { if (ITEMS[k]) st.have.add(k); });
+    if (p && p.ench && typeof p.ench === "object") st.ench = cleanEnch(p.ench);
     if (p && Array.isArray(p.profs)) p.profs.forEach((k) => { if (PROF_NAME[k]) st.profs.add(k); });
     if (p && LEVELS[20].specs[p.spec]) st.spec = p.spec;
     if (p && typeof p.savedAt === "string") st.savedAt = p.savedAt;
@@ -779,7 +846,10 @@ function save() {
   if (shared) return;
   const savedAt = new Date().toISOString();
   try {
-    localStorage.setItem(STORE_KEY, JSON.stringify({ v: 1, have: Array.from(state.have).sort(), profs: Array.from(state.profs).sort(), spec: state.spec, savedAt: savedAt }));
+    // Keeps anything else in the save (the dungeon planner shares it) and writes ours.
+    let base = {};
+    try { base = JSON.parse(localStorage.getItem(STORE_KEY) || "{}") || {}; } catch (e) { base = {}; }
+    localStorage.setItem(STORE_KEY, JSON.stringify(Object.assign(base, { v: 1, have: Array.from(state.have).sort(), profs: Array.from(state.profs).sort(), spec: state.spec, ench: state.ench, savedAt: savedAt })));
     state.savedAt = savedAt;
     canSave = true;
   } catch (e) { canSave = false; }
@@ -801,7 +871,10 @@ function changed() { save(); track("state", progressSummary()); }
 function track(kind, data) { try { if (window.shamanTrack) window.shamanTrack(kind, data); } catch (e) { /* stats are optional */ } }
 function progressSummary() {
   const c = ownedCount(state, rowsFor(state));
-  return { lvl: state.lvl, spec: state.spec, have: c.have, total: c.total, profs: Array.from(state.profs), own: Array.from(state.have).slice(0, 60) };
+  const ec = enchCount(state, rowsFor(state));
+  const ench = {};
+  Object.keys(state.ench).filter((k) => state.have.has(k)).slice(0, 30).forEach((k) => { ench[k] = state.ench[k]; });
+  return { lvl: state.lvl, spec: state.spec, have: c.have, total: c.total, profs: Array.from(state.profs), own: Array.from(state.have).slice(0, 60), enchDone: ec.done, enchTotal: ec.total, ench: ench };
 }
 
 /* ---------- sharing ---------- */
@@ -813,6 +886,9 @@ function shareURL() {
   if (state.profs.size) q.set("profs", Array.from(state.profs).sort().join("."));
   const own = Array.from(state.have).filter((k) => /^[a-z0-9]+$/.test(k)).sort();
   if (own.length) q.set("have", own.join("."));
+  // "item_enchant" pairs: neither part can contain an underscore, and it stays readable in a link.
+  const ench = own.filter((k) => state.ench[k]).map((k) => k + "_" + state.ench[k]);
+  if (ench.length) q.set("ench", ench.join("."));
   const name = cleanName(SITE.get(NAME_KEY));
   if (name) q.set("by", name);
   return location.origin + "/gear?" + q.toString();
@@ -820,10 +896,13 @@ function shareURL() {
 function readShared() {
   const q = new URLSearchParams(location.search);
   if (q.get("share") !== "1") return null;
-  const st = { have: new Set(), profs: new Set(), spec: "enh", savedAt: null, lvl: q.get("lvl") === "30" ? 30 : 20 };
+  const st = { have: new Set(), profs: new Set(), spec: "enh", savedAt: null, lvl: q.get("lvl") === "30" ? 30 : 20, ench: {} };
   if (LEVELS[20].specs[q.get("spec")]) st.spec = q.get("spec");
   (q.get("profs") || "").split(".").forEach((p) => { if (PROF_NAME[p]) st.profs.add(p); });
   (q.get("have") || "").split(".").forEach((k) => { if (ITEMS[k]) st.have.add(k); });
+  const ench = {};
+  (q.get("ench") || "").split(".").forEach((pair) => { const m = /^([a-z0-9]+)[_~]([A-Za-z0-9]+)$/.exec(pair); if (m) ench[m[1]] = m[2]; });
+  st.ench = cleanEnch(ench);
   return { st: st, by: cleanName(q.get("by")) };
 }
 async function onShare(btn) {
@@ -854,6 +933,23 @@ function renderAll() {
   app.innerHTML = appHTML(state);
   setStatus();
 }
+// Redraws the "On yours" line under one item's enchant after a change.
+function refreshApply(item, focus) {
+  const box = app.querySelector('.se[data-se-item="' + item + '"]');
+  if (!box) return;
+  const r = rowsFor(state).find((x) => x.item === item);
+  const e = r ? G.enchFor(state.lvl, state.spec, r.slot.key) : null;
+  box.classList.toggle("is-applied", !!state.ench[item]);
+  const old = box.querySelector(".se-apply");
+  if (!old || !e || !e.pick) return;
+  const tmp = document.createElement("div");
+  tmp.innerHTML = applyHTML(e, item, r.label, state);
+  old.replaceWith(tmp.firstElementChild);
+  if (focus) {
+    const sel = document.getElementById("ench-" + item);
+    if (sel) sel.focus({ preventScroll: true });
+  }
+}
 function renderBuild() {
   app.setAttribute("data-spec", state.spec);
   const rows = rowsFor(state);
@@ -873,6 +969,11 @@ function refreshOwned() {
   if (set) set.innerHTML = setHTML(state);
   const count = document.getElementById("gear-count");
   if (count) count.textContent = c.have + "/" + c.total + " owned";
+  const ec = enchCount(state, rows);
+  const ecEl = document.getElementById("ench-count");
+  if (ecEl) ecEl.textContent = ec.done + "/" + ec.total + " enchanted";
+  const list = document.getElementById("ench-list");
+  if (list) list.innerHTML = enchListHTML(state, rows);
 }
 
 let flashTimer = 0;
@@ -903,11 +1004,8 @@ function onReset(btn) {
   btn.textContent = "Clear all ticks";
   btn.classList.remove("armed");
   state.have.clear();
-  app.querySelectorAll(".tick").forEach((cb) => {
-    cb.checked = false;
-    const li = cb.closest(".slot");
-    if (li) li.classList.remove("is-have");
-  });
+  state.ench = {};
+  renderBuild();
   refreshOwned();
   changed();
 }
@@ -936,12 +1034,29 @@ app.addEventListener("change", (e) => {
     if (t.checked) state.have.add(id); else state.have.delete(id);
     const li = t.closest(".slot");
     if (li) li.classList.toggle("is-have", t.checked);
+    if (!t.checked && state.ench[id]) { delete state.ench[id]; refreshApply(id, false); }
     refreshOwned();
     changed();
   } else if (t.name === "spec") {
     if (!LEVELS[20].specs[t.value]) return;
     state.spec = t.value;
     renderBuild();
+    changed();
+  } else if (t.hasAttribute && t.hasAttribute("data-ench-item")) {
+    const item = t.getAttribute("data-ench-item");
+    const v = t.value;
+    if (!ITEMS[item]) return;
+    if (v && (v === "other" || G.ENCH[v])) state.ench[item] = v; else delete state.ench[item];
+    // An enchant means the item is in your bags, so tick Have it too.
+    if (v && !state.have.has(item)) {
+      state.have.add(item);
+      const cb = document.getElementById("have-" + item);
+      if (cb) cb.checked = true;
+      const li = t.closest(".slot");
+      if (li) li.classList.add("is-have");
+    }
+    refreshApply(item, true);
+    refreshOwned();
     changed();
   } else if (t.name === "lvl") {
     SITE.setLevel(t.value);
@@ -981,6 +1096,7 @@ window.addEventListener("storage", (e) => {
   state.have = next.have;
   state.profs = next.profs;
   state.spec = next.spec;
+  state.ench = next.ench;
   state.savedAt = next.savedAt;
   renderAll();
 });

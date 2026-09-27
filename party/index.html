@@ -243,7 +243,7 @@ function renderJoin() {
       + '<form id="join-form" novalidate><label for="join-name">Your name or character</label>'
       + '<input class="field" id="join-name" type="text" maxlength="40" autocomplete="nickname" value="' + esc(p.name()) + '">'
       + '<button class="btn btn-primary" type="submit" id="join-btn"' + (busy ? " disabled" : "") + ">" + (busy ? "Joining…" : "Join the party board") + "</button></form>"
-      + '<p class="fine">Your card shows your name, build, checklist and gear progress, which totems you have, your professions and roughly when you were last on. Anyone with this page’s link can see it. You can leave any time.</p>'
+      + '<p class="fine">Your card shows your name, build, checklist and gear progress, which enchants and kits you’ve applied, which totems you have, your professions and roughly when you were last on. Anyone with this page’s link can see it. You can leave any time.</p>'
       + msgHTML();
   }
   joinBox.innerHTML = html;
@@ -270,6 +270,7 @@ function shareURL(m) {
   q.set("spec", g.spec || "enh");
   if (g.profs.length) q.set("profs", g.profs.slice().sort().join("."));
   if (g.own.length) q.set("have", g.own.slice().sort().join("."));
+  if (g.ench && g.ench.length) q.set("ench", g.ench.map((x) => x.replace("~", "_")).sort().join("."));
   q.set("by", m.name);
   return "/gear?" + q.toString();
 }
@@ -285,6 +286,8 @@ function statsHTML(list) {
     if (counts[k]) out.push('<span class="stat" data-el="' + SPEC[k][1] + '"><i aria-hidden="true"></i><b>' + counts[k] + "</b> " + SPEC[k][0] + "</span>");
   });
   if (water) out.push('<span class="stat"><b>' + water + "</b> with the Water Totem</span>");
+  const enchanted = list.filter((m) => m.gear && m.gear.enchTotal && m.gear.enchDone >= m.gear.enchTotal).length;
+  if (enchanted) out.push('<span class="stat"><b>' + enchanted + "</b> fully enchanted</span>");
   if (air) out.push('<span class="stat"><b>' + air + "</b> with the Air Totem</span>");
   return '<div class="stats" role="group" aria-label="The party at a glance">' + out.join("") + "</div>";
 }
@@ -312,6 +315,7 @@ function cardHTML(m) {
     + (m.ck ? meterHTML("Level " + m.ck.lvl + " checklist", m.ck.done, m.ck.total, "done") : '<p class="none">Hasn’t opened the checklist yet.</p>')
     + totemsHTML(m)
     + (m.gear ? meterHTML("Level " + m.gear.lvl + " best-in-slot gear", m.gear.have, m.gear.total, "") : '<p class="none">Hasn’t opened the gear guide yet.</p>')
+    + (m.gear && m.gear.enchTotal ? meterHTML("Enchants and kits", m.gear.enchDone || 0, m.gear.enchTotal, "applied") : "")
     + (m.gear && m.gear.profs.length ? '<p class="profs">' + m.gear.profs.map((p) => esc(PROF[p] || p)).join(" · ") + "</p>" : "")
     + (link ? '<div class="card-foot"><a href="' + esc(link) + '">View ' + esc(m.name) + "’s build</a></div>" : "")
     + "</li>";

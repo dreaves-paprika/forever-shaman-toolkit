@@ -8,6 +8,7 @@ const {
 const TYPES = new Set(["view", "state", "name", "forget", "party"]);
 const PER_MINUTE = 40;
 const ITEM_RE = /^[a-z0-9]{2,24}$/;
+const ENCH_RE = /^[A-Za-z0-9]{2,24}$/;
 
 function level(v) { return Number(v) === 30 ? 30 : 20; }
 
@@ -28,8 +29,19 @@ function progress(page, d, vkey, now, cmds) {
     const have = Math.min(clampInt(d.have, 0, 100), total);
     const profs = Array.from(new Set((Array.isArray(d.profs) ? d.profs : []).filter((p) => PROFS[p]))).slice(0, 4);
     const own = Array.from(new Set((Array.isArray(d.own) ? d.own : []).map(String).filter((k) => ITEM_RE.test(k)))).slice(0, 60);
-    cmds.push(["HSET", vkey, "gear_have", have, "gear_total", total, "gear_spec", spec, "gear_lvl", lvl, "gear_profs", profs.join(","), "gear_own", own.join(","), "gear_at", now]);
-    return { spec, have, total, lvl, profs };
+    // Which enchant or kit is on each owned item, as "item~enchant" pairs.
+    const enchTotal = clampInt(d.enchTotal, 0, 30);
+    const enchDone = Math.min(clampInt(d.enchDone, 0, 30), enchTotal);
+    const ench = [];
+    if (d.ench && typeof d.ench === "object" && !Array.isArray(d.ench)) {
+      Object.keys(d.ench).slice(0, 30).forEach((k) => {
+        const v = String(d.ench[k]);
+        if (ITEM_RE.test(k) && ENCH_RE.test(v)) ench.push(k + "~" + v);
+      });
+    }
+    cmds.push(["HSET", vkey, "gear_have", have, "gear_total", total, "gear_spec", spec, "gear_lvl", lvl, "gear_profs", profs.join(","), "gear_own", own.join(","),
+      "gear_ench_done", enchDone, "gear_ench_total", enchTotal, "gear_ench", ench.join("."), "gear_at", now]);
+    return { spec, have, total, lvl, profs, enchDone, enchTotal };
   }
   return null;
 }
