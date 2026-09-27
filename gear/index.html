@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Shaman BiS</title>
-<meta name="description" content="Best-in-slot gear a Dwarf shaman can get at the WoW Forever beta’s level cap, for Enhancement, Elemental and Restoration, with a tracker that saves in your browser.">
-<meta property="og:title" content="Shaman BiS · Forever Shaman Toolkit">
-<meta property="og:description" content="Best-in-slot gear a Dwarf shaman can get at the WoW Forever beta’s level cap, for Enhancement, Elemental and Restoration, with a tracker that saves in your browser.">
+<meta name="description" content="Best-in-slot gear a shaman can get at the WoW Forever beta’s level cap, for Enhancement, Elemental and Restoration and every Alliance and Horde race, with a tracker that saves in your browser.">
+<meta property="og:title" content="Shaman BiS · Shaman Forever TL;DR">
+<meta property="og:description" content="Best-in-slot gear a shaman can get at the WoW Forever beta’s level cap, for Enhancement, Elemental and Restoration and every Alliance and Horde race, with a tracker that saves in your browser.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#EDF0F3" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0F141A" media="(prefers-color-scheme: dark)">
@@ -18,6 +18,7 @@
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="/assets/track.js"></script>
 <script src="/assets/site.js"></script>
+<script src="/assets/races.js"></script>
 <script src="/assets/notes.js"></script>
 <style>
 :root{color-scheme:light}html{-webkit-text-size-adjust:100%}[hidden]{display:none!important}
@@ -457,9 +458,14 @@ const GLYPH = {
 
 const G = window.GEAR_DATA;
 const { PROFS, PROF_NAME, ITEMS, SRC, GROUPS, WEIGHT, SOURCES, STAT_ORDER, LEVELS } = G;
-const SITE = window.SITE || { level: () => 20, levels: () => [20], setLevel: () => {}, onChange: () => {}, preview: false, get: () => null };
+const SITE = window.SITE || {
+  level: () => 20, levels: () => [20], setLevel: () => {}, onChange: () => {}, preview: false, get: () => null,
+  race: () => "dwarf", racePicked: () => false, RACES: { dwarf: { name: "Dwarf", fac: "a" } }
+};
 const LV = (st) => LEVELS[st.lvl] || LEVELS[20];
 const SPEC = (st) => LV(st).specs[st.spec];
+const RACE = (st) => SITE.RACES[st.race] || SITE.RACES.dwarf;
+const FAC = (st) => RACE(st).fac;
 
 /* ---------- helpers ---------- */
 function esc(s) {
@@ -473,6 +479,7 @@ function fmtTime(iso) {
   catch (e) { return d.toISOString().slice(0, 16).replace("T", " "); }
 }
 function cleanName(v) { return String(v || "").replace(/[\u0000-\u001f\u007f<>]/g, "").replace(/\s+/g, " ").trim().slice(0, 40); }
+function byFac(v, fac) { return v && typeof v === "object" ? (v[fac] || v.a || "") : (v || ""); }
 function itemLink(key, cls) {
   const it = ITEMS[key];
   return '<a class="' + cls + " q-" + it.q + '" href="' + WH + it.id + '" target="_blank" rel="noopener">' + esc(it.n) + "</a>";
@@ -515,14 +522,16 @@ const CRAFT_DEFAULT = {
   tail: "Pattern from Mivin Shadowweave at Three Corners, Redridge, for 30 Merchant’s Favor.",
   ench: "Formula from Alynsia at Three Corners, Redridge, for 45 Merchant’s Favor."
 };
-function srcText(it) {
+const LIBRARIAN = { a: "Garion Wendell in Stormwind’s Mage Quarter", h: "Owen Thadd in Undercity’s Magic Quarter" };
+function srcText(it, st) {
   const s = it.src;
+  const fac = FAC(st);
   switch (s.k) {
-    case "dm": case "wc": case "hot": case "rol": case "sfk": case "bfd": case "stocks": case "gnomer": case "rfk": case "smgy":
+    case "dm": case "wc": case "hot": case "rol": case "sfk": case "bfd": case "stocks": case "gnomer": case "rfk": case "smgy": case "rfc":
       return "Drops from " + s.by + (s.rare ? ", a rare that isn’t there every run" : "") + ".";
-    case "dmq": case "wcq": case "hotq": case "rolq": case "bfdq": case "stocksq": case "gnomerq": case "rfkq": case "smq": case "zq":
-      return "Quest: " + s.quest + ". " + s.how + ".";
-    case "lib": return "Friend of the Library: hand in 10 library books to Garion Wendell in Stormwind’s Mage Quarter.";
+    case "dmq": case "wcq": case "hotq": case "rolq": case "bfdq": case "stocksq": case "gnomerq": case "rfkq": case "smq": case "zq": case "rfcq": case "sfkq": case "zqh":
+      return "Quest: " + byFac(s.quest, fac) + ". " + byFac(s.how, fac) + ".";
+    case "lib": return "Friend of the Library: hand in 10 library books to " + LIBRARIAN[fac] + ".";
     case "boe": return "Bind on Equip. " + s.by + ".";
     case "rare": return "Drops from " + s.by + ". Bind on Equip.";
     case "unk": return "Not confirmed: " + s.by + ".";
@@ -532,7 +541,7 @@ function srcText(it) {
   }
   return "";
 }
-function rowsFor(st) { return G.computeRows(st.lvl, st.spec, st.profs); }
+function rowsFor(st) { return G.computeRows(st.lvl, st.spec, st.profs, FAC(st), st.race); }
 function ownedCount(st, rows) {
   const withItem = rows.filter((r) => r.item);
   return { have: withItem.filter((r) => st.have.has(r.item)).length, total: withItem.length };
@@ -548,8 +557,9 @@ function levelbarHTML(st) {
 }
 function plateHTML(st) {
   const L = LV(st);
-  return '<header class="plate"><p class="eyebrow">WoW Forever beta · Dwarf Shaman</p><h1>' + esc(L.title) + "</h1>"
+  return '<header class="plate"><p class="eyebrow">WoW Forever beta · ' + esc(RACE(st).name) + " Shaman</p><h1>" + esc(L.title) + "</h1>"
     + levelbarHTML(st)
+    + (window.racePickerHTML ? window.racePickerHTML({ race: st.race, readOnly: !!shared }) : "")
     + '<p class="lede">' + esc(L.lede) + "</p>"
     + '<p class="companion">Goes with the <a href="' + CHECKLIST_URL + '">' + esc(L.checklistName) + '</a> and the <a href="' + PLANNER_URL + '">dungeon planner</a>.</p></header>';
 }
@@ -666,7 +676,7 @@ function enchCount(st, rows) {
   let total = 0, done = 0;
   rows.forEach((r) => {
     if (!r.item) return;
-    const e = G.enchFor(st.lvl, st.spec, r.slot.key);
+    const e = G.enchFor(st.lvl, st.spec, r.slot.key, FAC(st));
     if (!e || !e.pick) return;
     total++;
     if (st.have.has(r.item) && st.ench[r.item]) done++;
@@ -689,7 +699,7 @@ function applyHTML(e, item, label, st) {
 }
 // The enchant or armor kit recommended for a slot, with easier or stronger options.
 function slotEnchHTML(key, st, item, label) {
-  const e = G.enchFor(st.lvl, st.spec, key);
+  const e = G.enchFor(st.lvl, st.spec, key, FAC(st));
   if (!e) return "";
   if (e.none) return '<p class="se-none">' + GLYPH.spark + esc(e.none) + "</p>";
   const p = e.pick;
@@ -710,7 +720,7 @@ function rowHTML(r, st) {
   if (it) {
     main += '<p class="item-line">' + itemLink(r.item, "item") + '<span class="item-type">' + esc(it.t + (it.set ? " · Viper set" : "")) + "</span></p>";
     main += statsHTML(it, st.spec);
-    main += '<p class="src">' + srcChips(it, st) + '<span class="src-text">' + esc(srcText(it)) + "</span></p>";
+    main += '<p class="src">' + srcChips(it, st) + '<span class="src-text">' + esc(srcText(it, st)) + "</span></p>";
     const why = slot.why && slot.why[r.item];
     if (why) main += '<p class="why">' + esc(why) + "</p>";
     main += slotEnchHTML(slot.key, st, r.item, r.label);
@@ -741,7 +751,7 @@ function joinSlots(labels) {
 function enchListHTML(st, rows) {
   const bySlot = {};
   rows.forEach((r) => { if (r.item) bySlot[r.slot.key] = r.item; });
-  return '<ul class="ench">' + G.enchGroups(st.lvl, st.spec).map((g) => {
+  return '<ul class="ench">' + G.enchGroups(st.lvl, st.spec, FAC(st)).map((g) => {
     const p = g.pick;
     const items = g.keys.map((k) => bySlot[k]).filter(Boolean);
     const done = items.filter((k) => st.have.has(k) && st.ench[k]).length;
@@ -770,14 +780,14 @@ function whereHTML(st, rows) {
   return '<div class="where-grid">' + GROUPS.filter((g) => buckets[g.key]).map((g) => {
     const items = buckets[g.key];
     const have = items.filter((k) => st.have.has(k)).length;
-    const where = G.whereText(g, st.lvl);
+    const where = G.whereText(g, st.lvl, FAC(st));
     return '<div class="where-card"><div class="where-head"><p class="where-title"><span>' + esc(g.title) + '</span><span class="where-count">' + have + "/" + items.length + "</span></p>"
       + (where ? '<p class="where-where">' + esc(where) + "</p>" : "") + "</div>"
       + '<ul class="where-items">' + items.map((k) => "<li" + (st.have.has(k) ? ' class="is-have"' : "") + "><span>" + esc(ITEMS[k].n) + "</span></li>").join("") + "</ul></div>";
   }).join("") + "</div>";
 }
 function choicesHTML(st) {
-  return '<ul class="choices">' + LV(st).choices.map((c) => {
+  return '<ul class="choices">' + G.choicesFor(st.lvl, FAC(st), st.race).map((c) => {
     const p = c.pick[st.spec];
     return '<li><div><p class="ch-q">' + esc(c.q) + '</p><p class="ch-where">' + esc(c.where) + '</p></div><div class="ch-right"><p class="ch-pick"><span class="ch-take">Take</span>'
       + (p[0] ? itemLink(p[0], "alt-item") : "<span>Either</span>") + '</p><p class="ch-why">' + esc(p[1]) + "</p></div></li>";
@@ -789,20 +799,23 @@ function sourcesPanelHTML(st, rows) {
     + '<div id="where-slot">' + whereHTML(st, rows) + "</div>"
     + '<h3 class="sub">Quest reward choices</h3><p class="intro">These quests make you pick one reward. Here’s the pick for your build.</p>' + choicesHTML(st) + "</div></section>";
 }
+const FAVOR_CAMP = { a: "hand it to Marcy Baker at Three Corners, Redridge", h: "hand it in at Durotar Supply and Logistics, west of the Crossroads, the Barrens" };
+const BOOKS_H = "Spots a Horde character can reach include Ambermill (Silverpine), Sludge Fen and Ratchet (Barrens), the Cavern of Mists near Wailing Caverns, and Grimtotem Post (Stonetalon).";
 function notesHTML(st) {
   const s = SPEC(st);
   const L = LV(st);
+  const fac = FAC(st);
   return '<section class="panel" id="notes" aria-labelledby="h-notes">' + panelHead("notes", "scroll", "Notes", null) + '<div class="pad">'
     + '<h3 class="sub">Merchant’s Favor</h3>'
-    + "<p>Waylaid Crates drop from ordinary mobs once you’re level 10. Open the label to see what the crate needs, fill it, and hand it to Marcy Baker at Three Corners, Redridge. Your first crate pays 50 Favor; testers report later low-level crates pay about 5 each. Craftsman’s Writs, quests to deliver crafted goods, also pay Favor.</p>"
-    + L.favor.map((p) => "<p>" + esc(p) + "</p>").join("")
-    + '<p class="callout">' + esc(s.favor) + "</p>"
+    + "<p>Waylaid Crates drop from ordinary mobs once you’re level 10. Open the label to see what the crate needs, fill it, and " + FAVOR_CAMP[fac] + ". Your first crate pays 50 Favor; testers report later low-level crates pay about 5 each. Craftsman’s Writs, quests to deliver crafted goods, also pay Favor.</p>"
+    + L.favor[fac].map((p) => "<p>" + esc(p) + "</p>").join("")
+    + '<p class="callout">' + esc(s.favor[fac]) + "</p>"
     + '<h3 class="sub">Library books</h3>'
-    + "<p>Friend of the Library needs 10 books, handed in one at a time to Garion Wendell in Stormwind’s Mage Quarter. Books sit on shelves and scroll piles in the world. An Alliance character can reach them at the Tower of Azora (Elwynn), the Hall of Explorers (Ironforge), Moonbrook (Westfall), the Thelsamar or Sentinel Hill inn, Mo’grosh Stronghold (Loch Modan), the Ruins of Mathystra (Darkshore), Duskwood at 16.7, 28.5, Whelgar’s Excavation Site (Wetlands), Ambermill (Silverpine), Sludge Fen and Ratchet (Barrens), the Cavern of Mists near Wailing Caverns, and Grimtotem Post (Stonetalon).</p>"
+    + "<p>Friend of the Library needs 10 books, handed in one at a time to " + LIBRARIAN[fac] + ". Books sit on shelves and scroll piles in the world. " + (fac === "h" ? BOOKS_H : "An Alliance character can reach them at the Tower of Azora (Elwynn), the Hall of Explorers (Ironforge), Moonbrook (Westfall), the Thelsamar or Sentinel Hill inn, Mo’grosh Stronghold (Loch Modan), the Ruins of Mathystra (Darkshore), Duskwood at 16.7, 28.5, Whelgar’s Excavation Site (Wetlands), Ambermill (Silverpine), Sludge Fen and Ratchet (Barrens), the Cavern of Mists near Wailing Caverns, and Grimtotem Post (Stonetalon).") + "</p>"
     + '<h3 class="sub">Worth grabbing if you see them</h3><ul class="wild">'
-    + L.wild.map((w) => "<li><span>" + itemLink(w.k, "alt-item") + ' <span class="alt-stats">' + esc(statsShort(ITEMS[w.k], "")) + '</span></span><p class="wild-note">' + esc(w.note) + "</p></li>").join("") + "</ul>"
+    + L.wild[fac].map((w) => "<li><span>" + itemLink(w.k, "alt-item") + ' <span class="alt-stats">' + esc(statsShort(ITEMS[w.k], "")) + '</span></span><p class="wild-note">' + esc(w.note) + "</p></li>").join("") + "</ul>"
     + '<h3 class="sub">Left out on purpose</h3><p class="intro">' + esc(L.leftIntro) + '</p><ul class="out">'
-    + L.left.map((o) => '<li><span class="out-name">' + esc(o[0]) + '</span><span class="out-why">' + esc(o[1]) + "</span>" + (o[2] ? '<span class="out-items">' + esc(o[2]) + "</span>" : "") + "</li>").join("") + "</ul>"
+    + L.left[fac].map((o) => '<li><span class="out-name">' + esc(o[0]) + '</span><span class="out-why">' + esc(o[1]) + "</span>" + (o[2] ? '<span class="out-items">' + esc(o[2]) + "</span>" : "") + "</li>").join("") + "</ul>"
     + '<h3 class="sub">About this data</h3><ul class="plain">'
     + L.about.map((a) => "<li>" + esc(a) + "</li>").join("")
     + "</ul></div></section>";
@@ -810,7 +823,7 @@ function notesHTML(st) {
 function footerHTML() {
   return '<footer class="foot"><p>Your ticks, build and professions are saved in this browser and don’t sync between devices. Fan-made and not affiliated with Blizzard Entertainment.</p>'
     + (window.shamanNoteFooter ? window.shamanNoteFooter("Spotted a mistake, or know a better option?") : "")
-    + '<p><a href="/">Toolkit home</a> · <a href="/checklist">Checklist</a> · <a href="/dungeons">Dungeon planner</a> · <a href="/party">Party board</a></p>'
+    + '<p><a href="/">Home</a> · <a href="/checklist">Checklist</a> · <a href="/dungeons">Dungeon planner</a> · <a href="/party">Party board</a></p>'
     + '<div class="whoami" data-whoami></div><h3 class="rail-title">Sources</h3><ul class="sources">'
     + SOURCES.map((s) => '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + "</a> <span>" + esc(s.site) + "</span></li>").join("")
     + "</ul>" + (shared ? "" : '<div class="reset-row"><button type="button" class="reset" id="reset-btn">Clear all ticks</button></div>') + "</footer>";
@@ -830,7 +843,7 @@ function appHTML(st) {
 const STORE_KEY = "forever-shaman20:gear:v1";
 let canSave = true;
 function readState() {
-  const st = { have: new Set(), profs: new Set(), spec: "enh", savedAt: null, lvl: SITE.level(), ench: {} };
+  const st = { have: new Set(), profs: new Set(), spec: "enh", savedAt: null, lvl: SITE.level(), race: SITE.race(), ench: {} };
   try {
     const raw = localStorage.getItem(STORE_KEY);
     const p = raw ? JSON.parse(raw) : null;
@@ -874,7 +887,7 @@ function progressSummary() {
   const ec = enchCount(state, rowsFor(state));
   const ench = {};
   Object.keys(state.ench).filter((k) => state.have.has(k)).slice(0, 30).forEach((k) => { ench[k] = state.ench[k]; });
-  return { lvl: state.lvl, spec: state.spec, have: c.have, total: c.total, profs: Array.from(state.profs), own: Array.from(state.have).slice(0, 60), enchDone: ec.done, enchTotal: ec.total, ench: ench };
+  return { lvl: state.lvl, spec: state.spec, race: SITE.racePicked() ? state.race : "", have: c.have, total: c.total, profs: Array.from(state.profs), own: Array.from(state.have).slice(0, 60), enchDone: ec.done, enchTotal: ec.total, ench: ench };
 }
 
 /* ---------- sharing ---------- */
@@ -883,6 +896,7 @@ function shareURL() {
   q.set("share", "1");
   q.set("lvl", String(state.lvl));
   q.set("spec", state.spec);
+  q.set("race", state.race);
   if (state.profs.size) q.set("profs", Array.from(state.profs).sort().join("."));
   const own = Array.from(state.have).filter((k) => /^[a-z0-9]+$/.test(k)).sort();
   if (own.length) q.set("have", own.join("."));
@@ -896,8 +910,9 @@ function shareURL() {
 function readShared() {
   const q = new URLSearchParams(location.search);
   if (q.get("share") !== "1") return null;
-  const st = { have: new Set(), profs: new Set(), spec: "enh", savedAt: null, lvl: q.get("lvl") === "30" ? 30 : 20, ench: {} };
+  const st = { have: new Set(), profs: new Set(), spec: "enh", savedAt: null, lvl: q.get("lvl") === "30" ? 30 : 20, race: "dwarf", ench: {} };
   if (LEVELS[20].specs[q.get("spec")]) st.spec = q.get("spec");
+  if (SITE.RACES[q.get("race")]) st.race = q.get("race");
   (q.get("profs") || "").split(".").forEach((p) => { if (PROF_NAME[p]) st.profs.add(p); });
   (q.get("have") || "").split(".").forEach((k) => { if (ITEMS[k]) st.have.add(k); });
   const ench = {};
@@ -938,7 +953,7 @@ function refreshApply(item, focus) {
   const box = app.querySelector('.se[data-se-item="' + item + '"]');
   if (!box) return;
   const r = rowsFor(state).find((x) => x.item === item);
-  const e = r ? G.enchFor(state.lvl, state.spec, r.slot.key) : null;
+  const e = r ? G.enchFor(state.lvl, state.spec, r.slot.key, FAC(state)) : null;
   box.classList.toggle("is-applied", !!state.ench[item]);
   const old = box.querySelector(".se-apply");
   if (!old || !e || !e.pick) return;
@@ -1021,9 +1036,9 @@ if (!shared) {
   if (hashSpec) state.spec = hashSpec[1];
 }
 renderAll();
-track("view", !shared && state.savedAt ? progressSummary() : null);
-// Notes to the admin carry the level and build being looked at.
-window.shamanNoteContext = () => ({ lvl: state.lvl, spec: state.spec, about: shared ? (shared.by ? shared.by + "’s shared build" : "a shared build") : "" });
+track("view", !shared && state.savedAt ? progressSummary() : (!shared && SITE.racePicked() ? { race: state.race } : null));
+// Notes to the admin carry the level, race and build being looked at.
+window.shamanNoteContext = () => ({ lvl: state.lvl, spec: state.spec, race: state.race, about: shared ? (shared.by ? shared.by + "’s shared build" : "a shared build") : "" });
 
 app.addEventListener("change", (e) => {
   if (shared) return;
@@ -1078,16 +1093,20 @@ app.addEventListener("click", (e) => {
   if (share) onShare(share);
 });
 
-// The level cap changed (the owner raised it, or the visitor picked a level).
+// The level cap or race changed (the owner raised the cap, or the visitor picked a level or race).
 SITE.onChange(() => {
   if (shared) return;
   const lvl = SITE.level();
+  const race = SITE.race();
   const hasBar = !!app.querySelector(".lvlbar");
   const wantBar = SITE.levels().length > 1;
-  if (lvl === state.lvl && hasBar === wantBar) return;
+  const hadHint = !!app.querySelector(".rp-hint");
+  const wantHint = !SITE.racePicked();
+  if (lvl === state.lvl && race === state.race && hasBar === wantBar && hadHint === wantHint) return;
   state.lvl = lvl;
+  state.race = race;
   renderAll();
-  track("state", progressSummary());
+  if (state.savedAt) track("state", progressSummary());
 });
 
 window.addEventListener("storage", (e) => {

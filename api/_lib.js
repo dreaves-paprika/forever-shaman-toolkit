@@ -6,6 +6,7 @@ const TZ = process.env.STATS_TZ || "America/Chicago";
 const PAGES = { home: "home page", checklist: "checklist", gear: "gear guide", dungeons: "dungeon planner", party: "party board" };
 const SPECS = { enh: "Enhancement", ele: "Elemental", resto: "Restoration" };
 const PROFS = { lw: "Leatherworking", tail: "Tailoring", eng: "Engineering", ench: "Enchanting" };
+const RACES = { dwarf: "Dwarf", orc: "Orc", tauren: "Tauren", troll: "Troll", skyborne: "Skyborne" };
 const VID_RE = /^[a-z0-9]{12,40}$/i;
 const KEEP_DAYS = 120;
 
@@ -99,6 +100,8 @@ function clampInt(v, min, max) {
   return Math.min(max, Math.max(min, n));
 }
 
+function cleanRace(v) { return RACES[v] ? String(v) : ""; }
+
 function safeEqual(a, b) {
   const ha = crypto.createHash("sha256").update(String(a)).digest();
   const hb = crypto.createHash("sha256").update(String(b)).digest();
@@ -142,6 +145,6 @@ async function forgetVisitor(vid, now) {
 }
 
 module.exports = {
-  TZ, PAGES, SPECS, PROFS, VID_RE, KEEP_DAYS,
-  pipeline, dayKey, lastDays, pairs, header, parseUA, cleanName, clampInt, safeEqual, readBody, sameOrigin, forgetVisitor
+  TZ, PAGES, SPECS, PROFS, RACES, VID_RE, KEEP_DAYS,
+  pipeline, dayKey, lastDays, pairs, header, parseUA, cleanName, clampInt, cleanRace, safeEqual, readBody, sameOrigin, forgetVisitor
 };

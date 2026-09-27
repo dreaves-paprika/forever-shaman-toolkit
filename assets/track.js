@@ -1,4 +1,4 @@
-/* Forever Shaman Toolkit: simple first-party visit stats and the optional name box.
+/* Shaman Forever TL;DR: simple first-party visit stats and the optional name box.
    Sends: a random browser ID, the page opened, a short progress summary and, if given, a name.
    The server adds rough location and device type. No cookies, and no IP addresses are stored. */
 (function () {
@@ -241,7 +241,7 @@
     var cb = el("input", { type: "checkbox", id: id });
     cb.checked = onParty();
     var label = el("label", { "for": id });
-    label.appendChild(document.createTextNode("Show my name, build and progress on the "));
+    label.appendChild(document.createTextNode("Show my name, race, build and progress on the "));
     var link = el("a", { href: "/party" }, "party board");
     label.appendChild(link);
     row.appendChild(cb);
@@ -289,7 +289,7 @@
   function finish(box, note) {
     if (counting()) {
       var fine = el("p", { "class": "st-who-fine" });
-      fine.appendChild(document.createTextNode("About stats: this site notes which pages you open, your build and how far along you are, plus your rough location and device type, so its owner can see who uses it. No ads, nothing sold, and IP addresses aren’t stored. "));
+      fine.appendChild(document.createTextNode("About stats: this site notes which pages you open, your race, build and how far along you are, plus your rough location and device type, so its owner can see who uses it. No ads, nothing sold, and IP addresses aren’t stored. "));
       var stop = el("button", { type: "button", "class": "st-link" }, "Don’t count me");
       stop.addEventListener("click", function () {
         flush();

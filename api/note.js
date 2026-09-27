@@ -3,7 +3,7 @@
 // Each note gets a private token. The browser that sent it keeps the number and token as a
 // receipt, and uses them to check for the admin's reply. Nobody else can read a note's status.
 const crypto = require("crypto");
-const { PAGES, SPECS, VID_RE, pipeline, cleanName, readBody, sameOrigin } = require("./_lib");
+const { PAGES, SPECS, VID_RE, pipeline, cleanName, cleanRace, readBody, sameOrigin } = require("./_lib");
 
 const KINDS = { better: 1, wrong: 1, idea: 1, other: 1 };
 const MAX_NOTES = 1000;     // the inbox stops taking notes past this, until the admin clears some
@@ -96,6 +96,7 @@ module.exports = async function handler(req, res) {
     vid: vid,
     lvl: Number(c.lvl) === 30 ? 30 : Number(c.lvl) === 20 ? 20 : 0,
     spec: SPECS[c.spec] ? c.spec : "",
+    race: cleanRace(c.race),
     slot: clip(c.slot, 24).replace(/[^a-z0-9-]/gi, "").toLowerCase(),
     label: clip(c.label, 40),
     item: clip(c.item, 80),

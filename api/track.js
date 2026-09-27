@@ -2,7 +2,7 @@
 // Stores no IP addresses: only a random ID the browser made, plus what's listed below.
 const {
   PAGES, SPECS, PROFS, VID_RE, KEEP_DAYS,
-  pipeline, dayKey, header, parseUA, cleanName, clampInt, readBody, sameOrigin, forgetVisitor, pairs
+  pipeline, dayKey, header, parseUA, cleanName, clampInt, cleanRace, readBody, sameOrigin, forgetVisitor, pairs
 } = require("./_lib");
 
 const TYPES = new Set(["view", "state", "name", "forget", "party"]);
@@ -17,14 +17,17 @@ function progress(page, d, vkey, now, cmds) {
   if (!d || typeof d !== "object") return null;
   const spec = SPECS[d.spec] ? d.spec : "";
   const lvl = level(d.lvl);
-  if (page === "checklist") {
+  const race = cleanRace(d.race);
+  if (race) cmds.push(["HSET", vkey, "race", race]);
+  // A summary without totals (say, just the race someone picked) records only the race.
+  if (page === "checklist" && d.total != null) {
     const total = clampInt(d.total, 0, 500);
     const done = Math.min(clampInt(d.done, 0, 500), total);
     const totems = Array.from(new Set(String(d.totems || "").split("").filter((c) => "efwa".indexOf(c) >= 0))).join("");
-    cmds.push(["HSET", vkey, "ck_done", done, "ck_total", total, "ck_spec", spec, "ck_lvl", lvl, "ck_totems", totems, "ck_at", now]);
-    return { spec, done, total, lvl };
+    cmds.push(["HSET", vkey, "ck_done", done, "ck_total", total, "ck_spec", spec, "ck_lvl", lvl, "ck_totems", totems, "ck_race", race, "ck_at", now]);
+    return { spec, done, total, lvl, race };
   }
-  if (page === "gear") {
+  if (page === "gear" && d.total != null) {
     const total = clampInt(d.total, 0, 100);
     const have = Math.min(clampInt(d.have, 0, 100), total);
     const profs = Array.from(new Set((Array.isArray(d.profs) ? d.profs : []).filter((p) => PROFS[p]))).slice(0, 4);
@@ -40,9 +43,10 @@ function progress(page, d, vkey, now, cmds) {
       });
     }
     cmds.push(["HSET", vkey, "gear_have", have, "gear_total", total, "gear_spec", spec, "gear_lvl", lvl, "gear_profs", profs.join(","), "gear_own", own.join(","),
-      "gear_ench_done", enchDone, "gear_ench_total", enchTotal, "gear_ench", ench.join("."), "gear_at", now]);
-    return { spec, have, total, lvl, profs, enchDone, enchTotal };
+      "gear_ench_done", enchDone, "gear_ench_total", enchTotal, "gear_ench", ench.join("."), "gear_race", race, "gear_at", now]);
+    return { spec, have, total, lvl, profs, race, enchDone, enchTotal };
   }
+  if (race) return { race };
   return null;
 }
 

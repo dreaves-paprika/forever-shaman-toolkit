@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Toolkit Stats</title>
-<meta name="description" content="Private visit stats for the Forever Shaman Toolkit.">
+<title>Site Stats</title>
+<meta name="description" content="Private visit stats for Shaman Forever TL;DR.">
 <meta name="theme-color" content="#EDF0F3" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0F141A" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -150,6 +150,8 @@ table{border-collapse:collapse;width:100%}
 .hbar.is-muted .hbar-bar i{background:var(--mark-muted)}
 .hbar.is-muted .hbar-label{color:var(--ink-2)}
 .none{margin:0;color:var(--ink-3);font-size:15px}
+.minihead{margin:14px 0 8px;font-family:var(--font-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.minihead:first-of-type{margin-top:0}
 
 /* activity */
 .feed{list-style:none;margin:0;padding:0;display:grid;align-content:start}
@@ -300,6 +302,8 @@ const KIND_LABEL = { better: "Better option", wrong: "Something’s wrong", idea
 const STATUS_LABEL = { new: "New", looking: "Looking into it", done: "Done" };
 const PREVIEW_LINKS = [["/checklist?preview=30", "Checklist"], ["/gear?preview=30", "Gear guide"], ["/dungeons?preview=30", "Dungeon planner"]];
 const SPEC_LABEL = { enh: "Enhancement", ele: "Elemental", resto: "Restoration" };
+const RACE_LABEL = { dwarf: "Dwarf", orc: "Orc", tauren: "Tauren", troll: "Troll", skyborne: "Skyborne" };
+const RACE_FAC = { dwarf: "Alliance", orc: "Horde", tauren: "Horde", troll: "Horde", skyborne: "Horde" };
 const PROF_LABEL = { lw: "Leatherworking", tail: "Tailoring", eng: "Engineering", ench: "Enchanting" };
 const PROF_SHORT = { lw: "LW", tail: "Tailor", eng: "Eng", ench: "Ench" };
 
@@ -373,6 +377,7 @@ function rows() {
       last: Number(v.last) || 0,
       views: Number(v.views) || 0,
       pages: PAGES.reduce((o, p) => { o[p] = Number(v["views_" + p]) || 0; return o; }, {}),
+      race: RACE_LABEL[v.race] ? v.race : "",
       party: v.party === "1" || v.party === 1,
       device: v.device || "",
       os: v.os || "",
@@ -461,10 +466,10 @@ function signOut(msg) {
 
 /* ---------- sign in ---------- */
 function renderLogin(msg) {
-  document.title = "Toolkit Stats";
+  document.title = "Site Stats";
   app.innerHTML = '<main class="login"><form class="login-card" id="login-form" novalidate>'
-    + '<p class="eyebrow">Forever Shaman Toolkit</p>'
-    + "<h1>Toolkit stats</h1>"
+    + '<p class="eyebrow">Shaman Forever TL;DR</p>'
+    + "<h1>Site stats</h1>"
     + "<p>Enter the admin passphrase you saved in Vercel as <code>ADMIN_KEY</code>.</p>"
     + '<input type="text" name="username" value="admin" autocomplete="username" hidden>'
     + '<label for="key">Passphrase</label>'
@@ -507,7 +512,7 @@ async function signIn(form) {
 const ICON_REFRESH = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.2 6.2A5.4 5.4 0 1 0 13.4 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M13.6 2.6v3.8H9.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 function topHTML() {
-  return '<header class="top"><div><p class="eyebrow">Forever Shaman Toolkit</p><h1>Toolkit stats</h1>'
+  return '<header class="top"><div><p class="eyebrow">Shaman Forever TL;DR</p><h1>Site stats</h1>'
     + '<p class="updated" id="updated" role="status" aria-live="polite">Updated ' + esc(clock.format(S.loadedAt)) + "</p></div>"
     + '<div class="actions"><button class="btn" type="button" id="refresh">' + ICON_REFRESH + "Refresh</button>"
     + '<a class="btn" href="/" target="_blank" rel="noopener">View site</a>'
@@ -558,7 +563,7 @@ function noteAbout(nt) {
   const parts = [PAGE_LABEL[nt.page] || "The site"];
   if (nt.label) parts.push(nt.label);
   if (nt.about) parts.push(nt.about);
-  const build = [nt.lvl ? "Level " + nt.lvl : "", SPEC_LABEL[nt.spec] || ""].filter(Boolean).join(" ");
+  const build = [nt.lvl ? "Level " + nt.lvl : "", RACE_LABEL[nt.race] || "", SPEC_LABEL[nt.spec] || ""].filter(Boolean).join(" ");
   if (build) parts.push(build);
   return parts.join(" · ");
 }
@@ -679,12 +684,14 @@ function feedItems(list) {
 function eventText(e) {
   const x = e.x || {};
   const lvl = Number(x.lvl) === 30 ? 30 : 20;
+  const build = [RACE_LABEL[x.race] || "", SPEC_LABEL[x.spec] || ""].filter(Boolean).join(" ");
   if (e.e === "view") return "opened " + PAGE_THE[e.p];
   if (e.e === "name") return x.set ? "added their name" : "removed their name";
   if (e.e === "party") return x.on ? "joined the party board" : "left the party board";
   if (e.e === "note") return "sent a note" + (x.label ? (e.p === "gear" ? " about the " + x.label + " slot" : " about " + x.label) : " from " + PAGE_THE[e.p]);
-  if (e.e === "state" && e.p === "checklist") return "is at " + n(x.done) + " of " + n(x.total) + " on the level " + lvl + " checklist" + (SPEC_LABEL[x.spec] ? " (" + SPEC_LABEL[x.spec] + ")" : "");
-  if (e.e === "state" && e.p === "gear") return "has " + n(x.have) + " of " + n(x.total) + " level " + lvl + " best-in-slot pieces" + (SPEC_LABEL[x.spec] ? " for " + SPEC_LABEL[x.spec] : "") + (x.enchTotal ? ", " + n(x.enchDone) + " of " + n(x.enchTotal) + " enchanted" : "");
+  if (e.e === "state" && x.total == null && RACE_LABEL[x.race]) return "picked " + RACE_LABEL[x.race] + " (" + RACE_FAC[x.race] + ") as their race";
+  if (e.e === "state" && e.p === "checklist") return "is at " + n(x.done) + " of " + n(x.total) + " on the level " + lvl + " checklist" + (build ? " (" + build + ")" : "");
+  if (e.e === "state" && e.p === "gear") return "has " + n(x.have) + " of " + n(x.total) + " level " + lvl + " best-in-slot pieces" + (build ? " for " + build : "") + (x.enchTotal ? ", " + n(x.enchDone) + " of " + n(x.enchTotal) + " enchanted" : "");
   return "was active";
 }
 function feedCardHTML(list) {
@@ -737,6 +744,9 @@ function breakdownsHTML(list) {
   const specs = tally(list, (r) => r.spec || (r.ck || r.gear ? "none" : null));
   const specItems = topItems(specs, 4, ["none"], (k) => (k === "none" ? "No build picked" : SPEC_LABEL[k]));
 
+  const races = tally(list, (r) => r.race || (r.ck || r.gear ? "none" : null));
+  const raceItems = topItems(races, 7, ["none"], (k) => (k === "none" ? "No race picked" : RACE_LABEL[k] + " · " + RACE_FAC[k]));
+
   const gearUsers = list.filter((r) => r.gear);
   const profs = tally(gearUsers, (r) => (r.gear.profs.length ? r.gear.profs : "none"));
   const profItems = topItems(profs, 5, ["none"], (k) => (k === "none" ? "No professions ticked" : PROF_LABEL[k]));
@@ -752,7 +762,7 @@ function breakdownsHTML(list) {
 
   return '<div class="trio">'
     + breakdownCard("Tools used", "People who opened each page", hbarsHTML(tools, "people"))
-    + breakdownCard("Builds", "The talent build each person picked last", hbarsHTML(specItems, "people"))
+    + breakdownCard("Races and builds", "What each person picked last", '<p class="minihead">Races</p>' + hbarsHTML(raceItems, "people") + '<p class="minihead">Talent builds</p>' + hbarsHTML(specItems, "people"))
     + breakdownCard("Professions", "Ticked on the gear guide", hbarsHTML(profItems, "people"))
     + breakdownCard("Where they are", "Rough location from the connection", hbarsHTML(placeItems, "people"))
     + breakdownCard("Devices", "What they opened the site on", hbarsHTML(deviceItems, "people"))
@@ -782,7 +792,7 @@ const COLS = [
 function filtered(list) {
   const q = S.q.trim().toLowerCase();
   let out = list;
-  if (q) out = list.filter((r) => [r.display, r.name, r.label, r.short, r.place, r.region, country(r.country), r.device, r.os, r.browser, r.party ? "party board" : ""].join(" ").toLowerCase().indexOf(q) >= 0);
+  if (q) out = list.filter((r) => [r.display, r.name, r.label, r.short, r.place, r.region, country(r.country), r.device, r.os, r.browser, r.party ? "party board" : "", RACE_LABEL[r.race] || "", RACE_FAC[r.race] || ""].join(" ").toLowerCase().indexOf(q) >= 0);
   const f = SORTS[S.sort] || SORTS.last;
   return out.slice().sort((a, b) => {
     const x = f(a), y = f(b);
@@ -814,6 +824,7 @@ function detailHTML(r) {
     + fact("Where", placeLong(r))
     + fact("Device", [r.device, r.os, r.browser].filter(Boolean).join(" · ") || "Unknown")
     + fact("Came from", r.ref || "Direct, or a link in an app")
+    + fact("Race", r.race ? RACE_LABEL[r.race] + " · " + RACE_FAC[r.race] : "Not picked")
     + fact("Checklist", ck)
     + fact("Totems", r.ck ? totems || "None yet" : "Not set")
     + fact("Gear guide", gear)
@@ -838,7 +849,7 @@ function rowsHTML(list) {
   if (!shown.length) return '<tr><td colspan="7" class="muted">' + (list.length ? "No one matches that search." : "No visitors yet. Share the site link and people show up here a few seconds after they open it.") + "</td></tr>";
   return shown.map((r) => {
     const open = S.open.has(r.id);
-    const sub = r.name && r.label ? r.label : (r.name || r.label ? r.short : "No name added");
+    const sub = [RACE_LABEL[r.race] || "", r.name && r.label ? r.label : (r.name || r.label ? r.short : "No name added")].filter(Boolean).join(" · ");
     // Show the level once level 30 is in play (it's live, or this person previewed it).
     const lvlTag = (lvl) => (showLevels || lvl === 30 ? "Lvl " + lvl : "");
     const ckSub = r.ck ? [lvlTag(r.ck.lvl), SPEC_LABEL[r.ck.spec] || ""].filter(Boolean).join(" · ") : "";
@@ -890,7 +901,7 @@ function renderDashboard() {
   const focusId = document.activeElement && document.activeElement.id;
   const list = rows();
   const fresh = ((S.data && S.data.notes) || []).filter((nt) => nt.status === "new").length;
-  document.title = (fresh ? "(" + fresh + ") " : "") + "Toolkit Stats";
+  document.title = (fresh ? "(" + fresh + ") " : "") + "Site Stats";
   app.innerHTML = '<main class="wrap">' + topHTML() + capCardHTML() + notesCardHTML(list) + tilesHTML(list)
     + '<div class="duo">' + chartCardHTML() + feedCardHTML(list) + "</div>"
     + visitorsCardHTML(list)
@@ -905,7 +916,7 @@ function renderDashboard() {
 }
 
 function renderDashboardError(text) {
-  app.innerHTML = '<main class="wrap">' + '<header class="top"><div><p class="eyebrow">Forever Shaman Toolkit</p><h1>Toolkit stats</h1></div>'
+  app.innerHTML = '<main class="wrap">' + '<header class="top"><div><p class="eyebrow">Shaman Forever TL;DR</p><h1>Site stats</h1></div>'
     + '<div class="actions"><button class="btn" type="button" id="refresh">' + ICON_REFRESH + 'Try again</button><button class="btn" type="button" id="signout">Sign out</button></div></header>'
     + '<section class="card error-card"><h2>Couldn’t load the stats</h2><p class="sub">' + esc(text) + "</p></section></main>";
 }
@@ -1123,7 +1134,7 @@ function redrawNotes(focusSel) {
   tmp.innerHTML = notesCardHTML(rows());
   card.replaceWith(tmp.firstElementChild);
   const fresh = S.data.notes.filter((nt) => nt.status === "new").length;
-  document.title = (fresh ? "(" + fresh + ") " : "") + "Toolkit Stats";
+  document.title = (fresh ? "(" + fresh + ") " : "") + "Site Stats";
   if (focusSel) {
     const f = document.querySelector(focusSel);
     if (f) f.focus({ preventScroll: true });
@@ -1243,7 +1254,7 @@ async function copyNotes(ids) {
   const byId = {};
   rows().forEach((r) => { byId[r.id] = r; });
   const list = S.data.notes.filter((nt) => ids.indexOf(nt.id) >= 0);
-  const text = (list.length > 1 ? "Notes from the Forever Shaman Toolkit (" + list.length + ")\n\n" : "") + list.map((nt) => noteAsText(nt, byId)).join("\n\n");
+  const text = (list.length > 1 ? "Notes from Shaman Forever TL;DR (" + list.length + ")\n\n" : "") + list.map((nt) => noteAsText(nt, byId)).join("\n\n");
   let copied = false;
   try { if (navigator.clipboard && navigator.clipboard.writeText) { await navigator.clipboard.writeText(text); copied = true; } } catch (e) { copied = false; }
   S.copyText = copied ? "" : text;
@@ -1403,7 +1414,7 @@ setInterval(() => {
 /* ---------- boot ---------- */
 S.key = sget("sessionStorage", KEY_STORE) || sget("localStorage", KEY_STORE);
 if (S.key) {
-  app.innerHTML = '<main class="wrap is-loading" aria-busy="true"><header class="top"><div><p class="eyebrow">Forever Shaman Toolkit</p><h1>Toolkit stats</h1><p class="updated">Loading…</p></div></header></main>';
+  app.innerHTML = '<main class="wrap is-loading" aria-busy="true"><header class="top"><div><p class="eyebrow">Shaman Forever TL;DR</p><h1>Site stats</h1><p class="updated">Loading…</p></div></header></main>';
   load();
 } else {
   renderLogin("");

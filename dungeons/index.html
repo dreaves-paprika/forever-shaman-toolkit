@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dungeon Planner</title>
-<meta name="description" content="Which dungeons a Dwarf shaman should run at the WoW Forever beta’s level cap, in order, with the quests to grab first and the upgrades each one holds for your build.">
-<meta property="og:title" content="Dungeon Planner · Forever Shaman Toolkit">
+<meta name="description" content="Which dungeons a shaman should run at the WoW Forever beta’s level cap, in order, for every Alliance and Horde race, with the quests to grab first and the upgrades each one holds for your build.">
+<meta property="og:title" content="Dungeon Planner · Shaman Forever TL;DR">
 <meta property="og:description" content="Which dungeons to run at the WoW Forever beta’s level cap, in order, with the quests to grab first and the upgrades for your build.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#EDF0F3" media="(prefers-color-scheme: light)">
@@ -18,6 +18,7 @@
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="/assets/track.js"></script>
 <script src="/assets/site.js"></script>
+<script src="/assets/races.js"></script>
 <script src="/assets/notes.js"></script>
 <style>
 :root{
@@ -174,6 +175,9 @@ details.more[open] summary{border-bottom:1px solid var(--line)}
 .travel{display:grid;gap:8px}
 .travel p{margin:0;max-width:72ch}
 .bosses{margin:0;font-size:15px;color:var(--ink-2)}
+.reach b{font-weight:500}
+.sky-note{color:var(--ink-2)}
+.head .rp{margin-top:2px;max-width:560px}
 .forever{margin:0;font-size:15px;padding:10px 14px;border-radius:10px;background:var(--spec-soft)}
 .done-row{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--ink-2);cursor:pointer;width:max-content}
 .run-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;padding:0 18px 16px}
@@ -207,12 +211,18 @@ details.more[open] summary{border-bottom:1px solid var(--line)}
 
 const G = window.GEAR_DATA;
 const D = window.DUNGEON_DATA;
-const SITE = window.SITE || { level: () => 20, levels: () => [20], setLevel: () => {}, onChange: () => {}, preview: false };
+const SITE = window.SITE || {
+  level: () => 20, levels: () => [20], setLevel: () => {}, onChange: () => {}, preview: false,
+  race: () => "dwarf", racePicked: () => false, RACES: { dwarf: { name: "Dwarf", fac: "a" } }
+};
 const GEAR_KEY = "forever-shaman20:gear:v1";
 const PLAN_KEY = "forever-shaman20:dungeons:v1";
 const WH = "https://www.wowhead.com/forever/item=";
 const SPEC_EL = { enh: "earth", ele: "fire", resto: "water" };
 const SPEC_NAME = { enh: ["Enhancement", "Enh"], ele: ["Elemental", "Ele"], resto: ["Restoration", "Resto"] };
+// Where each race sets out from: Ironforge, Orgrimmar or Thunder Bluff. Skyborne get an extra note.
+const FROM = { dwarf: "if", orc: "org", tauren: "tb", troll: "org", skyborne: "tb" };
+const FROM_NAME = { if: "From Ironforge", org: "From Orgrimmar", tb: "From Thunder Bluff" };
 const GLYPH = {
   earth: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M1.8 16.6 7 7.2l2.7 4.2 3-5.5 5.5 10.7z" fill="currentColor"/></svg>',
   fire: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10.2 1.6c.5 3 4.8 4.6 4.8 9.4a5 5 0 0 1-10 0c0-2 1-3.5 2.2-4.5.1 1.7.9 2.6 2 3.1-.4-2.8-.1-5.5 1-8z" fill="currentColor"/></svg>',
@@ -227,6 +237,9 @@ function esc(s) {
 function readJSON(k) { try { const raw = localStorage.getItem(k); return raw ? JSON.parse(raw) : null; } catch (e) { return null; } }
 function writeJSON(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
 function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+function byFac(v, fac) { return v && typeof v === "object" ? (v[fac] || v.a || "") : (v || ""); }
+function race() { return SITE.RACES[SITE.race()] ? SITE.race() : "dwarf"; }
+function fac() { return (SITE.RACES[race()] || { fac: "a" }).fac; }
 
 /* ---------- state: the build and owned gear come from the gear guide's own save ---------- */
 function readGear() {
@@ -269,7 +282,7 @@ function dungeonOf(item) {
   return src.group;
 }
 function upgradesFor(lvl) {
-  const rows = G.computeRows(lvl, gear.spec, gear.profs);
+  const rows = G.computeRows(lvl, gear.spec, gear.profs, fac(), race());
   const byDungeon = {};
   const byName = {};
   const seen = new Set();
@@ -290,7 +303,8 @@ function upgradesFor(lvl) {
 }
 function srcLine(it) {
   const s = it.src;
-  if (s.quest) return "Quest: " + s.quest;
+  const quest = byFac(s.quest, fac());
+  if (quest) return "Quest: " + quest;
   if (s.k === "boe") return s.by + " (Bind on Equip)";
   if (s.by) return s.by + (s.rare ? ", a rare that isn’t there every run" : "");
   return "";
@@ -344,15 +358,32 @@ function questHTML(q, lvl, names) {
     + (rewards.length ? '<p class="rewards">Rewards: ' + rewards.join(" · ") + "</p>" : "")
     + "</div></li>";
 }
+function reachHTML(d) {
+  const r = race() === "tauren" && d.reach && d.reach.tauren ? d.reach.tauren : byFac(d.reach, fac());
+  if (!r) return "";
+  const i = r.indexOf(":");
+  if (i < 0) return '<p class="reach">' + esc((r.charAt(0).toUpperCase() + r.slice(1)).replace(/([^.!?])$/, "$1.")) + "</p>";
+  const word = r.slice(0, i);
+  return '<p class="reach"><b>' + esc(word.charAt(0).toUpperCase() + word.slice(1)) + " for you</b>: " + esc(r.slice(i + 1).trim().replace(/([^.!?])$/, "$1.")) + "</p>";
+}
+function travelHTML(d) {
+  const from = FROM[race()] || "if";
+  const t = d.travel || {};
+  let h = reachHTML(d);
+  if (t[from]) h += "<p>" + esc(t[from]) + "</p>";
+  if (race() === "skyborne" && t.skyh) h += '<p class="sky-note">Skyborne: ' + esc(t.skyh) + "</p>";
+  return h;
+}
 function runHTML(step, i, lvl, ups) {
   const d = D.DUNGEONS[step.key];
   if (!d) return "";
+  const F = fac();
   const list = ups.byDungeon[step.key] || [];
   const left = list.filter((u) => u.role === "bis" && !gear.have.has(u.k)).length;
   const bisCount = list.filter((u) => u.role === "bis").length;
   const doneKey = lvl + ":" + step.key;
   const done = plan.done.has(doneKey);
-  const quests = (d.quests || []).filter((q) => !q.min || q.min <= lvl);
+  const quests = (d.quests || []).filter((q) => (!q.min || q.min <= lvl) && (q.fac === "both" || q.fac === F));
   const useful = quests.filter((q) => (q.rewards || []).some((r) => ups.byName[String(r).toLowerCase()]));
   const others = quests.filter((q) => useful.indexOf(q) < 0);
   const pickedN = quests.filter((q) => plan.quests.has(questId(q))).length;
@@ -370,8 +401,8 @@ function runHTML(step, i, lvl, ups) {
       + (others.length ? '<details class="more"><summary>' + (useful.length ? "Other quests here" : "The quests here") + " (" + others.length + ')</summary><ul class="rows">' + others.map((q) => questHTML(q, lvl, ups.byName)).join("") + "</ul></details>" : "")
       + "</div>"
     : "";
-  const travel = '<div class="box"><p class="box-title"><span>Getting there</span><span>' + esc(d.zone) + "</span></p>"
-    + '<div class="rows"><div style="padding:10px 14px" class="travel"><p>' + esc(d.travel) + "</p>"
+  const travel = '<div class="box"><p class="box-title"><span>Getting there</span><span>' + esc(FROM_NAME[FROM[race()]] || d.zone) + "</span></p>"
+    + '<div class="rows"><div style="padding:10px 14px" class="travel">' + travelHTML(d)
     + (d.entrance && d.entrance.x ? "<p>Entrance: " + coordHTML(d.entrance) + (d.entrance.note ? " <span class=\"quest-min\">" + esc(d.entrance.note) + "</span>" : "") + "</p>" : "")
     + (d.bosses && d.bosses.length ? '<p class="bosses">Bosses: ' + d.bosses.map(esc).join(" → ") + "</p>" : "")
     + "</div></div></div>";
@@ -391,17 +422,20 @@ function runHTML(step, i, lvl, ups) {
 }
 function render() {
   const lvl = SITE.level();
-  const P = D.PLANS[lvl] || D.PLANS[20];
+  const R = SITE.RACES[race()];
+  const LP = D.PLANS[lvl] || D.PLANS[20];
+  const P = LP[fac()] || LP.a;
   const steps = P[gear.spec] || [];
   const ups = upgradesFor(lvl);
   let need = 0, total = 0;
   steps.forEach((s) => (ups.byDungeon[s.key] || []).forEach((u) => { if (u.role === "bis") { total++; if (!gear.have.has(u.k)) need++; } }));
   app.setAttribute("data-spec", gear.spec);
   document.title = "Level " + lvl + " Dungeon Planner";
-  app.innerHTML = '<main class="wrap"><header class="head"><p class="eyebrow">WoW Forever beta · Dwarf Shaman</p><h1>Dungeon planner</h1>'
+  app.innerHTML = '<main class="wrap"><header class="head"><p class="eyebrow">WoW Forever beta · ' + esc(R.name) + " Shaman</p><h1>Dungeon planner</h1>"
     + levelbarHTML(lvl)
-    + '<p class="lede">Which dungeons to run at the level ' + lvl + " cap, in order, for your build. Ticking an item here ticks it in the gear guide too.</p>"
-    + '<p class="links"><a href="/gear">Gear guide</a> · <a href="/checklist">Checklist</a> · <a href="/party">Party board</a> · <a href="/">Toolkit home</a></p></header>'
+    + (window.racePickerHTML ? window.racePickerHTML({ race: race() }) : "")
+    + '<p class="lede">Which dungeons to run at the level ' + lvl + " cap, in order, for your build and faction. Ticking an item here ticks it in the gear guide too.</p>"
+    + '<p class="links"><a href="/gear">Gear guide</a> · <a href="/checklist">Checklist</a> · <a href="/party">Party board</a> · <a href="/">Home</a></p></header>'
     + buildsHTML()
     + '<div class="summary" role="status" aria-live="polite"><strong>' + need + "</strong><span>best-in-slot pieces still to get from these dungeons, out of " + total + ".</span></div>"
     + '<ol class="runs">' + steps.map((s, i) => runHTML(s, i, lvl, ups)).join("") + "</ol>"
@@ -430,8 +464,8 @@ if (!app || !G || !D) return;
 let gear = readGear();
 let plan = readPlan();
 render();
-// Notes to the admin carry the level and build being looked at.
-window.shamanNoteContext = () => ({ lvl: SITE.level(), spec: gear.spec });
+// Notes to the admin carry the level, race and build being looked at.
+window.shamanNoteContext = () => ({ lvl: SITE.level(), spec: gear.spec, race: race() });
 
 app.addEventListener("change", (e) => {
   const t = e.target;

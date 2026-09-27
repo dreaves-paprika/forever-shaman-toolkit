@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dwarf Shaman Checklist</title>
-<meta name="description" content="Everything a Dwarf Shaman can train, unlock and quest for at the WoW Forever beta’s level cap, as a checklist that saves in your browser.">
-<meta property="og:title" content="Dwarf Shaman Checklist · Forever Shaman Toolkit">
-<meta property="og:description" content="Everything a Dwarf Shaman can train, unlock and quest for at the WoW Forever beta’s level cap, as a checklist that saves in your browser.">
+<title>Shaman Checklist</title>
+<meta name="description" content="Everything a Shaman can train, unlock and quest for at the WoW Forever beta’s level cap, for every Alliance and Horde race, as a checklist that saves in your browser.">
+<meta property="og:title" content="Shaman Checklist · Shaman Forever TL;DR">
+<meta property="og:description" content="Everything a Shaman can train, unlock and quest for at the WoW Forever beta’s level cap, for every Alliance and Horde race, as a checklist that saves in your browser.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#EDF0F3" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0F141A" media="(prefers-color-scheme: dark)">
@@ -18,6 +18,7 @@
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="/assets/track.js"></script>
 <script src="/assets/site.js"></script>
+<script src="/assets/races.js"></script>
 <script src="/assets/notes.js"></script>
 <style>
 :root{color-scheme:light}html{-webkit-text-size-adjust:100%}[hidden]{display:none!important}
@@ -41,6 +42,10 @@
   --water-soft:#D4EDF1;
   --air:#54579E;
   --air-soft:#E2E2F3;
+  --alliance:#2458B3;
+  --alliance-soft:#DDE7F8;
+  --horde:#A3262A;
+  --horde-soft:#F6DEDD;
   --ok:#2C7A4B;
   --warn:#9A5B00;
   --focus:#0A62C9;
@@ -70,6 +75,10 @@
     --water-soft:#12323A;
     --air:#AAADF3;
     --air-soft:#25274A;
+    --alliance:#86AEF5;
+    --alliance-soft:#17274A;
+    --horde:#F08C8C;
+    --horde-soft:#3D1C1E;
     --ok:#6FD39A;
     --warn:#F2B35B;
     --focus:#5AA9FF;
@@ -96,6 +105,10 @@
   --water-soft:#12323A;
   --air:#AAADF3;
   --air-soft:#25274A;
+  --alliance:#86AEF5;
+  --alliance-soft:#17274A;
+  --horde:#F08C8C;
+  --horde-soft:#3D1C1E;
   --ok:#6FD39A;
   --warn:#F2B35B;
   --focus:#5AA9FF;
@@ -110,6 +123,8 @@ button{font:inherit;color:inherit}
 [data-el="fire"]{--el:var(--fire);--el-soft:var(--fire-soft)}
 [data-el="water"]{--el:var(--water);--el-soft:var(--water-soft)}
 [data-el="air"]{--el:var(--air);--el-soft:var(--air-soft)}
+[data-el="a"]{--el:var(--alliance);--el-soft:var(--alliance-soft)}
+[data-el="h"]{--el:var(--horde);--el-soft:var(--horde-soft)}
 
 /* Layout */
 .shell{max-width:1200px;margin-inline:auto;padding-inline:clamp(16px,3vw,32px);padding-block:28px 72px;display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
@@ -309,6 +324,7 @@ button{font:inherit;color:inherit}
 .companion{margin:0;font-size:14.5px;color:var(--ink-2)}
 .whoami{margin-top:4px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--surface);font-size:15px}
 .whoami:empty{display:none}
+.plate .rp{margin-top:2px}
 </style>
 </head>
 <body>
@@ -331,6 +347,7 @@ const GLYPH = {
   rune: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2v16M5 5.5l10 9M15 5.5l-10 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
   totem: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6.5 2.5h7v4h-7zM5.5 7.5h9v4h-9zM6.5 12.5h7v5h-7z" fill="currentColor"/></svg>',
   mace: '<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="13.2" cy="6.8" r="3.6" fill="currentColor"/><path d="m11 9.4-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+  crest: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8 3.5 4.3v5.1c0 4 2.8 7.1 6.5 8.8 3.7-1.7 6.5-4.8 6.5-8.8V4.3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 6v7M6.8 9.4h6.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
   next: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 16.5v-12M5 9l5-5 5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 };
 
@@ -492,14 +509,14 @@ const SOURCES = [
   { name: "Hall of Thanes walkthrough", site: "Wowhead", url: "https://www.wowhead.com/forever/news/the-hall-of-thanes-new-dungeon-walkthrough-for-wow-forever-382991" },
   { name: "Shaman class overview", site: "Icy Veins", url: "https://www.icy-veins.com/wow-forever/shaman-class-overview" },
   { name: "Dwarf and Gnome 1–20 route", site: "ForeverWisp", url: "https://www.foreverwisp.com/guides/wow-forever-dwarf-gnome-leveling-guide" },
-  { name: "Legacy System guide", site: "Warcraft Tavern", url: "https://www.warcrafttavern.com/forever/guides/legacy/" }
-];
-
-const SOCKETS20 = [
-  { el: "earth", from: "q-earth" },
-  { el: "fire", from: "q-fire" },
-  { el: "water", from: "w10" },
-  { el: "air", from: null }
+  { name: "Legacy System guide", site: "Warcraft Tavern", url: "https://www.warcrafttavern.com/forever/guides/legacy/" },
+  { name: "Orc/Troll leveling guide 1–20", site: "ForeverWisp", url: "https://www.foreverwisp.com/guides/wow-forever-orc-troll-leveling-guide" },
+  { name: "Tauren leveling guide 1–20", site: "ForeverWisp", url: "https://www.foreverwisp.com/guides/wow-forever-tauren-leveling-guide" },
+  { name: "Horde Skyborne leveling guide 1–20", site: "ForeverWisp", url: "https://www.foreverwisp.com/guides/wow-forever-skyborne-horde-leveling-guide" },
+  { name: "Zones index (Orgrimmar, Thunder Bluff, Durotar, Mulgore NPC lists)", site: "forever-codex.com", url: "https://forever-codex.com/zones/" },
+  { name: "WoW Classic Shaman Trainer Locations", site: "Wowhead", url: "https://www.wowhead.com/classic/guide/wow-classic-shaman-class-trainer-locations" },
+  { name: "Skyborne Race Overview", site: "Warcraft Tavern", url: "https://www.warcrafttavern.com/forever/guides/skyborne/" },
+  { name: "Racials compared with Classic Era", site: "foreverdiff.com", url: "https://foreverdiff.com/racials/" }
 ];
 
 /* ---------- level 30 ---------- */
@@ -656,31 +673,269 @@ const NEXT30 = [
   { lvl: "40", items: ["Mail armor", "Call of the Spirits (a third totem set)"] }
 ];
 
-const SOCKETS30 = [
-  { el: "earth", from: "q-earth" },
-  { el: "fire", from: "q-fire" },
-  { el: "water", from: "w10" },
-  { el: "air", from: "q-air" }
-];
+const SEC30 = {};
+SECTIONS30.forEach((s) => { SEC30[s.id] = s; });
 
-const LEVELS = {
-  20: { title: "Level 20 Dwarf Shaman", lede: "Everything you can train, unlock and quest for at the beta’s level 20 cap. Tick things off as you play.", sections: SECTIONS20, builds: BUILDS20, next: NEXT20, sockets: SOCKETS20 },
-  30: { title: "Level 30 Dwarf Shaman", lede: "Everything you can train, unlock and quest for at the beta’s level 30 cap. Tick things off as you play.", sections: SECTIONS30, builds: BUILDS30, next: NEXT30, sockets: SOCKETS30 }
+/* ---------- race data: racials ---------- */
+const RACIALS = {
+  dwarf: [
+    { name: "Stoneform", active: true, cd: "3 min", tag: "changed", fx: "Removes and grants immunity to Bleed, Poison and Disease effects, and reduces Physical damage taken by 10%, for 8 sec.", tip: "Your panic button against bleed/poison/disease debuffs and hard-hitting melee mobs. Pop it, then keep casting or swinging." },
+    { name: "Mace Specialization", active: false, tag: "new", fx: "+1% critical strike chance (melee, spells and healing) while a one-handed or two-handed mace is equipped.", tip: "Live from level 1 — a Shaman’s starting weapon is a one-handed mace, so you’re getting this for free before you ever visit a trainer." },
+    { name: "Find Treasure", active: true, cd: null, tag: "changed", fx: "Tracks lootable treasure worldwide, including chests and underwater items. Now stacks with other tracking abilities instead of overriding them. Turns off when you die and needs recasting.", tip: "Harmless to leave on all the time now that it doesn’t fight with your other tracking." },
+    { name: "Big Game Hunter", active: false, tag: "new", fx: "+5% damage dealt to Beast-type enemies.", tip: "Matches Troll’s Beast Slaying — useful through beast-heavy leveling zones." }
+  ],
+  orc: [
+    { name: "Blood Fury", active: true, cd: "2 min", tag: "changed", fx: "Increases Attack Power and Spell Power by 10% for 15 sec.", tip: "Works for any spec — Enhancement gets the AP, Elemental and Restoration get the SP. Save it for burst windows." },
+    { name: "Shatter Curse", active: true, cd: "3 min", tag: "new", fx: "Instantly removes and grants immunity to all Curses and Banes, and reduces all Magical damage taken by 15% for 8 sec.", tip: "A self-cleanse plus a big magic damage shield — strong against warlocks, curse-casting mobs and caster packs." },
+    { name: "Axe Specialization", active: false, tag: "changed", fx: "+1% critical strike chance (spells and abilities) while an axe or two-handed axe is equipped.", tip: "Two-handed axes are a trainable Shaman weapon in Forever, so an Orc swinging one actually gets the crit from this." },
+    { name: "Hardiness", active: false, tag: "changed", fx: "Duration of Stun effects on you reduced by 20%.", tip: "Stuns wear off a bit sooner." }
+  ],
+  tauren: [
+    { name: "War Stomp", active: true, cd: null, tag: null, fx: "Stuns nearby enemies for 2 sec.", tip: "A melee-range AoE stun — use it to open a pull, buy space to drop totems, or interrupt a caster pack. Cast time, cooldown and radius weren’t published for Forever, so don’t assume Classic’s numbers carry over." },
+    { name: "Endurance", active: false, tag: "changed", fx: "Total Health increased by 5% and Hit Chance increased by 1%.", tip: "The extra Hit helps your Earth Shock interrupt land and your melee and spell attacks connect more often while leveling." },
+    { name: "Cultivation", active: true, cd: null, tag: "changed", fx: "Cultivate a nearby herb, growing a duplicate you can harvest without needing Herbalism skill.", tip: "Mostly a gathering and gold perk, not combat-relevant, but free coin while you level." },
+    { name: "Plainsrunning", active: false, tag: "new", fx: "Gain 1% increased movement speed for every 5 sec you spend continuously moving, up to 30%. Resets if you take damage or stop moving.", tip: "Keep moving between pulls instead of standing still to top off mana — you’ll out-walk most travel time." }
+  ],
+  troll: [
+    { name: "Berserking", active: true, cd: "3 min", tag: "changed", fx: "Increases your spellcasting and attack speed by 10% for 10 sec.", tip: "A flat, reliable burst button now, not scaled by missing health like old Classic — pop it on a tough pull or before a big totem-buffed nuke." },
+    { name: "Rapid Regeneration", active: true, cd: "3 min", tag: "new", fx: "Regenerate 50% of your maximum Health over 6 sec. Any movement, action, or damage taken cancels the effect.", tip: "Stand still after a fight to refill half your health and save food — it doesn’t restore mana though." },
+    { name: "Beast Slaying", active: false, tag: null, fx: "Damage dealt versus Beasts increased by 5%.", tip: "Extra damage through the beast-heavy stretches of Durotar and the Barrens." },
+    { name: "Regeneration", active: false, tag: "changed", fx: "Health regeneration rate increased by 10%. In addition, 10% of total Health regeneration continues during combat.", tip: "A small in-combat health trickle on top of faster out-of-combat regen." }
+  ],
+  skyborne: [
+    { name: "Walk on Air", active: true, cd: "2 min", tag: "new", fx: "Glide downward through the air for 10 sec while controlling your direction of travel.", tip: "A free, steerable Slow Fall — take cliffs as shortcuts." },
+    { name: "Wind Blessed", active: false, tag: "new", fx: "Increases spellcasting, melee and ranged Haste by 1%.", tip: "Always on — your casts and swings are a little faster all the time." },
+    { name: "Elemental Insight", active: false, tag: "new", fx: "Damage dealt versus Elementals increased by 5%.", tip: "Handy in zones full of elementals." },
+    { name: "Skysight", active: true, cd: "2 min", tag: "new", fx: "Increases movement speed and mounted movement speed by 10%. Lasts 30 sec normally, or 15 min if used near an elemental convergence.", tip: "Cast it near an elemental convergence on your leveling route to stretch the buff to 15 minutes instead of 30 seconds." }
+  ]
 };
+const RACE_TIPS = {
+  dwarf: [
+    "Stoneform in Forever is stronger than Classic’s flat armor bonus — it now cuts ALL physical damage taken by 10% for 8 sec on top of the bleed/poison/disease immunity.",
+    "Mace Specialization is live from level 1 since one-handed mace is a Shaman’s starting weapon."
+  ],
+  orc: [
+    "Axe Specialization actually matters for you — two-handed axes are trainable, so it’s worth using one if your gear supports it.",
+    "Blood Fury boosts both Attack Power and Spell Power, so it’s useful in any of the three specs.",
+    "No Orgrimmar or Undercity trainer teaches Two-Handed Maces — plan a trip to Thunder Bluff’s Ansekhwa if you want one."
+  ],
+  tauren: [
+    "War Stomp is a melee-range AoE stun — useful to open a pull or buy time to drop totems before a group closes the distance.",
+    "You’re already home in Thunder Bluff, so the Two-Handed Mace trip Orc and Troll Shamans need doesn’t apply to you.",
+    "Plainsrunning rewards not stopping mid-route — its speed bonus builds over 5-second ticks and resets if you take damage or stand still."
+  ],
+  troll: [
+    "Berserking is now a flat 10%/10 sec burst, not scaled by missing health like old Classic — use it proactively rather than saving it for low health.",
+    "Rapid Regeneration only works out of combat and cancels on any movement or damage, so use it right after a fight before looting or moving on.",
+    "Beast Slaying pairs well with early Durotar and Barrens leveling, which is heavy on wolves, boars and other beasts."
+  ],
+  skyborne: [
+    "Skysight is your long-duration movement buff near an “elemental convergence” — worth learning where the nearest one is on your route.",
+    "Walk on Air is a free, steerable Slow Fall, shared with Alliance Skyborne.",
+    "Which Horde capital you train in isn’t nailed down (this page uses Thunder Bluff, the better-sourced option) — check in-game."
+  ]
+};
+function racialNote(r) {
+  const cd = r.active && r.cd ? r.cd + " cooldown. " : "";
+  return r.fx + " " + cd + r.tip;
+}
+function racialsSectionFor(race) {
+  const R = SITE.RACES[race];
+  return {
+    id: "racials", short: "Racials", title: "Your racial traits", el: R.fac, glyph: "crest",
+    intro: R.name + (R.sub ? " (" + R.sub + ")" : "") + " racials as they are after the Sept 24 beta patch. Put the active ones on your bars; the passive ones just work.",
+    tips: RACE_TIPS[race],
+    items: RACIALS[race].map((r, i) => r.active
+      ? { id: "r-" + race + "-" + i, name: "Put " + r.name + " on your bars", tag: r.tag, note: racialNote(r) }
+      : { id: "r-" + race + "-" + i, info: true, mark: "i", name: r.name, tag: r.tag, note: racialNote(r) })
+  };
+}
+
+/* ---------- race data: Horde trainers and totem quests ---------- */
+const ORG_TRAINER = { name: "Kardris Dreamseeker", zone: "Orgrimmar", x: "38.8", y: "36.4", place: "Orgrimmar’s Valley of Wisdom" };
+const TB_TRAINER = { name: "Beram Skychaser", zone: "Thunder Bluff", x: "22.0", y: "18.8", place: "Thunder Bluff’s Spirit Rise" };
+const EARTH_OT = { id: "q-earth-ot", el: "earth", name: "Earth Totem in your bags", sub: "Call of Earth · level 4", reward: "Earth Totem and Stoneskin Totem", steps: [
+  { t: "Pick up Call of Earth from Canaga Earthcaller outside the Den, Valley of Trials.", where: [{ zone: "Durotar", x: "42.4", y: "69.2" }] },
+  { t: "Follow the hidden path southwest of the Den to Spirit Rock.", where: [{ label: "Hidden path", zone: "Durotar", x: "41", y: "73" }, { label: "Spirit Rock", zone: "Durotar", x: "44", y: "76" }] },
+  { t: "Drink the Earth Sapta at Spirit Rock and speak with the Minor Manifestation of Earth." },
+  { t: "Return the Rough Quartz to Canaga Earthcaller." }
+] };
+const EARTH_TA = { id: "q-earth-ta", el: "earth", name: "Earth Totem in your bags", sub: "Call of Earth · level 4", reward: "Earth Totem and Stoneskin Totem", note: "Classic’s Tauren route, and a Forever leveling guide names Brambleblade and Kodo Rock too; Seer Ravenfeather as the giver isn’t confirmed for Forever yet.", steps: [
+  { t: "Talk to Seer Ravenfeather at Camp Narache.", where: [{ zone: "Mulgore", x: "45", y: "75.2" }] },
+  { t: "Collect 2 Ritual Salves around Brambleblade Ravine." },
+  { t: "Take the Earth Sapta to Kodo Rock, drink it, and speak with the Minor Manifestation of Earth." },
+  { t: "Return the Rough Quartz to Seer Ravenfeather." }
+] };
+const EARTH_SKY = { id: "q-earth-sky", el: "earth", name: "Earth Totem in your bags", sub: "Call of Earth · Zephras Isle", reward: "Earth Totem and Stoneskin Totem", note: "A YouTube video title confirms Windshaper Skyborne get their own Call of Earth quest, but its giver, coordinates and steps haven’t been published anywhere yet.", steps: [
+  { t: "Ask Windshaper Boro, the Shaman trainer at Thendal Grove, Zephras Isle — the best starting guess until someone maps the chain.", where: [{ zone: "Zephras Isle", x: "42.8", y: "23.6" }] },
+  { t: "This checklist gets the full steps once someone publishes them." }
+] };
+const FIRE_OT = { id: "q-fire-ot", el: "fire", name: "Fire Totem in your bags", sub: "Call of Fire · level 10", reward: "Fire Totem and Searing Totem", note: "The giver and the Kranal Fiss stop are confirmed for Forever by ForeverWisp’s route; the rest follows Classic.", steps: [
+  { t: "Pick up Call of Fire from Searn Firewarder in Orgrimmar’s Valley of Wisdom. Swart in Razor Hill offers it too.", where: [{ zone: "Orgrimmar", x: "38.0", y: "37.7" }] },
+  { t: "Find Kranal Fiss at a farm north of the Crossroads, the Barrens.", where: [{ zone: "The Barrens", x: "56.0", y: "19.9" }] },
+  { t: "Find Telf Joolam on the Southfury River, Durotar.", where: [{ zone: "Durotar", x: "38.5", y: "59.0" }] },
+  { t: "Collect a Reagent Pouch from Burning Blade cultists and Fire Tar from Razormane Geomancers." },
+  { t: "At the Brazier of the Dormant Flame, defeat the fire elemental and light the torch.", where: [{ zone: "Durotar", x: "39.0", y: "58.2" }] },
+  { t: "Return to Kranal Fiss for the Fire Totem and Searing Totem.", where: [{ zone: "The Barrens", x: "56.0", y: "19.9" }] }
+] };
+const FIRE_TA = { id: "q-fire-ta", el: "fire", name: "Fire Totem in your bags", sub: "Call of Fire · level 10", reward: "Fire Totem and Searing Totem", note: "Classic’s route; the Tauren starters aren’t confirmed for Forever yet.", steps: [
+  { t: "Pick up Call of Fire from Narm Skychaser in Bloodhoof Village, or Xanis Flameweaver on Spirit Rise in Thunder Bluff." },
+  { t: "Find Kranal Fiss at a farm north of the Crossroads, the Barrens.", where: [{ zone: "The Barrens", x: "56.0", y: "19.9" }] },
+  { t: "Find Telf Joolam on the Southfury River, Durotar.", where: [{ zone: "Durotar", x: "38.5", y: "59.0" }] },
+  { t: "Collect a Reagent Pouch from Burning Blade cultists and Fire Tar from Razormane Geomancers." },
+  { t: "At the Brazier of the Dormant Flame, defeat the fire elemental and light the torch.", where: [{ zone: "Durotar", x: "39.0", y: "58.2" }] },
+  { t: "Return to Kranal Fiss for the Fire Totem and Searing Totem.", where: [{ zone: "The Barrens", x: "56.0", y: "19.9" }] }
+] };
+const FIRE_SKY = { id: "q-fire-sky", el: "fire", name: "Fire Totem in your bags", sub: "Call of Fire · not yet found", reward: "Fire Totem and Searing Totem", note: "No source found even confirms this quest exists yet for Windshaper Skyborne.", steps: [
+  { t: "Once you reach Thunder Bluff, Xanis Flameweaver on Spirit Rise is the best first stop. Windshaper Boro at Thendal Grove, Zephras Isle is the other option before then.", where: [{ label: "Windshaper Boro", zone: "Zephras Isle", x: "42.8", y: "23.6" }] },
+  { t: "This checklist gets the full steps once someone maps the chain." }
+] };
+function earthQuestFor(race) {
+  if (race === "orc" || race === "troll") return EARTH_OT;
+  if (race === "tauren") return EARTH_TA;
+  return EARTH_SKY;
+}
+function fireQuestFor(race) {
+  if (race === "orc" || race === "troll") return FIRE_OT;
+  if (race === "tauren") return FIRE_TA;
+  return FIRE_SKY;
+}
+function airQuestFor(race) {
+  const home = (race === "tauren" || race === "skyborne");
+  const searn = { label: "Searn Firewarder", zone: "Orgrimmar", x: "38.0", y: "37.7" };
+  const pickup = home
+    ? { t: "Pick up Call of Air from Xanis Flameweaver on Spirit Rise in Thunder Bluff, or Searn Firewarder in Orgrimmar.", where: [searn] }
+    : { t: "Pick up Call of Air from Searn Firewarder in Orgrimmar, or Xanis Flameweaver on Spirit Rise in Thunder Bluff.", where: [searn] };
+  return { id: "q-air-h", el: "air", name: "Air Totem in your bags", sub: "Call of Air · level 30", reward: "the Air Totem, which Grounding and Nature Resistance Totem need", note: "Classic’s Horde route (Wowhead Classic quests 1531 and 1532); not confirmed for Forever yet.", steps: [
+    pickup,
+    { t: "Find Prate Cloudseer at the Weathered Nook in Thousand Needles, north of Splithoof Crag and east of Freewind Post, for the Air Totem." }
+  ] };
+}
+function waterSectionForHorde(race) {
+  const skyExtra = race === "skyborne" ? " It’s not confirmed whether Windshaper Skyborne get their own version or simply join this chain once they reach the mainland — treat it as your best guess until someone checks in-game." : "";
+  const ISLEN = { zone: "The Barrens", x: "65", y: "43" };
+  const wh1 = (race === "tauren" || race === "skyborne")
+    ? { id: "wh1", name: "Pick up Call of Water from Xanis Flameweaver", note: "He stands on Spirit Rise in Thunder Bluff. He sends you to Islen Waterseer in the Barrens." }
+    : { id: "wh1", name: "Pick up Call of Water from Searn Firewarder", note: "The Orgrimmar trainer in the Valley of Wisdom who gave you Call of Fire (Swart in Razor Hill offers the same quest). He sends you to Islen Waterseer in the Barrens.", where: [{ zone: "Orgrimmar", x: "38.0", y: "37.7" }] };
+  return {
+    id: "water", short: "Call of Water", title: "Call of Water", el: "water", glyph: "water", steps: true,
+    intro: "The level 20 totem quest for Orc, Troll and Tauren Shamans, stitched together from Classic-era Shaman quest data rather than a confirmed Forever walkthrough." + skyExtra + " The reward is the Water Totem and Healing Stream Totem.",
+    tips: [
+      "The route below is Classic’s, checked against Wowhead Classic’s quest data; only the last step, handing the crystal to Islen Waterseer, shows up in Forever’s own quest database so far, so confirm each stop in-game.",
+      "Set your hearthstone somewhere central, like the Crossroads or Thunder Bluff, before you start — this chain crosses several zones."
+    ],
+    items: [
+      wh1,
+      { id: "wh2", name: "Talk to Islen Waterseer", note: "South of Ratchet, on the largest of three coastal fingers of land. She sends you to find Brine.", where: [ISLEN] },
+      { id: "wh3", name: "Find Brine and fill a waterskin", note: "At a camp in the southern Barrens foothills, past the Field of Giants. Fill a waterskin from the pond below her camp, deal with a spawned pig, then she points you toward Tarren Mill." },
+      { id: "wh4", name: "Fill a waterskin at Tarren Mill", note: "Hillsbrad Foothills, reached by zeppelin through Undercity. Fill it at the well and return to Brine." },
+      { id: "wh5", name: "Fill a waterskin at the Ruins of Stardust", note: "Ashenvale, reached via a tunnel from Stonetalon Mountains. Fight the level 20-23 water elementals around the pond and fill the skin at the birdbath on the central island." },
+      { id: "wh6", name: "Trade your samples with Islen Waterseer", note: "She hands you the Water Sapta and a pure water sample.", where: [ISLEN] },
+      { id: "wh7", name: "Drink the Sapta near the Sepulcher", note: "At a coastal shrine, Silverpine Forest. Kill the Corrupted Manifestation that spawns, loot its bracer, click the altar with your water sample, then speak to another manifestation for a crystal." },
+      { id: "wh8", name: "Bring the crystal to Islen Waterseer", note: "Reward: the Water Totem, which has to stay in your bags, and Healing Stream Totem.", where: [ISLEN] }
+    ]
+  };
+}
+function gearItemsFor(race, lvl) {
+  const homeTB = race === "tauren" || race === "skyborne";
+  const maceNote = homeTB
+    ? "Ansekhwa trains it right here in Thunder Bluff, along with Staves and Guns. You already know One-Handed Maces and Staves."
+    : "Ansekhwa in Thunder Bluff is the only Horde trainer for it — nobody in Orgrimmar or Undercity teaches Two-Handed Maces, so this means a trip south. You already know One-Handed Maces and Staves.";
+  const axeNoteBase = homeTB
+    ? "A trip north to Orgrimmar: Sayoc in the Valley of Honor teaches both Two-Handed Axes and Fist Weapons; Hanashi beside him teaches Two-Handed Axes but not Fist Weapons. Ansekhwa in Thunder Bluff teaches neither."
+    : (race === "orc"
+      ? "Right here at home in Orgrimmar’s Valley of Honor: Sayoc teaches both Two-Handed Axes and Fist Weapons, and Hanashi beside him teaches Two-Handed Axes but not Fist Weapons. Orc Axe Specialization adds 1% crit to your spells and attacks while an axe or two-handed axe is equipped, so it’s worth training early."
+      : "Right here at home in Orgrimmar’s Valley of Honor: Sayoc teaches both Two-Handed Axes and Fist Weapons, and Hanashi beside him teaches Two-Handed Axes but not Fist Weapons. Troll has no matching weapon racial, so gear and feel matter more than the weapon type.");
+  const axeNote = axeNoteBase + (lvl === 30 ? " Corpsemaker, the best Enhancement weapon at 30, is an axe." : "");
+  const equipNote = race === "orc"
+    ? "Axe Specialization adds 1% crit to all your spells and attacks while an axe is equipped. A one-hander with a shield suits casters; a two-hander suits Enhancement."
+    : "A one-hander with a shield suits casters; a two-hander suits Enhancement.";
+  const base = [
+    { id: "gh-mace", name: "Learn Two-Handed Maces", whereText: "Ansekhwa, Thunder Bluff", note: maceNote },
+    Object.assign({ id: "gh-axe", name: "Learn Two-Handed Axes and Fist Weapons", whereText: "Sayoc, Valley of Honor, Orgrimmar", note: axeNote }, lvl === 30 ? {} : { opt: true }),
+    { id: "gh-equip", name: "Equip a weapon that suits your build", note: equipNote },
+    { id: "gh-skill", name: "Level up your weapon skill", note: "A newly trained weapon type starts at low skill and misses a lot. Swing it on easy mobs until the Skills tab shows it at your level’s cap." }
+  ];
+  if (lvl === 30) {
+    return base.concat([
+      { id: "gh30-ankh", name: "Carry Ankhs for Reincarnation", note: "Reincarnation brings you back after you die, once an hour, and each use costs an Ankh. Reagent vendors in Orgrimmar and Thunder Bluff sell them. Two or three cover a play session." },
+      { id: "gh30-legacy", name: "Pick Legacy perks that fit in 16 points", opt: true, note: "Talented (up to five extra talent points) costs 10 with its prerequisite. Reagent Economy (no Ankhs) costs 11. Together they’re over the 16-point limit, so choose one." },
+      { id: "gh30-prof", name: "Push a crafting profession toward 225", opt: true, note: "Expert (up to 225) opened at 20; Artisan needs level 35. The level 30 leatherworking belts need skill 150." },
+      { id: "gh30-fish", name: "Keep Fish Oil and Shiny Fish Scales", opt: true, note: "Water Walking and Water Breathing each use one. They come from fishing, drops and the Auction House, not vendors." }
+    ]);
+  }
+  return base.concat([
+    { id: "gh-legacy", name: "Stretch goal: an extra talent point", opt: true, note: "The Legacy system (press Y) opens with your first Legacy Point. With the cap at 20, the realistic way to earn one is a crafting profession at 150 skill. Spend it on Talented in the Adventure tree: each rank starts your talent points one level earlier, so one rank gives you a 12th point at 20. Perk values come from demo tooltips and could change." }
+  ]);
+}
+function hordeSections(lvl, race) {
+  const trainer = (race === "tauren" || race === "skyborne") ? TB_TRAINER : ORG_TRAINER;
+  const spellsSec = Object.assign({}, lvl === 30 ? SEC30.spells : SEC20.spells, {
+    intro: lvl === 30
+      ? "Visit " + trainer.name + " or another Shaman trainer in " + trainer.place + " at every even level from 22 to 30. Totemic Projection and Call of the Ancestors are the only new spells; the rest are Classic spells and stronger ranks."
+      : "Level 20 is a big training stop. Visit " + trainer.name + " or another Shaman trainer in " + trainer.place + ", and buy everything on this list.",
+    where: [trainer]
+  });
+  const earthQ = earthQuestFor(race);
+  const fireQ = fireQuestFor(race);
+  const totemsSec = lvl === 30
+    ? { id: "totems", short: "Totems", title: "Earth, Fire and Air totems", el: "air", glyph: "air", intro: SEC30.totems.intro, quests: [earthQ, fireQ, airQuestFor(race)] }
+    : { id: "totems", short: "Earth & Fire", title: "Earth and Fire totems", el: "earth", glyph: "earth", intro: SEC20.totems.intro, quests: [earthQ, fireQ], air: "Air Totem: Call of Air opens at level 30, once the beta cap rises. In Classic it starts with Searn Firewarder in Orgrimmar or Xanis Flameweaver in Thunder Bluff and ends with Prate Cloudseer in Thousand Needles." };
+  return [
+    spellsSec,
+    waterSectionForHorde(race),
+    totemsSec,
+    racialsSectionFor(race),
+    lvl === 30 ? SEC30.talents : SEC20.talents,
+    lvl === 30 ? SEC30.bar : SEC20.bar,
+    { id: "gear", short: "Gear & extras", title: "Weapons, gear and extras", glyph: "mace", items: gearItemsFor(race, lvl) },
+    lvl === 30 ? SEC30.next : SEC20.next
+  ];
+}
+function sectionsFor(lvl, race) {
+  if (race === "dwarf") {
+    const base = lvl === 30 ? SECTIONS30 : SECTIONS20;
+    const out = base.slice();
+    const idx = out.findIndex((s) => s.id === "talents");
+    out.splice(idx, 0, racialsSectionFor("dwarf"));
+    return out;
+  }
+  return hordeSections(lvl, race);
+}
+function socketsFor(race, lvl) {
+  const waterId = race === "dwarf" ? "w10" : "wh8";
+  const earthId = race === "dwarf" ? "q-earth" : earthQuestFor(race).id;
+  const fireId = race === "dwarf" ? "q-fire" : fireQuestFor(race).id;
+  const airId = race === "dwarf" ? "q-air" : "q-air-h";
+  return [
+    { el: "earth", from: earthId },
+    { el: "fire", from: fireId },
+    { el: "water", from: waterId },
+    { el: "air", from: lvl === 30 ? airId : null }
+  ];
+}
 
 /* ---------- derived ---------- */
 function sectionItems(sec) {
-  if (sec.groups) return sec.groups.reduce((all, g) => all.concat(g.items), []);
-  if (sec.quests) return sec.quests;
-  if (sec.check) return [sec.check];
-  return sec.items || [];
+  let out = [];
+  if (sec.groups) out = sec.groups.reduce((all, g) => all.concat(g.items), []);
+  if (sec.quests) out = out.concat(sec.quests);
+  if (sec.check) out = out.concat([sec.check]);
+  if (sec.items) out = out.concat(sec.items);
+  return out;
 }
 const VALID_ALL = new Set();
-let TITLE = "", LEDE = "", SECTIONS = [], BUILDS = {}, NEXT = [], SOCKETS = [], CHECKABLE = {}, VALID = new Set(), TOTAL = 0, LEVEL = 20;
-function useLevel(lvl) {
-  const L = LEVELS[lvl] || LEVELS[20];
-  LEVEL = LEVELS[lvl] ? lvl : 20;
-  TITLE = L.title; LEDE = L.lede; SECTIONS = L.sections; BUILDS = L.builds; NEXT = L.next; SOCKETS = L.sockets;
+let TITLE = "", LEDE = "", SECTIONS = [], BUILDS = {}, NEXT = [], SOCKETS = [], CHECKABLE = {}, VALID = new Set(), TOTAL = 0, LEVEL = 20, RACE = "dwarf";
+function useLevel(lvl, race) {
+  LEVEL = lvl === 30 ? 30 : 20;
+  RACE = SITE.RACES[race] ? race : "dwarf";
+  const R = SITE.RACES[RACE];
+  TITLE = "Level " + LEVEL + " " + R.name + " Shaman";
+  LEDE = "Everything a " + R.name + " shaman can train, unlock and quest for at the beta’s level " + LEVEL + " cap. Tick things off as you play.";
+  SECTIONS = sectionsFor(LEVEL, RACE);
+  BUILDS = LEVEL === 30 ? BUILDS30 : BUILDS20;
+  NEXT = LEVEL === 30 ? NEXT30 : NEXT20;
+  SOCKETS = socketsFor(RACE, LEVEL);
   CHECKABLE = {};
   VALID = new Set();
   SECTIONS.forEach((sec) => {
@@ -690,7 +945,7 @@ function useLevel(lvl) {
   });
   TOTAL = VALID.size;
 }
-[20, 30].forEach((l) => { useLevel(l); VALID.forEach((id) => VALID_ALL.add(id)); });
+[20, 30].forEach((l) => Object.keys(SITE.RACES).forEach((r) => { useLevel(l, r); VALID.forEach((id) => VALID_ALL.add(id)); }));
 
 /* ---------- helpers ---------- */
 function esc(s) {
@@ -717,6 +972,7 @@ function chips(it) {
   if (it.rank) h += '<span class="chip">Rank ' + it.rank + "</span>";
   if (it.lvl) h += '<span class="chip">Lvl ' + it.lvl + "</span>";
   if (it.tag === "new") h += '<span class="chip chip-new">New in Forever</span>';
+  if (it.tag === "changed") h += '<span class="chip">Changed in Forever</span>';
   if (it.el) h += '<span class="chip chip-el" data-el="' + it.el + '">' + EL_NAME[it.el] + " totem</span>";
   if (it.opt) h += '<span class="chip chip-opt">Optional</span>';
   return h;
@@ -726,7 +982,7 @@ function chips(it) {
 function itemHTML(it, isDone, num) {
   const note = it.noteHTML ? it.noteHTML : (it.note ? esc(it.note) : "");
   if (it.info) {
-    return '<li class="item is-info"><span class="info-mark" aria-hidden="true">↓</span>'
+    return '<li class="item is-info"><span class="info-mark" aria-hidden="true">' + esc(it.mark || "↓") + "</span>"
       + '<div class="item-body"><span class="item-head"><span class="item-title">' + esc(it.name) + "</span>" + chips(it) + "</span>"
       + (note ? '<span class="item-note">' + note + "</span>" : "") + "</div></li>";
   }
@@ -743,12 +999,13 @@ function itemHTML(it, isDone, num) {
 }
 
 function questHTML(q, isDone) {
+  if (q.info) return itemHTML(q, false);
   const cid = "cb-" + q.id;
   return '<li class="item quest' + (isDone ? " is-done" : "") + '" data-item="' + q.id + '" data-el="' + q.el + '">'
     + '<input type="checkbox" class="tick" id="' + cid + '" data-id="' + q.id + '"' + (isDone ? " checked" : "") + ">"
     + '<label class="item-body" for="' + cid + '"><span class="item-head"><span class="item-title">' + esc(q.name) + "</span>"
-    + '<span class="chip chip-el" data-el="' + q.el + '">' + esc(q.sub) + "</span></span>"
-    + '<span class="item-note">Reward: ' + esc(q.reward) + ". Steps if you still need it:</span></label>"
+    + '<span class="chip chip-el" data-el="' + q.el + '">' + esc(q.sub) + "</span>" + (q.opt ? '<span class="chip chip-opt">Optional</span>' : "") + "</span>"
+    + '<span class="item-note">Reward: ' + esc(q.reward) + "." + (q.note ? " " + esc(q.note) : "") + " Steps if you still need it:</span></label>"
     + '<ol class="steps">' + q.steps.map((s) => '<li><span>' + esc(s.t) + "</span>"
       + (s.where ? '<span class="step-where">' + s.where.map(coordBtn).join("") + "</span>" : "") + "</li>").join("")
     + "</ol></li>";
@@ -827,8 +1084,10 @@ function socketsHTML(st) {
 
 function plateHTML(st) {
   const n = countAll(st);
-  return '<header class="plate"><p class="eyebrow">WoW Forever beta · Dwarf Shaman</p><h1>' + TITLE + "</h1>"
+  const R = SITE.RACES[RACE];
+  return '<header class="plate"><p class="eyebrow">WoW Forever beta · ' + esc(R.name) + ' Shaman</p><h1>' + esc(TITLE) + "</h1>"
     + levelbarHTML()
+    + (window.racePickerHTML ? window.racePickerHTML({ race: RACE }) : "")
     + '<p class="lede">' + esc(LEDE) + "</p>"
     + '<p class="companion">Next: <a href="/gear">best-in-slot gear for your talent build</a> and the <a href="/dungeons">dungeon planner</a>.</p>'
     + socketsHTML(st)
@@ -857,7 +1116,7 @@ function footerHTML() {
     + '<p>Tap any coordinate to copy a TomTom <code>/way</code> command.</p>'
     + '<p>Your ticks are saved in this browser and don’t sync between devices. Fan-made and not affiliated with Blizzard Entertainment.</p>'
     + (window.shamanNoteFooter ? window.shamanNoteFooter("Spotted a mistake, or know a better way?") : "")
-    + '<p><a href="/">Toolkit home</a> · <a href="/gear">Gear guide</a> · <a href="/dungeons">Dungeon planner</a> · <a href="/party">Party board</a></p>'
+    + '<p><a href="/">Home</a> · <a href="/gear">Gear guide</a> · <a href="/dungeons">Dungeon planner</a> · <a href="/party">Party board</a></p>'
     + '<div class="whoami" data-whoami></div>'
     + '<h3 class="group-title">Sources</h3><ul class="sources">'
     + SOURCES.map((s) => '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + "</a> <span>" + esc(s.site) + "</span></li>").join("")
@@ -910,11 +1169,12 @@ function changed() { save(); track("state", progressSummary()); }
 /* ---------- visit stats (see /assets/track.js) ---------- */
 function track(kind, data) { try { if (window.shamanTrack) window.shamanTrack(kind, data); } catch (e) { /* stats are optional */ } }
 function progressSummary() {
+  const s30 = socketsFor(RACE, 30);
   const totems = [["earth", "e"], ["fire", "f"], ["water", "w"], ["air", "a"]].filter((t) => {
-    const s = LEVELS[30].sockets.find((x) => x.el === t[0]);
+    const s = s30.find((x) => x.el === t[0]);
     return s && s.from && state.done.has(s.from);
   }).map((t) => t[1]).join("");
-  return { lvl: LEVEL, spec: state.spec, done: countAll(state), total: TOTAL, totems: totems };
+  return { lvl: LEVEL, spec: state.spec, done: countAll(state), total: TOTAL, totems: totems, race: SITE.racePicked() ? RACE : "" };
 }
 function levelbarHTML() {
   const levels = SITE.levels();
@@ -1018,7 +1278,7 @@ function onReset(btn) {
 /* ---------- boot ---------- */
 const app = document.getElementById("app");
 if (!app) return;
-useLevel(SITE.level());
+useLevel(SITE.level(), SITE.race());
 const state = readState();
 try { localStorage.setItem(STORE_KEY + ":test", "1"); localStorage.removeItem(STORE_KEY + ":test"); } catch (e) { canSave = false; }
 function renderAll() {
@@ -1028,9 +1288,9 @@ function renderAll() {
   setStatus();
 }
 renderAll();
-track("view", state.savedAt ? progressSummary() : null);
-// Notes to the admin carry the level and build being looked at.
-window.shamanNoteContext = () => ({ lvl: LEVEL, spec: state.spec });
+track("view", state.savedAt ? progressSummary() : (SITE.racePicked() ? { race: RACE } : null));
+// Notes to the admin carry the level, race and build being looked at.
+window.shamanNoteContext = () => ({ lvl: LEVEL, spec: state.spec, race: RACE });
 
 app.addEventListener("change", (e) => {
   const t = e.target;
@@ -1059,12 +1319,15 @@ app.addEventListener("change", (e) => {
 // The level cap changed (the owner raised it, or the visitor picked a level).
 SITE.onChange(() => {
   const lvl = SITE.level();
+  const race = SITE.race();
   const hasBar = !!app.querySelector(".lvlbar");
   const wantBar = SITE.levels().length > 1;
-  if (lvl === LEVEL && hasBar === wantBar) return;
-  useLevel(lvl);
+  const hadHint = !!app.querySelector(".rp-hint");
+  const wantHint = !SITE.racePicked();
+  if (lvl === LEVEL && race === RACE && hasBar === wantBar && hadHint === wantHint) return;
+  useLevel(lvl, race);
   renderAll();
-  track("state", progressSummary());
+  if (state.savedAt) track("state", progressSummary());
 });
 
 app.addEventListener("click", (e) => {

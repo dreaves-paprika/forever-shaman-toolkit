@@ -1,6 +1,6 @@
 // The party board: only people who chose to join it, and only what they agreed to show.
 // No IDs, locations or devices leave this endpoint.
-const { SPECS, PROFS, pipeline, pairs } = require("./_lib");
+const { SPECS, PROFS, RACES, pipeline, pairs } = require("./_lib");
 
 const ITEM_RE = /^[a-z0-9]{2,24}$/;
 const PAIR_RE = /^[a-z0-9]{2,24}~[A-Za-z0-9]{2,24}$/;
@@ -32,6 +32,7 @@ module.exports = async function handler(req, res) {
         have: Number(v.gear_have) || 0,
         total: Number(v.gear_total) || 0,
         spec: SPECS[v.gear_spec] ? v.gear_spec : "",
+        race: RACES[v.gear_race] ? v.gear_race : "",
         profs: String(v.gear_profs || "").split(",").filter((p) => PROFS[p]),
         own: String(v.gear_own || "").split(",").filter((k) => ITEM_RE.test(k)).slice(0, 60),
         enchDone: Number(v.gear_ench_done) || 0,
@@ -40,7 +41,14 @@ module.exports = async function handler(req, res) {
       } : null;
       const last = Number(v.last) || 0;
       // Round "last seen" to the hour so the board doesn't show anyone's exact activity.
-      members.push({ name: String(v.name).slice(0, 40), ck: ck, gear: gear, last: last ? Math.floor(last / 3600000) * 3600000 : 0, active: last > now - 15 * 60000 });
+      members.push({
+        name: String(v.name).slice(0, 40),
+        race: RACES[v.race] ? v.race : "",
+        ck: ck,
+        gear: gear,
+        last: last ? Math.floor(last / 3600000) * 3600000 : 0,
+        active: last > now - 15 * 60000
+      });
     });
     members.sort((a, b) => b.last - a.last || a.name.localeCompare(b.name));
     // A short cache on Vercel's edge keeps a tab left open from running up database reads.

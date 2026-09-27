@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Party Board</title>
-<meta name="description" content="See how your friends’ Dwarf shamans are coming along in the WoW Forever beta: builds, checklist progress, totems and best-in-slot gear. Only people who join show up.">
-<meta property="og:title" content="Party Board · Forever Shaman Toolkit">
-<meta property="og:description" content="Friends’ builds, checklist progress, totems and best-in-slot gear, side by side.">
+<meta name="description" content="See how your friends’ shamans are coming along in the WoW Forever beta: races, builds, checklist progress, totems and best-in-slot gear. Only people who join show up.">
+<meta property="og:title" content="Party Board · Shaman Forever TL;DR">
+<meta property="og:description" content="Friends’ races, builds, checklist progress, totems and best-in-slot gear, side by side.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#EDF0F3" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0F141A" media="(prefers-color-scheme: dark)">
@@ -41,6 +41,10 @@
   --water-soft:#D4EDF1;
   --air:#54579E;
   --air-soft:#E2E2F3;
+  --alliance:#2458B3;
+  --alliance-soft:#DDE7F8;
+  --horde:#A3262A;
+  --horde-soft:#F6DEDD;
   --danger:#B42318;
   --font-display:"Marcellus SC","Marcellus",Georgia,"Times New Roman",serif;
   --font-body:"Alegreya Sans","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
@@ -69,6 +73,10 @@
     --water-soft:#12323A;
     --air:#AAADF3;
     --air-soft:#25274A;
+    --alliance:#86AEF5;
+    --alliance-soft:#17274A;
+    --horde:#F08C8C;
+    --horde-soft:#3D1C1E;
     --danger:#FF8A7A;
   }
 }
@@ -84,6 +92,8 @@ button,input{font:inherit;color:inherit}
 [data-el="fire"]{--el:var(--fire);--el-soft:var(--fire-soft)}
 [data-el="water"]{--el:var(--water);--el-soft:var(--water-soft)}
 [data-el="air"]{--el:var(--air);--el-soft:var(--air-soft)}
+[data-el="a"]{--el:var(--alliance);--el-soft:var(--alliance-soft)}
+[data-el="h"]{--el:var(--horde);--el-soft:var(--horde-soft)}
 [data-el="none"]{--el:var(--line-strong);--el-soft:var(--surface-2)}
 
 .wrap{max-width:1040px;margin-inline:auto;padding:clamp(28px,6vw,64px) clamp(16px,4vw,36px) 64px;display:grid;gap:24px}
@@ -122,7 +132,7 @@ h1{margin:0;font-family:var(--font-display);font-weight:400;font-size:clamp(36px
 .seen{font-size:13.5px;color:var(--ink-3);white-space:nowrap}
 .seen.is-now{color:var(--ok);font-weight:500}
 .seen.is-now::before{content:"";display:inline-block;width:8px;height:8px;margin-right:6px;border-radius:50%;background:var(--ok);vertical-align:1px}
-.build{margin:0;display:flex;align-items:center;gap:7px;font-weight:500;color:var(--ink-2)}
+.build{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:4px 7px;font-weight:500;color:var(--ink-2)}
 .build i{flex:none;width:22px;height:22px;border-radius:7px;display:grid;place-items:center;background:var(--el-soft);color:var(--el)}
 .build i svg{width:13px;height:13px}
 .meter{display:grid;gap:5px}
@@ -138,6 +148,8 @@ h1{margin:0;font-family:var(--font-display);font-weight:400;font-size:clamp(36px
 .totem svg{width:12px;height:12px;opacity:.55}
 .totem.is-have{border-style:solid;border-color:transparent;background:var(--el-soft);color:var(--el);font-weight:500}
 .totem.is-have svg{opacity:1}
+.race{display:inline-flex;align-items:center;gap:6px;font-weight:500;color:var(--ink-2)}
+.fac{display:inline-block;padding:1px 7px;border-radius:99px;background:var(--el-soft);color:var(--el);font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase}
 .profs{margin:0;font-size:14.5px;color:var(--ink-2)}
 .card-foot{display:flex;justify-content:flex-end;padding-top:10px;border-top:1px solid var(--line)}
 .card-foot a{font-weight:500}
@@ -153,10 +165,10 @@ h1{margin:0;font-family:var(--font-display);font-weight:400;font-size:clamp(36px
 <body>
 <main class="wrap">
   <header class="head">
-    <p class="eyebrow">WoW Forever beta · Dwarf Shaman</p>
+    <p class="eyebrow">WoW Forever beta · Shaman</p>
     <h1>Party board</h1>
-    <p class="lede">How everyone’s shamans are coming along: builds, checklist progress, totems and best-in-slot gear. Only people who join show up here.</p>
-    <p class="links"><a href="/checklist">Checklist</a> · <a href="/gear">Gear guide</a> · <a href="/dungeons">Dungeon planner</a> · <a href="/">Toolkit home</a></p>
+    <p class="lede">How everyone’s shamans are coming along: races, builds, checklist progress, totems and best-in-slot gear. Only people who join show up here.</p>
+    <p class="links"><a href="/checklist">Checklist</a> · <a href="/gear">Gear guide</a> · <a href="/dungeons">Dungeon planner</a> · <a href="/">Home</a></p>
   </header>
   <section class="join" id="join" aria-labelledby="join-title"><h2 id="join-title">Join the board</h2><p>Loading…</p></section>
   <section id="board" aria-label="Party members"><div class="empty"><p>Loading the board…</p></div></section>
@@ -172,6 +184,8 @@ h1{margin:0;font-family:var(--font-display);font-weight:400;font-size:clamp(36px
 
 const SPEC = { enh: ["Enhancement", "earth"], ele: ["Elemental", "fire"], resto: ["Restoration", "water"] };
 const PROF = { lw: "Leatherworking", tail: "Tailoring", eng: "Engineering", ench: "Enchanting" };
+const RACE = { dwarf: ["Dwarf", "a"], orc: ["Orc", "h"], tauren: ["Tauren", "h"], troll: ["Troll", "h"], skyborne: ["Skyborne", "h"] };
+const FACTION = { a: "Alliance", h: "Horde" };
 const TOTEMS = [["e", "earth", "Earth"], ["f", "fire", "Fire"], ["w", "water", "Water"], ["a", "air", "Air"]];
 const GLYPH = {
   earth: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M1.8 16.6 7 7.2l2.7 4.2 3-5.5 5.5 10.7z" fill="currentColor"/></svg>',
@@ -243,7 +257,7 @@ function renderJoin() {
       + '<form id="join-form" novalidate><label for="join-name">Your name or character</label>'
       + '<input class="field" id="join-name" type="text" maxlength="40" autocomplete="nickname" value="' + esc(p.name()) + '">'
       + '<button class="btn btn-primary" type="submit" id="join-btn"' + (busy ? " disabled" : "") + ">" + (busy ? "Joining…" : "Join the party board") + "</button></form>"
-      + '<p class="fine">Your card shows your name, build, checklist and gear progress, which enchants and kits you’ve applied, which totems you have, your professions and roughly when you were last on. Anyone with this page’s link can see it. You can leave any time.</p>'
+      + '<p class="fine">Your card shows your name, race, build, checklist and gear progress, which enchants and kits you’ve applied, which totems you have, your professions and roughly when you were last on. Anyone with this page’s link can see it. You can leave any time.</p>'
       + msgHTML();
   }
   joinBox.innerHTML = html;
@@ -261,6 +275,15 @@ function buildOf(m) {
   if (m.ck && m.ck.spec) return m.ck.spec;
   return "";
 }
+function raceOf(m) {
+  if (m.race && RACE[m.race]) return m.race;
+  if (m.gear && RACE[m.gear.race]) return m.gear.race;
+  return "";
+}
+function facOf(m) {
+  const r = raceOf(m);
+  return r ? RACE[r][1] : "";
+}
 function shareURL(m) {
   const g = m.gear;
   if (!g) return "";
@@ -268,6 +291,7 @@ function shareURL(m) {
   q.set("share", "1");
   q.set("lvl", String(g.lvl));
   q.set("spec", g.spec || "enh");
+  if (raceOf(m)) q.set("race", g.race || raceOf(m));
   if (g.profs.length) q.set("profs", g.profs.slice().sort().join("."));
   if (g.own.length) q.set("have", g.own.slice().sort().join("."));
   if (g.ench && g.ench.length) q.set("ench", g.ench.map((x) => x.replace("~", "_")).sort().join("."));
@@ -276,12 +300,21 @@ function shareURL(m) {
 }
 function statsHTML(list) {
   const counts = { enh: 0, ele: 0, resto: 0 };
-  list.forEach((m) => { const b = buildOf(m); if (b in counts) counts[b]++; });
+  const facs = { a: 0, h: 0 };
+  list.forEach((m) => {
+    const b = buildOf(m);
+    if (b in counts) counts[b]++;
+    const f = facOf(m);
+    if (f) facs[f]++;
+  });
   const on = list.filter((m) => m.active).length;
   const water = list.filter((m) => m.ck && m.ck.totems.indexOf("w") >= 0).length;
   const air = list.filter((m) => m.ck && m.ck.totems.indexOf("a") >= 0).length;
   const out = ['<span class="stat"><b>' + list.length + "</b> on the board</span>"];
   if (on) out.push('<span class="stat is-now"><i aria-hidden="true"></i><b>' + on + "</b> on now</span>");
+  Object.keys(facs).forEach((f) => {
+    if (facs[f]) out.push('<span class="stat" data-el="' + f + '"><i aria-hidden="true"></i><b>' + facs[f] + "</b> " + FACTION[f] + "</span>");
+  });
   Object.keys(counts).forEach((k) => {
     if (counts[k]) out.push('<span class="stat" data-el="' + SPEC[k][1] + '"><i aria-hidden="true"></i><b>' + counts[k] + "</b> " + SPEC[k][0] + "</span>");
   });
@@ -311,7 +344,8 @@ function cardHTML(m) {
   const link = shareURL(m);
   return '<li class="card" data-el="' + el + '"><div class="card-head"><div class="card-top"><h2 class="card-name">' + esc(m.name) + "</h2>"
     + '<span class="seen' + (m.active ? " is-now" : "") + '">' + (m.active ? "On now" : esc(seen(m.last))) + "</span></div>"
-    + '<p class="build">' + (SPEC[spec] ? "<i>" + GLYPH[el] + "</i>" + SPEC[spec][0] : "No build picked yet") + "</p></div>"
+    + '<p class="build">' + (SPEC[spec] ? "<i>" + GLYPH[el] + "</i>" + SPEC[spec][0] : "No build picked yet")
+    + (raceOf(m) ? ' · <span class="race">' + esc(RACE[raceOf(m)][0]) + ' <span class="fac" data-el="' + RACE[raceOf(m)][1] + '">' + FACTION[RACE[raceOf(m)][1]] + "</span></span>" : "") + "</p></div>"
     + (m.ck ? meterHTML("Level " + m.ck.lvl + " checklist", m.ck.done, m.ck.total, "done") : '<p class="none">Hasn’t opened the checklist yet.</p>')
     + totemsHTML(m)
     + (m.gear ? meterHTML("Level " + m.gear.lvl + " best-in-slot gear", m.gear.have, m.gear.total, "") : '<p class="none">Hasn’t opened the gear guide yet.</p>')

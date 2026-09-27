@@ -1,8 +1,8 @@
-/* Forever Shaman Toolkit: "Note to admin", and replies to those notes.
+/* Shaman Forever TL;DR: "Note to admin", and replies to those notes.
    Any button with data-note opens a small form that sends the site's admin a note: a better option,
    something that's wrong, or an idea. Buttons can add context with data-note-slot, data-note-label,
    data-note-item, data-note-about and data-note-kind. A page can also set window.shamanNoteContext()
-   to return { lvl, spec, about }.
+   to return { lvl, spec, race, about }.
    Each note sent from this browser leaves a receipt here (its number and a private token), so the
    browser can check for the admin's reply. "Your notes" lists them; a one-time notice appears when
    the admin replies or changes a note's status.
@@ -21,6 +21,7 @@
   var PAGE_LABEL = { home: "Home page", checklist: "Checklist", gear: "Gear guide", dungeons: "Dungeon planner", party: "Party board" };
   var PAGE_THE = { home: "the home page", checklist: "the checklist", gear: "the gear guide", dungeons: "the dungeon planner", party: "the party board" };
   var SPEC_LABEL = { enh: "Enhancement", ele: "Elemental", resto: "Restoration" };
+  var RACE_LABEL = { dwarf: "Dwarf", orc: "Orc", tauren: "Tauren", troll: "Troll", skyborne: "Skyborne" };
   var KIND_SHORT = { better: "Better option", wrong: "Something’s wrong", idea: "Idea", other: "Note" };
   var STATUS_SHORT = { new: "Sent", looking: "Looking into it", done: "Done", gone: "Closed" };
   var KINDS = [
@@ -311,7 +312,7 @@
     var parts = [PAGE_LABEL[c.page] || "This site"];
     if (c.label) parts.push(c.label);
     if (c.about) parts.push(c.about);
-    var build = [c.lvl ? "Level " + c.lvl : "", SPEC_LABEL[c.spec] || ""].filter(Boolean).join(" ");
+    var build = [c.lvl ? "Level " + c.lvl : "", RACE_LABEL[c.race] || "", SPEC_LABEL[c.spec] || ""].filter(Boolean).join(" ");
     if (build) parts.push(build);
     return parts.join(" · ") + (c.item ? " · current pick: " + c.item : "");
   }
@@ -404,7 +405,8 @@
       about: c.about || extra.about || "",
       kind: c.kind || "wrong",
       lvl: Number(extra.lvl) || 0,
-      spec: extra.spec || ""
+      spec: extra.spec || "",
+      race: extra.race || (window.SITE && window.SITE.racePicked && window.SITE.racePicked() ? window.SITE.race() : "")
     };
     mode = "form";
     sending = false;
@@ -463,7 +465,7 @@
       kind: ctx.kind,
       page: ctx.page,
       name: nameEl.value.trim().slice(0, 40),
-      ctx: { lvl: ctx.lvl, spec: ctx.spec, slot: ctx.slot, label: ctx.label, item: ctx.item, about: ctx.about },
+      ctx: { lvl: ctx.lvl, spec: ctx.spec, race: ctx.race, slot: ctx.slot, label: ctx.label, item: ctx.item, about: ctx.about },
       website: trap ? trap.value : ""
     };
     // Browsers that chose "Don't count me" send their note without the browser ID.
