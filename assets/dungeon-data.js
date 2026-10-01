@@ -1167,7 +1167,7 @@ const PLANS = {
     enh: [
       { key: "hot", why: "A warm-up right under Ironforge. Its quests give Catacomb Cloak and Deepgrave Trousers, solid stand-ins until you finish the rest." },
       { key: "dm", why: "Your weapon lives here: Smite’s Mighty Hammer, plus First Mate Band and Blackened Defias Belt. Start The Defias Brotherhood chain at Sentinel Hill before your first run." },
-      { key: "wc", why: "Three Viper set pieces and Snake Eye Kaleidoscope. The Glowing Shard from the last boss starts the quest for Talbar Mantle." },
+      { key: "wc", why: "Three Viper set pieces and Snake Eye Kaleidoscope. The Glowing Shard from the last boss starts the quest for Talbar Mantle, your shoulders until a Magician’s Mantle turns up on the Auction House." },
       { key: "rol", opt: true, why: "Only for Abominable Creatures and its Grave Shroud cloak. It’s a long trek through Horde land." },
       { key: "sfk", opt: true, why: "Trash drops Night Reaver and Gloomshroud Armor. They’re Bind on Equip, so check the Auction House first." }
     ],
@@ -1180,10 +1180,10 @@ const PLANS = {
       { key: "bfd", opt: true, why: "Researching the Corruption gives Prelacy Cape, a small upgrade. Tuned a few levels above 20." }
     ],
     resto: [
-      { key: "dm", why: "Four of your best pieces: Ogre Loincloth, Corsair’s Overshirt, Lookie’s Spyglass and the Staff of Westfall from The Defias Brotherhood chain. Start that chain at Sentinel Hill first." },
+      { key: "dm", why: "Three of your best pieces: Ogre Loincloth, Lookie’s Spyglass and the Staff of Westfall from The Defias Brotherhood chain, plus Corsair’s Overshirt, a chest within a point of your best. Start that chain at Sentinel Hill first." },
       { key: "wc", why: "Serpent Gloves if you don’t craft, plus good backups: Living Root, Robe of the Moccasin and Talbar Mantle." },
+      { key: "sfk", opt: true, why: "Bloody Apron, your best chest, from Razorclaw the Butcher, the second boss. It’s only a hair ahead of Corsair’s Overshirt, so go when your group is heading there anyway. The trash drops Mindthrust Bracers; check the Auction House first." },
       { key: "bfd", why: "Only for Researching the Corruption and its Prelacy Cape, your best cloak. Tuned a few levels above 20, so go once your group has gear from the first two." },
-      { key: "sfk", opt: true, why: "Mindthrust Bracers drop from the trash. Check the Auction House first." },
       { key: "hot", opt: true, why: "An easy warm-up under Ironforge to practice healing." }
     ],
     skip: [
