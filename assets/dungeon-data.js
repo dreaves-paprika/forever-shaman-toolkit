@@ -1033,6 +1033,25 @@ const DUNGEONS = {
     "note": "Rewards: pick Snake Hoop."
    },
    {
+    "id": 96264,
+    "name": "Elemental Aid",
+    "giver": "Veyric Thunderhame",
+    "where": {
+     "zone": "Arathi Highlands",
+     "x": "59.6",
+     "y": "27.6"
+    },
+    "min": 30,
+    "chain": "Shaman only. Step 2 of the Air Totem chain: Call of Air, from Eldrun Stormbreaker in Ironforge, sends you to Veyric first.",
+    "task": "Kill Charlga Razorflank (the last boss) and loot the Tattered Note, then return to Veyric.",
+    "rewards": [
+     "Rage of the Storm",
+     "Lightning's Grasp",
+     "Tidebringer's Claw"
+    ],
+    "note": "The weapons come three quests later, at the end of the chain (The Tempest's Weapons), and you choose one. The last two steps are level 40 content, so bring a group."
+   },
+   {
     "id": 1142,
     "name": "Mortality Wanes",
     "giver": "Heralath Fallowbrook",
