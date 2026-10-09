@@ -529,7 +529,7 @@ function srcText(it, st) {
   switch (s.k) {
     case "dm": case "wc": case "hot": case "rol": case "sfk": case "bfd": case "stocks": case "gnomer": case "rfk": case "smgy": case "rfc":
       return "Drops from " + s.by + (s.rare ? ", a rare that isn’t there every run" : "") + ".";
-    case "dmq": case "wcq": case "hotq": case "rolq": case "bfdq": case "stocksq": case "gnomerq": case "rfkq": case "smq": case "zq": case "rfcq": case "sfkq": case "zqh":
+    case "dmq": case "wcq": case "hotq": case "rolq": case "bfdq": case "stocksq": case "gnomerq": case "rfkq": case "smq": case "zq": case "rfcq": case "sfkq": case "zqh": case "tempq":
       return "Quest: " + byFac(s.quest, fac) + ". " + byFac(s.how, fac) + ".";
     case "lib": return "Friend of the Library: hand in 10 library books to " + LIBRARIAN[fac] + ".";
     case "boe": return "Bind on Equip. " + s.by + ".";
